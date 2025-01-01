@@ -1,13 +1,15 @@
-import { container, injectable, singleton } from "tsyringe";
+import { container, inject, injectable, singleton } from "tsyringe";
 import { IAuthService } from "./IAuthService";
 import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
 import jwt, { type SignOptions, type VerifyOptions } from 'jsonwebtoken'
+import { Properties } from "config/Properties";
 
 @injectable()
 export class AuthService implements IAuthService {
 
-  private readonly secret = '0d05310c-3bcb-48b8-bd7d-b0feef9769f6'
-  private readonly toeknExpires = '1 days'
+  constructor(
+    @inject('Properties') private readonly properties: Properties
+  ) { }
 
   signIn({ username, password }: AuthRequestDTO) {
     console.log('signIn')
@@ -18,8 +20,8 @@ export class AuthService implements IAuthService {
       permissions: ['ADMIN']
     }
 
-    const token = jwt.sign(tokenData, this.secret, {
-      expiresIn: this.toeknExpires
+    const token = jwt.sign(tokenData, this.properties.env.JWT_SECRET, {
+      expiresIn: this.properties.env.TOKEN_EXPIRES
     })
 
     return token

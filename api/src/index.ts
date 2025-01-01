@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import 'dotenv/config'
 
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
