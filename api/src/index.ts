@@ -1,16 +1,24 @@
 import "reflect-metadata";
 import 'dotenv/config'
 
-import { Elysia } from 'elysia'
-import { node } from '@elysiajs/node'
-import { authController } from "factory";
+import Fastify from "fastify";
+import { authController, webSocketController } from "factory";
+import fastifyWebsocket from "@fastify/websocket";
 
-const app = new Elysia({ adapter: node() })
-  .use(authController.build('/auth'))
-  .listen(3000, ({ hostname, port }) => {
-    console.log(
-      `🦊 Elysia is running at ${hostname}:${port}`
-    )
-  })
+const fastify = Fastify()
 
-export type App = typeof app
+fastify
+  .register(fastifyWebsocket)
+  .register(authController.plugin)
+  .register(webSocketController.plugin)
+
+
+fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+  console.log(
+    `🌍 Server is running at ${address}`
+  )
+})
