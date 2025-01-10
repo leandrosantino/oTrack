@@ -17,7 +17,7 @@ export class EventListener {
     payload: z.any()
   })
 
-  newInstance() {
+  build() {
     return new EventListener()
   }
 

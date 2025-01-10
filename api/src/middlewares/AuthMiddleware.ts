@@ -1,19 +1,43 @@
+import { ControllerInterface } from "types/PluginInterface";
 import Elysia from "elysia";
-import { injectable } from "tsyringe";
+import { FastifyPluginAsync, FastifyRequest, RouteHandlerMethod } from "fastify";
+import { inject, injectable } from "tsyringe";
+import { AuthService } from "services/AuthService/AuthService";
+import { IAuthService } from "services/AuthService/IAuthService";
 
 
 @injectable()
 export class AuthMiddleware {
 
-  build(requestPermission: string) {
-    return new Elysia()
-      .derive({ as: 'global' }, ({ headers }) => {
-        const auth = headers['authorization']
-        return {
-          bearer: auth?.startsWith('Bearer ') ? auth.slice(7) : null
+  constructor(
+    @inject('AuthService') private readonly authService: IAuthService
+  ) { }
+
+  build(roles: string[]): RouteHandlerMethod {
+    return async (request, reply) => {
+      const authHeader = request.headers.authorization
+
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        reply.status(401).send({ error: 'Unauthorized' })
+        return
+      }
+
+      try {
+        const token = authHeader.split(' ')[1]
+        const userData = await this.authService.verifyToken(token)
+
+        if (!roles.includes(userData.role)) {
+          reply.status(403).send({ error: 'You do not have permission to access this resource' })
+          return
         }
-      })
-      .get('/plugin', ({ bearer }) => bearer)
+
+        request.user = userData
+      } catch (err) {
+        console.log(err)
+        reply.status(403).send({ error: 'Invalid token' })
+      }
+
+    };
   }
 
 }

@@ -1,7 +1,7 @@
 import { container, inject, injectable, singleton } from "tsyringe";
 import { IAuthService } from "./IAuthService";
 import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
-import jwt, { type SignOptions, type VerifyOptions } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { Properties } from "config/Properties";
 
 @injectable()
@@ -12,12 +12,10 @@ export class AuthService implements IAuthService {
   ) { }
 
   signIn({ username, password }: AuthRequestDTO) {
-    console.log('signIn')
-
     const tokenData: TokenData = {
-      uid: '',
+      uid: '123456789',
       username: 'leandro',
-      permissions: ['ADMIN']
+      role: 'ADMIN'
     }
 
     const token = jwt.sign(tokenData, this.properties.env.JWT_SECRET, {
@@ -27,8 +25,16 @@ export class AuthService implements IAuthService {
     return token
   }
 
-  verifiyToken(token: JwtToken): TokenData {
-    throw new Error("Method not implemented.");
+  async verifyToken(token: JwtToken): Promise<TokenData> {
+    return await new Promise<TokenData>((resolve, reject) => {
+      jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => {
+        if (err !== null) {
+          reject(new Error('invalid token'))
+          return
+        }
+        resolve(data as TokenData)
+      })
+    })
   }
 
 }

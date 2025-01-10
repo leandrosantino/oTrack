@@ -1,7 +1,6 @@
-import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { IAuthService } from "services/AuthService/IAuthService";
 import { inject, injectable } from "tsyringe";
-import { ControllerInterface } from "./interfaces/ControllerInterface";
+import { ControllerInterface } from "../types/PluginInterface";
 import { FastifyPluginAsync } from "fastify";
 import z from "zod";
 
@@ -10,7 +9,6 @@ export class AuthController implements ControllerInterface {
 
   constructor(
     @inject('AuthService') private readonly authService: IAuthService,
-    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
   ) { }
 
   private bodySchema = z.object({
@@ -18,8 +16,8 @@ export class AuthController implements ControllerInterface {
     password: z.string()
   })
 
-  plugin: FastifyPluginAsync = async (fastify) => {
-    fastify.post('/login', async (request, reply) => {
+  routes: FastifyPluginAsync = async (app) => {
+    app.post('/login', async (request, reply) => {
       const body = this.bodySchema.parse(request.body)
       reply.send(this.authService.signIn(body)).status(200)
     })

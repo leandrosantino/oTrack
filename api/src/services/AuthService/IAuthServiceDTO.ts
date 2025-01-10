@@ -9,5 +9,5 @@ export type JwtToken = string
 export type TokenData = {
   uid: string
   username: string
-  permissions: string[]
+  role: string
 }

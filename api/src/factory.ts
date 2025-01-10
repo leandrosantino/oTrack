@@ -9,9 +9,7 @@ import { EventListener } from "utils/EventListener";
 container.register('AuthMiddleware', AuthMiddleware)
 container.register('Properties', Properties)
 container.register('EventListener', EventListener)
-
-export const authService = container.resolve(AuthService)
-container.registerInstance('AuthService', authService)
+container.register('AuthService', AuthService)
 
 export const authController = container.resolve(AuthController)
 export const webSocketController = container.resolve(WebSocketController)
