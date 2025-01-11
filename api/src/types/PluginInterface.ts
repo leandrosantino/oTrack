@@ -1,5 +1,6 @@
-import { FastifyPluginAsync, FastifyPluginOptions } from "fastify";
+import { FastifyPluginAsync, RawServerDefault } from "fastify";
+import { FastifyPluginAsyncZod, ZodTypeProvider } from "fastify-type-provider-zod";
 
 export interface ControllerInterface {
-  routes: FastifyPluginAsync
+  routes: FastifyPluginAsyncZod
 }

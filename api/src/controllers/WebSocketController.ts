@@ -4,6 +4,8 @@ import { ControllerInterface } from "../types/PluginInterface";
 import { EventListener } from "utils/EventListener";
 import { WebSocket } from 'ws';
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
+import z from "zod";
+import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 
 type ClientMapValue = {
   socket: WebSocket,
@@ -56,9 +58,12 @@ export class WebSocketController implements ControllerInterface {
     })
   }
 
-  routes: FastifyPluginAsync = async (app) => {
+  routes: FastifyPluginAsyncZod = async (app) => {
     app.addHook('onRequest', this.authMiddleware.build(['ADMIN']))
     app.route({
+      schema: {
+        security: [{ BearerAuth: [] }],
+      },
       method: 'GET',
       url: '/location',
       handler: () => { },

@@ -13,7 +13,7 @@ export class AuthMiddleware {
     @inject('AuthService') private readonly authService: IAuthService
   ) { }
 
-  build(roles: string[]): RouteHandlerMethod {
+  build(roles: string[] = []): RouteHandlerMethod {
     return async (request, reply) => {
       const authHeader = request.headers.authorization
 
@@ -26,7 +26,7 @@ export class AuthMiddleware {
         const token = authHeader.split(' ')[1]
         const userData = await this.authService.verifyToken(token)
 
-        if (!roles.includes(userData.role)) {
+        if (roles.length > 0 && !roles.includes(userData.role)) {
           reply.status(403).send({ error: 'You do not have permission to access this resource' })
           return
         }
