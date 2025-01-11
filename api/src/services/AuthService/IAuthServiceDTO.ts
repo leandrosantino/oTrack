@@ -1,3 +1,5 @@
+import { Roule } from "entities/user/Roule"
+import { User } from "entities/user/User"
 
 export type AuthRequestDTO = {
   username: string
@@ -6,8 +8,4 @@ export type AuthRequestDTO = {
 
 export type JwtToken = string
 
-export type TokenData = {
-  uid: string
-  username: string
-  role: string
-}
+export type TokenData = Pick<User, 'id' | 'displayName' | 'username' | 'roule'>

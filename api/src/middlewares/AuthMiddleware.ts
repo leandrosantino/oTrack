@@ -1,4 +1,4 @@
-import { ControllerInterface } from "types/PluginInterface";
+import { ControllerInterface } from "entities/types/PluginInterface";
 import Elysia from "elysia";
 import { FastifyPluginAsync, FastifyRequest, RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
@@ -26,7 +26,7 @@ export class AuthMiddleware {
         const token = authHeader.split(' ')[1]
         const userData = await this.authService.verifyToken(token)
 
-        if (roles.length > 0 && !roles.includes(userData.role)) {
+        if (roles.length > 0 && !roles.includes(userData.roule)) {
           reply.status(403).send({ error: 'You do not have permission to access this resource' })
           return
         }
