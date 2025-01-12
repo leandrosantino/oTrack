@@ -1,0 +1,11 @@
+
+services:
+  database:
+    container_name: database
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "admin123"
+      POSTGRES_USER: "leandro"
+      POSTGRES_DB: "facility"
+    ports:
+      - 5432:5432
