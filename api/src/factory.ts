@@ -6,6 +6,7 @@ import { Properties } from "config/Properties";
 import { WebSocketController } from "controllers/WebSocketController";
 import { EventListener } from "utils/EventListener";
 import { UserRepository } from "repository/UserRepository";
+import { UsersController } from "controllers/UsersController";
 
 container.register('AuthMiddleware', AuthMiddleware)
 container.register('EventListener', EventListener)
@@ -17,4 +18,5 @@ container.register('UserRepository', UserRepository)
 
 
 export const authController = container.resolve(AuthController)
+export const usersController = container.resolve(UsersController)
 export const webSocketController = container.resolve(WebSocketController)

@@ -5,6 +5,14 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class UserRepository implements IUserRepository {
+
+  async create(entity: Omit<User, "id">): Promise<User> {
+    const user = await prisma.users.create({
+      data: entity
+    })
+    return user as User
+  }
+
   async getByUsername(username: User["username"]): Promise<User | null> {
     return await prisma.users.findUnique({
       where: { username }

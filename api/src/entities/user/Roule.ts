@@ -1,5 +1,5 @@
 
-export enum Roule {
+export enum Roules {
   ADMIN = 'ADMIN',
   LOG = 'LOG',
   TECHNIC = 'TECHNIC',

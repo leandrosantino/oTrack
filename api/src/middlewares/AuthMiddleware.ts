@@ -1,9 +1,7 @@
-import { ControllerInterface } from "entities/types/PluginInterface";
-import Elysia from "elysia";
-import { FastifyPluginAsync, FastifyRequest, RouteHandlerMethod } from "fastify";
+import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
-import { AuthService } from "services/AuthService/AuthService";
 import { IAuthService } from "services/AuthService/IAuthService";
+import { Roules } from "entities/user/Roule";
 
 
 @injectable()
@@ -13,7 +11,7 @@ export class AuthMiddleware {
     @inject('AuthService') private readonly authService: IAuthService
   ) { }
 
-  build(roles: string[] = []): RouteHandlerMethod {
+  build(roles: Roules[] = []): RouteHandlerMethod {
     return async (request, reply) => {
       const authHeader = request.headers.authorization
 

@@ -1,11 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import { FastifyPluginAsync, FastifyRequest } from 'fastify'
-import { ControllerInterface } from "entities/types/PluginInterface";
+import { ControllerInterface } from "entities/types/ControllerInterface";
 import { EventListener } from "utils/EventListener";
 import { WebSocket } from 'ws';
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import { Roules } from "entities/user/Roule";
 
 type ClientMapValue = {
   socket: WebSocket,
@@ -59,7 +60,7 @@ export class WebSocketController implements ControllerInterface {
   }
 
   routes: FastifyPluginAsyncZod = async (app) => {
-    app.addHook('onRequest', this.authMiddleware.build(['ADMIN']))
+    app.addHook('onRequest', this.authMiddleware.build([Roules.ADMIN]))
     app.route({
       schema: {
         security: [{ BearerAuth: [] }],

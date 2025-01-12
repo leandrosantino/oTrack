@@ -4,7 +4,7 @@ import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
 import jwt from 'jsonwebtoken'
 import { Properties } from "config/Properties";
 import { IUserRepository } from 'entities/user/IUserRepository'
-import { Roule } from "entities/user/Roule";
+import { Roules } from "entities/user/Roule";
 import { ErrorMessage } from "entities/types/ErrorMessage";
 
 @injectable()

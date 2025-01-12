@@ -1,6 +1,6 @@
 import { IAuthService } from "services/AuthService/IAuthService";
 import { inject, injectable } from "tsyringe";
-import { ControllerInterface } from "entities/types/PluginInterface";
+import { ControllerInterface } from "entities/types/ControllerInterface";
 import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
@@ -27,9 +27,12 @@ export class AuthController implements ControllerInterface {
   })
 
   routes: FastifyPluginAsyncZod = async (app) => {
+
     app.get('/profile', {
       onRequest: this.authMiddleware.build(),
       schema: {
+        tags: ['Users'],
+        description: 'Get user data encrypted in access token',
         security: [{ BearerAuth: [] }],
         response: {
           200: this.TOKEN_DATA_SCHEMA
@@ -41,6 +44,7 @@ export class AuthController implements ControllerInterface {
 
     app.post('/login', {
       schema: {
+        tags: ['Authentication'],
         body: this.BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),

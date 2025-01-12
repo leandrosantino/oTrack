@@ -1,4 +1,4 @@
-import { Roule } from "entities/user/Roule"
+import { Roules } from "entities/user/Roule"
 import { User } from "entities/user/User"
 
 export type AuthRequestDTO = {

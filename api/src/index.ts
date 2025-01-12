@@ -2,7 +2,7 @@ import "reflect-metadata";
 import 'dotenv/config'
 
 import Fastify from "fastify";
-import { authController, webSocketController } from "factory";
+import { authController, usersController, webSocketController } from "factory";
 import { fastifyWebsocket } from "@fastify/websocket";
 import { fastifyCors } from "@fastify/cors";
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
@@ -49,6 +49,7 @@ app.register(fastifySwaggerUi, {
 //Local Plugins
 app.register(authController.routes)
 app.register(webSocketController.routes)
+app.register(usersController.routes)
 
 
 app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
