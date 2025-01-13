@@ -2,9 +2,9 @@ import { inject, injectable } from "tsyringe";
 import { IAuthService } from "./IAuthService";
 import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
 import jwt from 'jsonwebtoken'
-import { Properties } from "config/Properties";
 import { IUserRepository } from 'entities/user/IUserRepository'
-import { ErrorTypes } from "entities/types/ErrorTypes";
+import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
+import { Properties } from "utils/Properties";
 
 
 @injectable()
@@ -15,15 +15,15 @@ export class AuthService implements IAuthService {
     @inject('UserRepository') private readonly userRepository: IUserRepository
   ) { }
 
-  async signIn({ username, password }: AuthRequestDTO): Promise<Result<JwtToken, ErrorTypes.NOT_FOUND | ErrorTypes.VALIDATION_ERROR>> {
+  async signIn({ username, password }: AuthRequestDTO): AsyncResult<JwtToken, SignInExceptions> {
     const user = await this.userRepository.getByUsername(username)
 
     if (!user) {
-      return Err(ErrorTypes.NOT_FOUND)
+      return Err(SignInExceptions.USER_NOT_FOUND)
     }
 
     if (user.password != password) {
-      return Err(ErrorTypes.VALIDATION_ERROR)
+      return Err(SignInExceptions.INVALID_PASSWORD)
     }
 
     const tokenData: TokenData = {
@@ -40,13 +40,13 @@ export class AuthService implements IAuthService {
     return Ok(token)
   }
 
-  async verifyToken(token: JwtToken): Promise<Result<TokenData, ErrorTypes.VALIDATION_ERROR>> {
+  async verifyToken(token: JwtToken): AsyncResult<TokenData, TokenExceptions> {
     const { err, data } = await new Promise<{ err: Error | null, data: any }>(resolve => {
       jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
 
     if (err != null) {
-      return Err(ErrorTypes.VALIDATION_ERROR)
+      return Err(TokenExceptions.INVALID_TOKEN)
     }
 
     return Ok(data as TokenData)

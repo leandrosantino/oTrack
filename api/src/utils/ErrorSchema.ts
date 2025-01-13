@@ -1,7 +1,8 @@
-import { ErrorTypes } from "entities/types/ErrorTypes";
 import z from "zod";
 
-export const ERROR_SCHEMA = z.object({
-  message: z.string(),
-  type: z.nativeEnum(ErrorTypes)
-})
+export function ERROR_SCHEMA(enumtype: any) {
+  return z.object({
+    message: z.string(),
+    type: z.nativeEnum(enumtype)
+  })
+}

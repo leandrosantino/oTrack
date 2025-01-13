@@ -1,7 +1,10 @@
+import { ErrorTypes } from 'interfaces/Result';
+
 declare global {
-  type Result<T, E> = import('entities/types/Result').Result<T, E>;
-  const Ok: typeof import('entities/types/Result').Ok;
-  const Err: typeof import('entities/types/Result').Err;
+  type Result<T, E extends ErrorTypes> = import('interfaces/Result').Result<T, E>;
+  type AsyncResult<T, E extends ErrorTypes> = import('interfaces/Result').AsyncResult<T, E>;
+  const Ok: typeof import('utils/ResultHandler').Ok;
+  const Err: typeof import('utils/ResultHandler').Err;
 }
 
 export { };

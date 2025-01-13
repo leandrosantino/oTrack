@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { FastifyPluginAsync, FastifyRequest } from 'fastify'
-import { ControllerInterface } from "controllers/types/ControllerInterface";
+import { ControllerInterface } from "interfaces/ControllerInterface";
 import { EventListener } from "utils/EventListener";
 import { WebSocket } from 'ws';
 import { AuthMiddleware } from "middlewares/AuthMiddleware";

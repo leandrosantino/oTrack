@@ -2,13 +2,13 @@ import { container } from "tsyringe";
 import { AuthService } from "./services/AuthService/AuthService";
 import { AuthController } from "controllers/AuthController";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import { Properties } from "config/Properties";
 import { WebSocketController } from "controllers/WebSocketController";
 import { EventListener } from "utils/EventListener";
 import { UserRepository } from "repository/UserRepository";
 import { UsersController } from "controllers/UsersController";
 
-import { Err, Ok } from 'entities/types/Result'
+import { Err, Ok } from 'utils/ResultHandler'
+import { Properties } from "utils/Properties";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;

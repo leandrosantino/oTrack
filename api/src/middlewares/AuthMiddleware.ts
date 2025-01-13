@@ -2,6 +2,7 @@ import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
 import { IAuthService } from "services/AuthService/IAuthService";
 import { Roules } from "entities/user/Roule";
+import { TokenExceptions } from "services/AuthService/AuthExceptions";
 
 
 @injectable()
@@ -20,20 +21,27 @@ export class AuthMiddleware {
         return
       }
 
-      try {
-        const token = authHeader.split(' ')[1]
-        const userData = await this.authService.verifyToken(token)
 
-        if (roles.length > 0 && !roles.includes(userData.roule)) {
-          reply.status(403).send({ error: 'You do not have permission to access this resource' })
-          return
-        }
+      const token = authHeader.split(' ')[1]
+      const verifyTokenResult = await this.authService.verifyToken(token)
 
-        request.user = userData
-      } catch (err) {
-        console.log(err)
-        reply.status(403).send({ error: 'Invalid token' })
+      if (!verifyTokenResult.ok) {
+        verifyTokenResult.err
+          .case(TokenExceptions.INVALID_TOKEN, () => reply.status(403).send(verifyTokenResult.err.throw('invalid token')))
+        return
       }
+
+      const { value: userData } = verifyTokenResult
+
+      if (roles.length > 0 && !roles.includes(userData.roule)) {
+        reply.status(403).send({ error: 'You do not have permission to access this resource' })
+        return
+      }
+
+      request.user = userData
+
+
+
 
     };
   }

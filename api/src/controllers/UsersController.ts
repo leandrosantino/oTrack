@@ -1,4 +1,4 @@
-import { ControllerInterface } from "controllers/types/ControllerInterface";
+import { ControllerInterface } from "interfaces/ControllerInterface";
 import { Roules } from "entities/user/Roule";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
