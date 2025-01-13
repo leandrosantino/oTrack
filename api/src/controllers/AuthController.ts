@@ -1,10 +1,11 @@
 import { IAuthService } from "services/AuthService/IAuthService";
 import { inject, injectable } from "tsyringe";
-import { ControllerInterface } from "entities/types/ControllerInterface";
+import { ControllerInterface } from "controllers/types/ControllerInterface";
 import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import { ErrorMessage } from "entities/types/ErrorMessage";
+import { ErrorTypes } from "entities/types/ErrorTypes";
+import { ERROR_SCHEMA } from "utils/ErrorSchema";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -48,22 +49,23 @@ export class AuthController implements ControllerInterface {
         body: this.BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),
-          400: z.string().describe('User not found'),
-          401: z.string().describe('Invalid password')
+          400: ERROR_SCHEMA.describe('User not found'),
+          401: ERROR_SCHEMA.describe('Invalid password')
         }
       }
     }, async (request, reply) => {
       const { password, username } = request.body
-      try {
-        const token = await this.authService.signIn({ password, username })
-        reply.status(200).send(token)
-      } catch (err) {
-        switch ((err as Error).cause) {
-          case ErrorMessage.NOT_FOUND: reply.status(400).send('User not found'); break
-          case ErrorMessage.VALIDATION_ERROR: reply.status(401).send('Invalid password'); break
-          default: break;
-        }
+      const token = await this.authService.signIn({ password, username })
+
+      if (!token.isSuccess) {
+        token.error
+          .case(ErrorTypes.NOT_FOUND, () => reply.status(400).send(token.error.throw('User not found')))
+          .case(ErrorTypes.VALIDATION_ERROR, () => reply.status(401).send(token.error.throw('Invalid password')))
+        return
       }
+
+      reply.status(200).send(token.value)
+
     })
 
   };

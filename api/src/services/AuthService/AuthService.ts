@@ -4,8 +4,8 @@ import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
 import jwt from 'jsonwebtoken'
 import { Properties } from "config/Properties";
 import { IUserRepository } from 'entities/user/IUserRepository'
-import { Roules } from "entities/user/Roule";
-import { ErrorMessage } from "entities/types/ErrorMessage";
+import { ErrorTypes } from "entities/types/ErrorTypes";
+
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -15,16 +15,15 @@ export class AuthService implements IAuthService {
     @inject('UserRepository') private readonly userRepository: IUserRepository
   ) { }
 
-  async signIn({ username, password }: AuthRequestDTO) {
-
+  async signIn({ username, password }: AuthRequestDTO): Promise<Result<JwtToken, ErrorTypes.NOT_FOUND | ErrorTypes.VALIDATION_ERROR>> {
     const user = await this.userRepository.getByUsername(username)
 
     if (!user) {
-      throw new Error('User not found', { cause: ErrorMessage.NOT_FOUND })
+      return Err(ErrorTypes.NOT_FOUND)
     }
 
-    if (!user) {
-      throw new Error('User not found', { cause: ErrorMessage.NOT_FOUND })
+    if (user.password != password) {
+      return Err(ErrorTypes.VALIDATION_ERROR)
     }
 
     const tokenData: TokenData = {
@@ -38,19 +37,20 @@ export class AuthService implements IAuthService {
       expiresIn: this.properties.env.TOKEN_EXPIRES
     })
 
-    return token
+    return Ok(token)
   }
 
-  async verifyToken(token: JwtToken): Promise<TokenData> {
-    return await new Promise<TokenData>((resolve, reject) => {
-      jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => {
-        if (err !== null) {
-          reject(new Error('Invalid token', { cause: ErrorMessage.VALIDATION_ERROR }))
-          return
-        }
-        resolve(data as TokenData)
-      })
+  async verifyToken(token: JwtToken): Promise<Result<TokenData, ErrorTypes.VALIDATION_ERROR>> {
+    const { err, data } = await new Promise<{ err: Error | null, data: any }>(resolve => {
+      jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
+
+    if (err != null) {
+      return Err(ErrorTypes.VALIDATION_ERROR)
+    }
+
+    return Ok(data as TokenData)
   }
+
 
 }

@@ -8,6 +8,11 @@ import { EventListener } from "utils/EventListener";
 import { UserRepository } from "repository/UserRepository";
 import { UsersController } from "controllers/UsersController";
 
+import { Err, Ok } from 'entities/types/Result'
+
+(globalThis as any).Ok = Ok;
+(globalThis as any).Err = Err;
+
 container.register('AuthMiddleware', AuthMiddleware)
 container.register('EventListener', EventListener)
 container.register('Properties', Properties)
