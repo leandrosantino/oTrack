@@ -50,8 +50,8 @@ export class AuthController implements ControllerInterface {
         body: this.BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),
-          400: ERROR_SCHEMA(SignInExceptions).describe('User not found'),
-          401: ERROR_SCHEMA(SignInExceptions).describe('Invalid password')
+          400: ERROR_SCHEMA(SignInExceptions.USER_NOT_FOUND).describe('User not found'),
+          401: ERROR_SCHEMA(SignInExceptions.INVALID_PASSWORD).describe('Invalid password')
         }
       }
     }, async (request, reply) => {

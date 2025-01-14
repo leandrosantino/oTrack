@@ -1,10 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { FastifyPluginAsync, FastifyRequest } from 'fastify'
+import { FastifyRequest } from 'fastify'
 import { ControllerInterface } from "interfaces/ControllerInterface";
 import { EventListener } from "utils/EventListener";
 import { WebSocket } from 'ws';
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { Roules } from "entities/user/Roule";
 

@@ -6,6 +6,13 @@ import { injectable } from "tsyringe";
 @injectable()
 export class UserRepository implements IUserRepository {
 
+  async existsByUsername(username: User["username"]): Promise<Boolean> {
+    const userExists = await prisma.users.findUnique({
+      where: { username }
+    })
+    return userExists != null
+  }
+
   async create(entity: Omit<User, "id">): Promise<User> {
     const user = await prisma.users.create({
       data: entity

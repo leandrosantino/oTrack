@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import { IUserRepository } from 'entities/user/IUserRepository'
 import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
 import { Properties } from "utils/Properties";
+import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 
 
 @injectable()
@@ -12,7 +13,8 @@ export class AuthService implements IAuthService {
 
   constructor(
     @inject('Properties') private readonly properties: Properties,
-    @inject('UserRepository') private readonly userRepository: IUserRepository
+    @inject('UserRepository') private readonly userRepository: IUserRepository,
+    @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher
   ) { }
 
   async signIn({ username, password }: AuthRequestDTO): AsyncResult<JwtToken, SignInExceptions> {
@@ -22,7 +24,7 @@ export class AuthService implements IAuthService {
       return Err(SignInExceptions.USER_NOT_FOUND)
     }
 
-    if (user.password != password) {
+    if (await this.passwordHasher.verify(password, user.password)) {
       return Err(SignInExceptions.INVALID_PASSWORD)
     }
 

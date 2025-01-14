@@ -9,6 +9,8 @@ import { UsersController } from "controllers/UsersController";
 
 import { Err, Ok } from 'utils/ResultHandler'
 import { Properties } from "utils/Properties";
+import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
+import { UserService } from "services/UserService/UserService";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -17,8 +19,11 @@ container.register('AuthMiddleware', AuthMiddleware)
 container.register('EventListener', EventListener)
 container.register('Properties', Properties)
 
-container.register('AuthService', AuthService)
 container.register('UserRepository', UserRepository)
+
+container.register('AuthService', AuthService)
+container.register('UserService', UserService)
+container.register('PasswordHasher', PasswordHasher)
 
 
 
