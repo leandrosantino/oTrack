@@ -50,7 +50,7 @@ export class AuthController implements ControllerInterface {
         body: this.BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),
-          400: ERROR_SCHEMA(SignInExceptions.USER_NOT_FOUND).describe('User not found'),
+          404: ERROR_SCHEMA(SignInExceptions.USER_NOT_FOUND).describe('User not found'),
           401: ERROR_SCHEMA(SignInExceptions.INVALID_PASSWORD).describe('Invalid password')
         }
       }
@@ -60,8 +60,8 @@ export class AuthController implements ControllerInterface {
 
       if (!signInResult.ok) {
         signInResult.err
-          .case(SignInExceptions.USER_NOT_FOUND, () => reply.status(400).send(signInResult.err.throw('User not found')))
-          .case(SignInExceptions.INVALID_PASSWORD, () => reply.status(401).send(signInResult.err.throw('Invalid password')))
+          .case(SignInExceptions.USER_NOT_FOUND, () => reply.status(404).send(signInResult.err.throw('User not found')))
+          .case(SignInExceptions.INVALID_PASSWORD, () => reply.status(400).send(signInResult.err.throw('Invalid password')))
         return
       }
 

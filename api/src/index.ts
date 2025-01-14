@@ -2,7 +2,7 @@ import "reflect-metadata";
 import Dotenv from 'dotenv'
 
 import Fastify from "fastify";
-import { authController, usersController, webSocketController } from "factory";
+import { authController, errorMiddleware, usersController, webSocketController } from "factory";
 import { fastifyWebsocket } from "@fastify/websocket";
 import { fastifyCors } from "@fastify/cors";
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
@@ -48,6 +48,8 @@ app.register(fastifySwaggerUi, {
   staticCSP: true,
   transformStaticCSP: (header) => header
 })
+
+app.setErrorHandler(errorMiddleware.build)
 
 //Local Plugins
 app.register(authController.routes)

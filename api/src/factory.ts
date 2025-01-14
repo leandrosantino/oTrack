@@ -11,6 +11,7 @@ import { Err, Ok } from 'utils/ResultHandler'
 import { Properties } from "utils/Properties";
 import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
 import { UserService } from "services/UserService/UserService";
+import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -26,6 +27,7 @@ container.register('UserService', UserService)
 container.register('PasswordHasher', PasswordHasher)
 
 
+export const errorMiddleware = container.resolve(ErrorMiddleware)
 
 export const authController = container.resolve(AuthController)
 export const usersController = container.resolve(UsersController)
