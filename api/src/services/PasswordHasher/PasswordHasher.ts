@@ -10,7 +10,9 @@ export class PasswordHasher implements IPasswordHasher {
   }
 
   async verify(password: string, hashedPassword: string): Promise<Boolean> {
-    return await this.hash(password) === hashedPassword
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch
   }
+
 
 }

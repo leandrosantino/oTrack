@@ -24,7 +24,7 @@ export class AuthService implements IAuthService {
       return Err(SignInExceptions.USER_NOT_FOUND)
     }
 
-    if (await this.passwordHasher.verify(password, user.password)) {
+    if (!(await this.passwordHasher.verify(password, user.password))) {
       return Err(SignInExceptions.INVALID_PASSWORD)
     }
 
