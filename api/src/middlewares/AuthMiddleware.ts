@@ -21,13 +21,13 @@ export class AuthMiddleware {
         return
       }
 
-
       const token = authHeader.split(' ')[1]
       const verifyTokenResult = await this.authService.verifyToken(token)
 
       if (!verifyTokenResult.ok) {
         verifyTokenResult.err
           .case(TokenExceptions.INVALID_TOKEN, () => reply.status(403).send(verifyTokenResult.err.throw('invalid token')))
+          .case(TokenExceptions.EXPIRES_TOKEN, () => reply.status(403).send(verifyTokenResult.err.throw('expires token')))
         return
       }
 
@@ -39,10 +39,6 @@ export class AuthMiddleware {
       }
 
       request.user = userData
-
-
-
-
     };
   }
 

@@ -63,7 +63,9 @@ app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
     process.exit(1)
   }
   console.log(
-    `🌍 Server is running at ${address} \n` +
-    `Access docs in ${address}/docs`
+    '\n' +
+    `🌍 Server is running at ${address}` +
+    '\n' +
+    `📖 Access docs in ${address}/docs`
   )
 })

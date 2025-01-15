@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IAuthService } from "./IAuthService";
 import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
-import jwt from 'jsonwebtoken'
+import jwt, { VerifyErrors, TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 import { IUserRepository } from 'entities/user/IUserRepository'
 import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
 import { Properties } from "utils/Properties";
@@ -43,13 +43,18 @@ export class AuthService implements IAuthService {
   }
 
   async verifyToken(token: JwtToken): AsyncResult<TokenData, TokenExceptions> {
-    const { err, data } = await new Promise<{ err: Error | null, data: any }>(resolve => {
+    const { err, data } = await new Promise<{ err: any, data: any }>(resolve => {
       jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
 
-    if (err != null) {
+    if (err instanceof TokenExpiredError) {
+      return Err(TokenExceptions.EXPIRES_TOKEN)
+    }
+
+    if (err instanceof JsonWebTokenError) {
       return Err(TokenExceptions.INVALID_TOKEN)
     }
+
 
     return Ok(data as TokenData)
   }

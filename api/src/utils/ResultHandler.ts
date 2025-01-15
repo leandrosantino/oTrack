@@ -16,8 +16,8 @@ class ErrorHandle<T> implements IErrorHandler<T> {
 
   throw(message: string) {
     return {
-      type: this.type,
-      message
+      message,
+      type: this.type
     }
   }
 }
