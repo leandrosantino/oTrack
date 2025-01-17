@@ -18,7 +18,6 @@ import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
 
 container.register('AuthMiddleware', AuthMiddleware)
 container.register('EventListener', EventListener)
-container.register('Properties', Properties)
 
 container.register('UserRepository', UserRepository)
 
@@ -26,6 +25,9 @@ container.register('AuthService', AuthService)
 container.register('UserService', UserService)
 container.register('PasswordHasher', PasswordHasher)
 
+
+export const properties = container.resolve(Properties)
+container.registerInstance('Properties', properties)
 
 export const errorMiddleware = container.resolve(ErrorMiddleware)
 

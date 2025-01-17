@@ -16,6 +16,8 @@ export class AuthMiddleware {
     return async (request, reply) => {
       const authHeader = request.headers.authorization
 
+      console.log(await this.authService.verifyToken(request.cookies.refreshToken as string))
+
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         reply.status(401).send({ error: 'Unauthorized' })
         return

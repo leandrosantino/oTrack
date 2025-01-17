@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IAuthService } from "./IAuthService";
-import { AuthRequestDTO, JwtToken, TokenData } from "./IAuthServiceDTO";
+import { AuthRequestDTO, JwtToken, AccessTokenData, RefreshTokenData, AuthResponseDTO } from "./IAuthServiceDTO";
 import jwt, { VerifyErrors, TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 import { IUserRepository } from 'entities/user/IUserRepository'
 import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
@@ -17,7 +17,7 @@ export class AuthService implements IAuthService {
     @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher
   ) { }
 
-  async signIn({ username, password }: AuthRequestDTO): AsyncResult<JwtToken, SignInExceptions> {
+  async signIn({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions> {
     const user = await this.userRepository.getByUsername(username)
 
     if (!user) {
@@ -28,21 +28,31 @@ export class AuthService implements IAuthService {
       return Err(SignInExceptions.INVALID_PASSWORD)
     }
 
-    const tokenData: TokenData = {
+    const accessTokenData: AccessTokenData = {
       id: user.id,
       username: user.username,
       displayName: user.displayName,
       roule: user.roule
     }
 
-    const token = jwt.sign(tokenData, this.properties.env.JWT_SECRET, {
-      expiresIn: this.properties.env.TOKEN_EXPIRES
+    const refreshTokenData: RefreshTokenData = { id: user.id }
+
+    const accessToken = jwt.sign(accessTokenData, this.properties.env.JWT_SECRET, {
+      expiresIn: this.properties.env.ACCESS_TOKEN_EXPIRES
     })
 
-    return Ok(token)
+    const refreshToken = this.generateRefreshToken(refreshTokenData)
+
+    return Ok({ accessToken, refreshToken })
   }
 
-  async verifyToken(token: JwtToken): AsyncResult<TokenData, TokenExceptions> {
+  private generateRefreshToken(refreshTokenData: RefreshTokenData) {
+    return jwt.sign(refreshTokenData, this.properties.env.JWT_SECRET, {
+      expiresIn: this.properties.env.REFRESH_TOKEN_EXPIRES
+    })
+  }
+
+  async verifyToken(token: JwtToken): AsyncResult<AccessTokenData, TokenExceptions> {
     const { err, data } = await new Promise<{ err: any, data: any }>(resolve => {
       jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
@@ -56,7 +66,7 @@ export class AuthService implements IAuthService {
     }
 
 
-    return Ok(data as TokenData)
+    return Ok(data as AccessTokenData)
   }
 
 

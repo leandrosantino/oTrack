@@ -6,6 +6,12 @@ export type AuthRequestDTO = {
   password: string
 }
 
+export type AuthResponseDTO = {
+  accessToken: JwtToken
+  refreshToken: JwtToken
+}
+
 export type JwtToken = string
 
-export type TokenData = Pick<User, 'id' | 'displayName' | 'username' | 'roule'>
+export type AccessTokenData = Pick<User, 'id' | 'displayName' | 'username' | 'roule'>
+export type RefreshTokenData = Pick<User, 'id'>

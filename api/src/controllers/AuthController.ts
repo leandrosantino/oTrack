@@ -40,7 +40,6 @@ export class AuthController implements ControllerInterface {
         }
       }
     }, async (request, reply) => {
-      console.log(request.user)
       return reply.status(200).send(request.user)
     })
 
@@ -51,7 +50,7 @@ export class AuthController implements ControllerInterface {
         response: {
           200: z.string().describe('Access Token'),
           404: ERROR_SCHEMA(SignInExceptions.USER_NOT_FOUND).describe('User not found'),
-          401: ERROR_SCHEMA(SignInExceptions.INVALID_PASSWORD).describe('Invalid password')
+          401: ERROR_SCHEMA(SignInExceptions.INVALID_PASSWORD).describe('Invalid password'),
         }
       }
     }, async (request, reply) => {
@@ -65,7 +64,16 @@ export class AuthController implements ControllerInterface {
         return
       }
 
-      reply.status(200).send(signInResult.value)
+      const { accessToken, refreshToken } = signInResult.value
+
+      reply
+        .setCookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          path: '/',
+        })
+        .status(200).send(accessToken)
 
     })
 

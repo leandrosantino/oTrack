@@ -2,12 +2,13 @@ import "reflect-metadata";
 import Dotenv from 'dotenv'
 
 import Fastify from "fastify";
-import { authController, errorMiddleware, usersController, webSocketController } from "factory";
+import { authController, errorMiddleware, properties, usersController, webSocketController } from "factory";
 import { fastifyWebsocket } from "@fastify/websocket";
 import { fastifyCors } from "@fastify/cors";
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import { fastifyCookie } from "@fastify/cookie";
 
 Dotenv.config()
 
@@ -19,6 +20,9 @@ app.setSerializerCompiler(serializerCompiler)
 //Externals Plugins
 app.register(fastifyWebsocket)
 app.register(fastifyCors, { origin: '*' })
+app.register(fastifyCookie, {
+  secret: properties.env.COOKIE_SECRET,
+});
 app.register(fastifySwagger, {
   openapi: {
     info: {
