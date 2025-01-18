@@ -14,7 +14,7 @@ export class UserService implements IUserService {
     @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher
   ) { }
 
-  async create(user: Omit<User, "id">): AsyncResult<User, UserCreateExceptions> {
+  async create(user: Omit<User, "id">): AsyncResult<Omit<User, "tokens">, UserCreateExceptions> {
     const alreadyExists = await this.userRepository.existsByUsername(user.username)
 
     if (alreadyExists) {

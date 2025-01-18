@@ -6,6 +6,7 @@ import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
 import { Properties } from "utils/Properties";
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 import { AsyncResult } from "interfaces/Result";
+import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
 
 
 @injectable()
@@ -95,7 +96,12 @@ export class AuthService implements IAuthService {
     if (err instanceof TokenExpiredError) return Err(TokenExceptions.EXPIRES_TOKEN)
     if (err instanceof JsonWebTokenError) return Err(TokenExceptions.INVALID_TOKEN)
 
-    return Ok(data as AccessTokenData)
+    const { success, data: tokenData } = await TOKEN_DATA_SCHEMA.spa(data)
+    if (!success) {
+      return Err(TokenExceptions.INVALID_TOKEN)
+    }
+
+    return Ok(tokenData)
   }
 
 
