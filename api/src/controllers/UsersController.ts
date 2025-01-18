@@ -6,7 +6,8 @@ import { inject, injectable } from "tsyringe";
 import z from "zod";
 import { IUserService } from "services/UserService/IUserService";
 import { UserCreateExceptions } from "entities/user/UserExceptions";
-import { ERROR_SCHEMA } from "utils/ErrorSchema";
+import { ERROR_SCHEMA } from "schemas/ErrorSchema";
+import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
 
 
 @injectable()
@@ -28,7 +29,8 @@ export class UsersController implements ControllerInterface {
   routes: FastifyPluginAsyncZod = async (app) => {
 
     app.addHook('onRequest', this.authMiddleware.build([Roules.ADMIN]))
-    app.post('/users', {
+
+    app.post('/', {
       schema: {
         tags: ['Users'],
         description: 'Create a new user',
@@ -49,6 +51,19 @@ export class UsersController implements ControllerInterface {
       }
 
       reply.status(201).send(createUserResult.value)
+    })
+
+    app.get('/profile', {
+      schema: {
+        tags: ['Users'],
+        description: 'Get user data encrypted in access token',
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: TOKEN_DATA_SCHEMA
+        }
+      }
+    }, async (request, reply) => {
+      return reply.status(200).send(request.user)
     })
 
   }

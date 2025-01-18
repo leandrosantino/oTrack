@@ -56,9 +56,9 @@ app.register(fastifySwaggerUi, {
 app.setErrorHandler(errorMiddleware.build)
 
 //Local Plugins
-app.register(authController.routes)
+app.register(authController.routes, { prefix: 'auth' })
+app.register(usersController.routes, { prefix: 'user' })
 app.register(webSocketController.routes)
-app.register(usersController.routes)
 
 
 app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {

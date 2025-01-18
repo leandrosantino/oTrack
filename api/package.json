@@ -6,7 +6,9 @@
     "start": "node build/index.js",
     "dev": "tsx watch ./src/index.ts",
     "build": "spack",
-    "postbuild": "node post-build.js"
+    "postbuild": "node post-build.js",
+    "db.push": "prisma db push",
+    "db.studio": "prisma studio"
   },
   "author": "",
   "license": "ISC",

@@ -10,4 +10,9 @@ export enum TokenExceptions {
   EXPIRES_TOKEN = 'EXPIRES_TOKEN'
 }
 
+export enum AuthException {
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  UNAUTHENTICATED = 'UNAUTHENTICATED'
+}
+
 

@@ -4,8 +4,10 @@ import { ControllerInterface } from "interfaces/ControllerInterface";
 import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import { ERROR_SCHEMA } from "utils/ErrorSchema";
-import { SignInExceptions } from "services/AuthService/AuthExceptions";
+import { ERROR_SCHEMA } from "schemas/ErrorSchema";
+import { SignInExceptions, TokenExceptions } from "services/AuthService/AuthExceptions";
+import { CookieSerializeOptions } from "@fastify/cookie";
+import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -15,38 +17,27 @@ export class AuthController implements ControllerInterface {
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware
   ) { }
 
-  private BODY_SCHEMA = z.object({
+  private readonly tags = ['Authentication']
+
+  private LOGIN_RESQUEST_BODY_SCHEMA = z.object({
     username: z.string(),
     password: z.string()
   })
 
-  private TOKEN_DATA_SCHEMA = z.object({
-    id: z.number(),
-    username: z.string(),
-    displayName: z.string(),
-    roule: z.string(),
-  })
+  private readonly refreshTokenCookiesName = 'refreshToken'
+  private readonly refreshTokenCookiesOption: CookieSerializeOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+  }
 
   routes: FastifyPluginAsyncZod = async (app) => {
 
-    app.get('/profile', {
-      onRequest: this.authMiddleware.build(),
-      schema: {
-        tags: ['Users'],
-        description: 'Get user data encrypted in access token',
-        security: [{ BearerAuth: [] }],
-        response: {
-          200: this.TOKEN_DATA_SCHEMA
-        }
-      }
-    }, async (request, reply) => {
-      return reply.status(200).send(request.user)
-    })
-
     app.post('/login', {
       schema: {
-        tags: ['Authentication'],
-        body: this.BODY_SCHEMA,
+        tags: this.tags,
+        body: this.LOGIN_RESQUEST_BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),
           404: ERROR_SCHEMA(SignInExceptions.USER_NOT_FOUND).describe('User not found'),
@@ -58,23 +49,44 @@ export class AuthController implements ControllerInterface {
       const signInResult = await this.authService.signIn({ password, username })
 
       if (!signInResult.ok) {
-        signInResult.err
-          .case(SignInExceptions.USER_NOT_FOUND, () => reply.status(404).send(signInResult.err.throw('User not found')))
-          .case(SignInExceptions.INVALID_PASSWORD, () => reply.status(400).send(signInResult.err.throw('Invalid password')))
+        const { err } = signInResult
+        err.case(SignInExceptions.USER_NOT_FOUND, () => reply.status(404).send(signInResult.err.throw('User not found')))
+        err.case(SignInExceptions.INVALID_PASSWORD, () => reply.status(400).send(signInResult.err.throw('Invalid password')))
         return
       }
 
       const { accessToken, refreshToken } = signInResult.value
 
       reply
-        .setCookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          path: '/',
-        })
+        .setCookie(this.refreshTokenCookiesName, refreshToken, this.refreshTokenCookiesOption)
         .status(200).send(accessToken)
+    })
 
+    app.get('/refresh', {
+      schema: {
+        tags: this.tags,
+        response: {
+          200: z.string().describe('Access Token'),
+          401: ERROR_SCHEMA(TokenExceptions.EXPIRES_TOKEN).describe('Refresh token expired')
+            .or(ERROR_SCHEMA(TokenExceptions.INVALID_TOKEN).describe('Invalid refresh token'))
+        }
+      }
+    }, async (request, reply) => {
+      const refreshToken = request.cookies.refreshToken ?? '';
+
+      const refreshTokensResult = await this.authService.refreshTokens(refreshToken)
+
+      if (!refreshTokensResult.ok) {
+        const { err } = refreshTokensResult
+        err.case(TokenExceptions.EXPIRES_TOKEN, () => reply.status(401).send(err.throw('Refresh token expired')))
+        err.case(TokenExceptions.INVALID_TOKEN, () => reply.status(401).send(err.throw('Invalid refresh token')))
+        return
+      }
+
+      const { accessToken, refreshToken: newRefreshToken } = refreshTokensResult.value
+      reply
+        .setCookie(this.refreshTokenCookiesName, newRefreshToken, this.refreshTokenCookiesOption)
+        .status(200).send(accessToken)
     })
 
   };
