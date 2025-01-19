@@ -29,7 +29,7 @@ export class JwtService implements IJwtService {
       jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
 
-    if (err instanceof TokenExpiredError) return Err(TokenExceptions.EXPIRES_TOKEN)
+    if (err instanceof TokenExpiredError) return Err(TokenExceptions.EXPIRED_TOKEN)
     if (err instanceof JsonWebTokenError) return Err(TokenExceptions.INVALID_TOKEN)
 
     return Ok(data)

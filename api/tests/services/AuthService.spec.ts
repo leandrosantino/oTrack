@@ -68,12 +68,12 @@ describe("AuthService", () => {
     it("should return EXPIRES_TOKEN if the refresh token is expired", async () => {
       const expiredToken = 'expiredRefreshToken'
 
-      when(jwtServiceMock.verify('expiredRefreshToken')).thenResolve(Err(TokenExceptions.EXPIRES_TOKEN))
+      when(jwtServiceMock.verify('expiredRefreshToken')).thenResolve(Err(TokenExceptions.EXPIRED_TOKEN))
 
       const result = await authService.refreshTokens(expiredToken)
 
       assert(!result.ok)
-      result.err.case(TokenExceptions.EXPIRES_TOKEN, () => assert(true))
+      result.err.case(TokenExceptions.EXPIRED_TOKEN, () => assert(true))
     })
 
     it("should return INVALID_TOKEN if the refresh token is invalid", async () => {
@@ -123,12 +123,12 @@ describe("AuthService", () => {
 
   describe("verifyToken", () => {
     it("should return EXPIRES_TOKEN if the token is expired", async () => {
-      when(jwtServiceMock.verify('expiredToken')).thenResolve(Err(TokenExceptions.EXPIRES_TOKEN))
+      when(jwtServiceMock.verify('expiredToken')).thenResolve(Err(TokenExceptions.EXPIRED_TOKEN))
 
       const result = await authService.verifyToken('expiredToken')
 
       assert(!result.ok)
-      result.err.case(TokenExceptions.EXPIRES_TOKEN, () => assert(true))
+      result.err.case(TokenExceptions.EXPIRED_TOKEN, () => assert(true))
     })
 
     it("should return INVALID_TOKEN if the token is invalid", async () => {
