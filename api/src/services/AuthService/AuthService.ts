@@ -2,20 +2,21 @@ import { inject, injectable } from "tsyringe";
 import { IAuthService, AuthRequestDTO, JwtToken, AccessTokenData, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
 import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 import { IUserRepository } from 'entities/user/IUserRepository'
-import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
-import { Properties } from "utils/Properties";
+import { SignInExceptions } from "./AuthExceptions";
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 import { AsyncResult } from "interfaces/Result";
 import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
+import { TokenExceptions } from "services/JwtService/TokenExceptions";
+import { IJwtService } from "services/JwtService/IJwtService";
 
 
 @injectable()
 export class AuthService implements IAuthService {
 
   constructor(
-    @inject('Properties') private readonly properties: Properties,
     @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher
+    @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher,
+    @inject('JwtService') private readonly jwtService: IJwtService,
   ) { }
 
   async signIn({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions> {
@@ -31,8 +32,8 @@ export class AuthService implements IAuthService {
 
     const createdToken = await this.userRepository.createToken(user.id)
 
-    const refreshToken = this.generateRefreshToken(createdToken)
-    const accessToken = this.generateAccessToken({
+    const refreshToken = this.jwtService.generateRefreshToken(createdToken)
+    const accessToken = this.jwtService.generateAccessToken({
       id: user.id,
       username: user.username,
       displayName: user.displayName,
@@ -42,27 +43,14 @@ export class AuthService implements IAuthService {
     return Ok({ accessToken, refreshToken })
   }
 
-  private generateRefreshToken(refreshTokenData: RefreshTokenData) {
-    return jwt.sign(refreshTokenData, this.properties.env.JWT_SECRET, {
-      expiresIn: this.properties.env.REFRESH_TOKEN_EXPIRES
-    })
-  }
-
-  private generateAccessToken(accessTokenData: AccessTokenData) {
-    return jwt.sign(accessTokenData, this.properties.env.JWT_SECRET, {
-      expiresIn: this.properties.env.ACCESS_TOKEN_EXPIRES
-    })
-  }
-
   async refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenExceptions> {
-    const { err, data } = await new Promise<{ err: any, data: any }>(resolve => {
-      jwt.verify(refreshToken, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
-    })
+    const jwtVerifyResult = await this.jwtService.verify<RefreshTokenData>(refreshToken)
 
-    if (err instanceof TokenExpiredError) return Err(TokenExceptions.EXPIRES_TOKEN)
-    if (err instanceof JsonWebTokenError) return Err(TokenExceptions.INVALID_TOKEN)
+    if (!jwtVerifyResult.ok) {
+      return Err(jwtVerifyResult.err.type)
+    }
 
-    const refreshTokenData = data as RefreshTokenData
+    const refreshTokenData = jwtVerifyResult.value
     const savedTokenData = await this.userRepository.getTokenById(refreshTokenData.id)
 
     if (savedTokenData === null) {
@@ -76,8 +64,8 @@ export class AuthService implements IAuthService {
 
     const createdToken = await this.userRepository.createToken(user.id)
 
-    const newRefreshToken = this.generateRefreshToken(createdToken)
-    const newAccessToken = this.generateAccessToken({
+    const newRefreshToken = this.jwtService.generateRefreshToken(createdToken)
+    const newAccessToken = this.jwtService.generateAccessToken({
       id: user.id,
       username: user.username,
       displayName: user.displayName,
@@ -89,14 +77,14 @@ export class AuthService implements IAuthService {
   }
 
   async verifyToken(token: JwtToken): AsyncResult<AccessTokenData, TokenExceptions> {
-    const { err, data } = await new Promise<{ err: any, data: any }>(resolve => {
-      jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
-    })
 
-    if (err instanceof TokenExpiredError) return Err(TokenExceptions.EXPIRES_TOKEN)
-    if (err instanceof JsonWebTokenError) return Err(TokenExceptions.INVALID_TOKEN)
+    const jwtVerifyResult = await this.jwtService.verify<AccessTokenData>(token)
 
-    const { success, data: tokenData } = await TOKEN_DATA_SCHEMA.spa(data)
+    if (!jwtVerifyResult.ok) {
+      return Err(jwtVerifyResult.err.type)
+    }
+
+    const { success, data: tokenData } = await TOKEN_DATA_SCHEMA.spa(jwtVerifyResult.value)
     if (!success) {
       return Err(TokenExceptions.INVALID_TOKEN)
     }

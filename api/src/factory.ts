@@ -12,6 +12,7 @@ import { Properties } from "utils/Properties";
 import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
 import { UserService } from "services/UserService/UserService";
 import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
+import { JwtService } from "services/JwtService/JwtService";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -24,6 +25,7 @@ container.register('UserRepository', UserRepository)
 container.register('AuthService', AuthService)
 container.register('UserService', UserService)
 container.register('PasswordHasher', PasswordHasher)
+container.register('JwtService', JwtService)
 
 
 export const properties = container.resolve(Properties)

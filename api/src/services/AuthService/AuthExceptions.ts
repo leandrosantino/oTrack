@@ -5,11 +5,6 @@ export enum SignInExceptions {
   INTERNAL_ERROR = 'INTERNAL_ERROR'
 }
 
-export enum TokenExceptions {
-  INVALID_TOKEN = 'INVALID_TOKEN',
-  EXPIRES_TOKEN = 'EXPIRES_TOKEN'
-}
-
 export enum AuthException {
   UNAUTHORIZED = 'UNAUTHORIZED',
   UNAUTHENTICATED = 'UNAUTHENTICATED'

@@ -1,14 +1,14 @@
 import { AsyncResult } from "interfaces/Result";
-import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
+import { SignInExceptions } from "./AuthExceptions";
+import { User } from "entities/user/User"
+import { UserToken } from "entities/user/UserToken";
+import { TokenExceptions } from "services/JwtService/TokenExceptions";
 
 export interface IAuthService {
   signIn(authData: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions>
   verifyToken(token: JwtToken): AsyncResult<AccessTokenData, TokenExceptions>
   refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenExceptions>
 }
-
-import { User } from "entities/user/User"
-import { UserToken } from "entities/user/UserToken";
 
 export type AuthRequestDTO = {
   username: string
