@@ -1,18 +1,18 @@
 import { AuthService } from "services/AuthService/AuthService";
 import { instance, when, reset, verify } from "ts-mockito";
-import { SignInExceptions, TokenExceptions } from "services/AuthService/AuthExceptions";
+import { SignInExceptions } from "services/AuthService/AuthExceptions";
 import assert from "assert";
 import { userRepositoryMock } from "../mocks/repositories.mock";
-import { passwordHasherMock } from "../mocks/services.mock";
+import { jwtServiceMock, passwordHasherMock } from "../mocks/services.mock";
 import { propertiesInstance } from "../mocks/utils.mock";
 import { Roules } from "entities/user/Roule";
-import jwt from 'jsonwebtoken'
+import { TokenExceptions } from "services/JwtService/TokenExceptions";
 
 // Create AuthService instance with mocks
 const authService = new AuthService(
-  propertiesInstance,
   instance(userRepositoryMock),
-  instance(passwordHasherMock)
+  instance(passwordHasherMock),
+  instance(jwtServiceMock)
 )
 
 describe("AuthService", () => {
@@ -51,12 +51,14 @@ describe("AuthService", () => {
       when(userRepositoryMock.getByUsername("test")).thenResolve(user)
       when(passwordHasherMock.verify("password", "hashed")).thenResolve(true)
       when(userRepositoryMock.createToken(1)).thenResolve(token)
+      when(jwtServiceMock.generateAccessToken).thenReturn(() => 'accessToken')
+      when(jwtServiceMock.generateRefreshToken).thenReturn(() => 'refreshToken')
 
       const result = await authService.signIn({ username: "test", password: "password" })
 
       assert(result.ok)
-      assert(result.value.accessToken)
-      assert(result.value.refreshToken)
+      assert.equal(result.value.accessToken, 'accessToken')
+      assert.equal(result.value.refreshToken, 'refreshToken')
     })
 
   })
@@ -64,7 +66,9 @@ describe("AuthService", () => {
   describe("refreshTokens", () => {
 
     it("should return EXPIRES_TOKEN if the refresh token is expired", async () => {
-      const expiredToken = jwt.sign({}, propertiesInstance.env.JWT_SECRET, { expiresIn: "-1s" })
+      const expiredToken = 'expiredRefreshToken'
+
+      when(jwtServiceMock.verify('expiredRefreshToken')).thenResolve(Err(TokenExceptions.EXPIRES_TOKEN))
 
       const result = await authService.refreshTokens(expiredToken)
 
@@ -73,9 +77,9 @@ describe("AuthService", () => {
     })
 
     it("should return INVALID_TOKEN if the refresh token is invalid", async () => {
-      const invalidToken = "invalid-token"
+      when(jwtServiceMock.verify('invalidToken')).thenResolve(Err(TokenExceptions.INVALID_TOKEN))
 
-      const result = await authService.refreshTokens(invalidToken)
+      const result = await authService.refreshTokens('invalidToken')
 
       assert(!result.ok)
       result.err.case(TokenExceptions.INVALID_TOKEN, () => assert(true))
@@ -83,11 +87,11 @@ describe("AuthService", () => {
 
     it("should delete all saved user refresh Token if the refresh token already been used", async () => {
       const refreshTokenData = { id: 1, userId: 1 }
-      const alreadyUsedToken = jwt.sign(refreshTokenData, propertiesInstance.env.JWT_SECRET, { expiresIn: "10s" })
 
+      when(jwtServiceMock.verify('alreadyUsedToken')).thenResolve(Ok(refreshTokenData))
       when(userRepositoryMock.getTokenById(1)).thenResolve(null)
 
-      const result = await authService.refreshTokens(alreadyUsedToken)
+      const result = await authService.refreshTokens('alreadyUsedToken')
 
 
       assert(!result.ok)
@@ -98,45 +102,48 @@ describe("AuthService", () => {
     it("should return new access and refresh tokens if the refresh token is valid", async () => {
       const user = { id: 1, username: "test", password: "hashed", roule: Roules.ADMIN, displayName: '' }
       const token = { id: 1, userId: 1, user }
-      const refreshToken = jwt.sign({ id: 1, userId: 1 }, propertiesInstance.env.JWT_SECRET, { expiresIn: "1d" })
+      const createdToken = { id: 2, userId: 1 }
 
+      when(jwtServiceMock.verify('refreshToken')).thenResolve(Ok(token))
       when(userRepositoryMock.getTokenById(1)).thenResolve(token)
-      when(userRepositoryMock.createToken(1)).thenResolve({ id: 2, userId: 1 })
+      when(userRepositoryMock.createToken(1)).thenResolve(createdToken)
 
-      const result = await authService.refreshTokens(refreshToken)
+      when(jwtServiceMock.generateAccessToken).thenReturn(() => 'accessToken')
+      when(jwtServiceMock.generateRefreshToken).thenReturn(() => 'refreshToken')
+
+      const result = await authService.refreshTokens('refreshToken')
 
       assert(result.ok)
       verify(userRepositoryMock.deleteTokenById(1)).once()
-      assert(result.value.accessToken)
-      assert(result.value.refreshToken)
+      assert.equal(result.value.accessToken, 'accessToken')
+      assert.equal(result.value.refreshToken, 'refreshToken')
     })
 
   })
 
   describe("verifyToken", () => {
     it("should return EXPIRES_TOKEN if the token is expired", async () => {
-      const expiredToken = jwt.sign({}, propertiesInstance.env.JWT_SECRET, { expiresIn: "-1s" })
+      when(jwtServiceMock.verify('expiredToken')).thenResolve(Err(TokenExceptions.EXPIRES_TOKEN))
 
-      const result = await authService.verifyToken(expiredToken)
+      const result = await authService.verifyToken('expiredToken')
 
       assert(!result.ok)
       result.err.case(TokenExceptions.EXPIRES_TOKEN, () => assert(true))
     })
 
     it("should return INVALID_TOKEN if the token is invalid", async () => {
-      const invalidToken = "invalid-token"
+      when(jwtServiceMock.verify('invalidToken')).thenResolve(Err(TokenExceptions.INVALID_TOKEN))
 
-      const result = await authService.verifyToken(invalidToken)
+      const result = await authService.verifyToken('invalidToken')
 
       assert(!result.ok)
       result.err.case(TokenExceptions.INVALID_TOKEN, () => assert(true))
     })
 
     it("should return INVALID_TOKEN if the token data schema is invalid", async () => {
-      const invalidAccessTokenData = {}
-      const invalidToken = jwt.sign(invalidAccessTokenData, propertiesInstance.env.JWT_SECRET, { expiresIn: "1h" })
+      when(jwtServiceMock.verify('invalidToken')).thenResolve(Ok({}))
 
-      const result = await authService.verifyToken(invalidToken)
+      const result = await authService.verifyToken('invalidToken')
 
       assert(!result.ok)
       result.err.case(TokenExceptions.INVALID_TOKEN, () => assert(true))
@@ -144,9 +151,9 @@ describe("AuthService", () => {
 
     it("should return access token data if the token is valid", async () => {
       const accessTokenData = { id: 1, username: "test", displayName: "Test User", roule: "ADMIN" }
-      const validToken = jwt.sign(accessTokenData, propertiesInstance.env.JWT_SECRET, { expiresIn: "1h" })
+      when(jwtServiceMock.verify('validToken')).thenResolve(Ok(accessTokenData))
 
-      const result = await authService.verifyToken(validToken)
+      const result = await authService.verifyToken('validToken')
 
       assert(result.ok)
       assert.deepStrictEqual(result.value, accessTokenData)
@@ -154,3 +161,4 @@ describe("AuthService", () => {
   })
 
 })
+
