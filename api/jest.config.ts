@@ -11,9 +11,8 @@ const config: Config = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'], // Formatos do relatório de cobertura
   collectCoverageFrom: [
-    'src/**/*.{js,ts}', // Arquivos que devem ser incluídos na análise
+    'src/services/**/*.{js,ts}', // Arquivos que devem ser incluídos na análise
     '!src/*.{js,ts}',
-    '!src/repository/**/*.{js,ts}',
     '!src/**/*.d.ts', // Exclui arquivos de declaração de tipos
     '!src/**/index.ts', // Exemplo: exclui arquivos de índice
     '!src/**/*.spec.ts', // Exclui arquivos de teste

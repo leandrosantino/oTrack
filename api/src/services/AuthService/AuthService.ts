@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IAuthService, AuthRequestDTO, JwtToken, AccessTokenData, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
-import jwt, { VerifyErrors, TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
+import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 import { IUserRepository } from 'entities/user/IUserRepository'
 import { SignInExceptions, TokenExceptions } from "./AuthExceptions";
 import { Properties } from "utils/Properties";
