@@ -6,8 +6,8 @@ export default defineConfig({
       target: 'http://127.0.0.1:3000/docs/json'
     },
     output: {
-      target: 'src/api.ts',
-      client: 'axios',
+      target: 'src/query.ts',
+      client: 'react-query',
       baseUrl: 'http://localhost:3000'
     }
   },
