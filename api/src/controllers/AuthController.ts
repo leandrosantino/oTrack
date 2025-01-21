@@ -5,9 +5,9 @@ import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { ERROR_SCHEMA } from "schemas/ErrorSchema";
-import { SignInExceptions, TokenExceptions } from "services/AuthService/AuthExceptions";
+import { SignInExceptions } from "services/AuthService/AuthExceptions";
 import { CookieSerializeOptions } from "@fastify/cookie";
-import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
+import { TokenExceptions } from "services/JwtService/TokenExceptions";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -67,7 +67,7 @@ export class AuthController implements ControllerInterface {
         tags: this.tags,
         response: {
           200: z.string().describe('Access Token'),
-          401: ERROR_SCHEMA(TokenExceptions.EXPIRES_TOKEN).describe('Refresh token expired')
+          401: ERROR_SCHEMA(TokenExceptions.EXPIRED_TOKEN).describe('Refresh token expired')
             .or(ERROR_SCHEMA(TokenExceptions.INVALID_TOKEN).describe('Invalid refresh token'))
         }
       }
@@ -78,7 +78,7 @@ export class AuthController implements ControllerInterface {
 
       if (!refreshTokensResult.ok) {
         const { err } = refreshTokensResult
-        err.case(TokenExceptions.EXPIRES_TOKEN, () => reply.status(401).send(err.throw('Refresh token expired')))
+        err.case(TokenExceptions.EXPIRED_TOKEN, () => reply.status(401).send(err.throw('Refresh token expired')))
         err.case(TokenExceptions.INVALID_TOKEN, () => reply.status(401).send(err.throw('Invalid refresh token')))
         return
       }
