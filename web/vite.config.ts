@@ -4,7 +4,9 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({
+    tsDecorators: true
+  })],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

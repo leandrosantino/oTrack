@@ -1,4 +1,3 @@
-import logo from '@/assets/logo.png';
 import {
   Cable,
   MapPin,
@@ -9,8 +8,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+import { Logo } from "@/components/logo";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +17,8 @@ import {
   SidebarRail,
   useSidebar
 } from "@/components/ui/sidebar";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 // This is sample data.
 const data = {
@@ -69,16 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <div className='flex' >
-          <img src={logo} alt="Logo" width="30" />
-          {open&&(
-            <h1 className="font-extrabold text-2xl text-lime-500" >
-            Portal
-            <span className="text-blue-400" >Facility</span>
-          </h1>
-          )}
-        </div>
-        
+        <Logo {...{minimize: !open}} />        
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
