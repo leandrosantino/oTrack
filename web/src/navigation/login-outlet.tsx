@@ -4,7 +4,7 @@ import { Navigate, useLocation } from 'react-router'
 
 export function LoginOutLet () {
   const { isAuth } = {
-    isAuth: true,
+    isAuth: false,
   }
   const location = useLocation()
 

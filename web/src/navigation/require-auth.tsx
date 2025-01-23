@@ -6,7 +6,7 @@ interface RequiredPermissionProps {
 
 export function RequireAuth ({ permission }: RequiredPermissionProps) {
   const { isAuth } = {
-    isAuth: true,
+    isAuth: false,
   }
   const location = useLocation()
 
