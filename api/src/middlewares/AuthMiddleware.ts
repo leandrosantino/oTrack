@@ -2,7 +2,8 @@ import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
 import { IAuthService } from "services/AuthService/IAuthService";
 import { Roules } from "entities/user/Roule";
-import { AuthException, TokenExceptions } from "services/AuthService/AuthExceptions";
+import { AuthException } from "services/AuthService/AuthExceptions";
+import { TokenExceptions } from "services/JwtService/TokenExceptions";
 
 
 @injectable()
@@ -30,7 +31,7 @@ export class AuthMiddleware {
       if (!verifyTokenResult.ok) {
         const { err } = verifyTokenResult
         err.case(TokenExceptions.INVALID_TOKEN, () => reply.status(401).send(err.throw('invalid token')))
-        err.case(TokenExceptions.EXPIRES_TOKEN, () => reply.status(401).send(err.throw('expires token')))
+        err.case(TokenExceptions.EXPIRED_TOKEN, () => reply.status(401).send(err.throw('expires token')))
         return
       }
 

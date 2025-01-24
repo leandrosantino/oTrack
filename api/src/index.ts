@@ -19,7 +19,7 @@ app.setSerializerCompiler(serializerCompiler)
 
 //Externals Plugins
 app.register(fastifyWebsocket)
-app.register(fastifyCors, { origin: '*' })
+app.register(fastifyCors, { origin: 'http://localhost:5173', credentials: true })
 app.register(fastifyCookie, {
   secret: properties.env.COOKIE_SECRET,
 });
