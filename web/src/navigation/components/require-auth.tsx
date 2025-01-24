@@ -1,3 +1,4 @@
+import { useAuth } from '@/hooks/useAuth'
 import { Navigate, Outlet, useLocation } from 'react-router'
 
 interface RequiredPermissionProps {
@@ -5,9 +6,7 @@ interface RequiredPermissionProps {
 }
 
 export function RequireAuth ({ permission }: RequiredPermissionProps) {
-  const { isAuth } = {
-    isAuth: false,
-  }
+  const { isAuth } = useAuth()
   const location = useLocation()
 
   return (

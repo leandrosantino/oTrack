@@ -1,17 +1,16 @@
-import { Login } from '@/presentation/login/login-view'
-import { Navigate, useLocation } from 'react-router'
+import { useAuth } from '@/hooks/useAuth'
+import { Navigate, Outlet, useLocation } from 'react-router'
 
 
 export function LoginOutLet () {
-  const { isAuth } = {
-    isAuth: false,
-  }
+  const { isAuth } = useAuth()
+
   const location = useLocation()
 
   return (
     <>{
       !isAuth
-        ? <Login/>
+        ? <Outlet />
         : <Navigate to='/' state={{ from: location }} replace />
     }</>
   )

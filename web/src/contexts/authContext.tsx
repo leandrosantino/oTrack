@@ -27,6 +27,7 @@ export function AuthProvider ({ children }: { children: ReactNode }) {
 
   async function signIn (userName: string, password: string) {
     const accessToken = await authService.login(userName, password)
+
     if (accessToken) {
       httpClient.setToken(accessToken)
 

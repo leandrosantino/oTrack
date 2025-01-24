@@ -11,26 +11,25 @@ export class AxiosHttpClient implements IHttpClient{
   api = axios.create({
     baseURL: 'http://localhost:3000',
     withCredentials: true,
-
-    
   })
 
   async post<T, B>(path: string, body: B): Promise<T> {
-    return await this.api.post(path, {
-      body,
+    const {data} = await this.api.post(path, body, {
       headers: {
         'Authorization': 'Bearer ' + this.token
       }
     })
+    return data
   }
 
-  get<T, P>(path: string, params?: P): Promise<T> {
-    return this.api.get(path, {
+  async get<T, P>(path: string, params?: P): Promise<T> {
+    const {data} = await this.api.get(path, {
       params,
       headers: {
         'Authorization': 'Bearer ' + this.token
       }
     })
+    return data
   }
 
   setToken(token: string){
