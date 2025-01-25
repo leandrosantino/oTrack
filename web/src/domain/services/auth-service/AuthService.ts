@@ -10,29 +10,40 @@ export class AuthService implements IAuthService {
     @inject('HttpClient') private readonly httpClient: IHttpClient
   ) { }
 
-
-  private async getLoginData(): Promise<User | null> {
-    const userDataResult = await this.httpClient.get<User>('/user/profile')
-    if (!userDataResult.ok) {
-      throw new Error(userDataResult.err.data.message)
-    }
-    return userDataResult.value
+  onRefreshToken(callback: (error?: any) => void) {
+    this.httpClient.setUnauthorizedErrorInterceptor(async (error) => {
+      let success = false
+      try {
+        await this.restoreSession()
+        success = true
+      } catch { }
+      callback(success ? null : error)
+    })
   }
 
-  async login(username: string, password: string): Promise<User | null> {
-    const loginResult = await this.httpClient.post<string>('/auth/login', { username, password })
-
-    if (!loginResult.ok) {
-      throw new Error(loginResult.err.data.message)
+  async getProfile(): Promise<User | null> {
+    const userProfileResult = await this.httpClient.get<User>('/user/profile')
+    if (!userProfileResult.ok) {
+      throw new Error(userProfileResult.err.type)
     }
+    return userProfileResult.value
+  }
 
-    if (loginResult.value) {
-      this.httpClient.setToken(loginResult.value)
-
-      return await this.getLoginData()
+  async login(username: string, password: string): Promise<void> {
+    const accessTokenResult = await this.httpClient.post<string>('/auth/login', { username, password })
+    if (!accessTokenResult.ok) {
+      throw new Error(accessTokenResult.err.type)
     }
+    this.httpClient.setToken(accessTokenResult.value)
+  }
 
-    return null
+  async restoreSession(): Promise<void> {
+    const refreshTokenResult = await this.httpClient.get<string>('/auth/refresh')
+    if (!refreshTokenResult.ok) {
+      this.httpClient.setToken('')
+      throw new Error(refreshTokenResult.err.type)
+    }
+    this.httpClient.setToken(refreshTokenResult.value)
   }
 
 }

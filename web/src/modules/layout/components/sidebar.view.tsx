@@ -12,15 +12,15 @@ export type AppSidebarProps = {
     icon: LucideIcon
     isActive?: boolean
   }>,
+  sideBarIsOpen: boolean
   onNavigate(url: string): void
 } & React.ComponentProps<typeof Sidebar>
 
-export function AppSidebar({ pages, user, onNavigate, ...props }: AppSidebarProps) {
-
+export function AppSidebar({ pages, user, sideBarIsOpen, onNavigate, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <Logo {...{minimize: !open}} />        
+        <Logo {...{minimize: !sideBarIsOpen}} />        
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

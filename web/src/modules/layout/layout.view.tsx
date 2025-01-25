@@ -15,7 +15,7 @@ export function LayoutView({controller }: props) {
   const {user} = controller.useUserData()
 
   return (<>
-    <AppSidebar {...{user, pages, open: sideBarIsOpen} } onNavigate={handleNavigate} />
+    <AppSidebar {...{user, pages, sideBarIsOpen} } onNavigate={handleNavigate} />
     <SidebarInset>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">

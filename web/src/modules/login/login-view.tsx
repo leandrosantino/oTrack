@@ -11,10 +11,10 @@ type props = {
 
 export function LoginView({ controller }: props) {
 
-  const {handleLogin, passwordField, usernameField} = controller.use()
+  const {handleLogin, passwordField, usernameField, isLoadingSession} = controller.use()
 
   return (
-    <LoginLayout>
+    <LoginLayout isLoading={isLoadingSession} >
       <form onSubmit={e => e.preventDefault()} className={cn("flex flex-col gap-6")}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Bem Vindo!</h1>

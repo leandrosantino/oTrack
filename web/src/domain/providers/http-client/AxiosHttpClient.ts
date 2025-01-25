@@ -1,12 +1,10 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { injectable } from 'tsyringe';
 import { ApiErrorData, HttpClientError, IHttpClient } from './IHttpClient';
 
 
 @injectable()
 export class AxiosHttpClient implements IHttpClient {
-
-  private token = ''
 
   private api = axios.create({
     baseURL: 'http://localhost:3000',
@@ -15,16 +13,12 @@ export class AxiosHttpClient implements IHttpClient {
 
   async post<T, B>(path: string, body: B): AsyncResult<T, HttpClientError> {
     try {
-      const resp = await this.api.post<T>(path, body, {
-        headers: {
-          'Authorization': 'Bearer ' + this.token
-        }
-      })
+      const resp = await this.api.post<T>(path, body, {})
       return Ok(resp.data)
     } catch (err) {
       const { response } = err as AxiosError<ApiErrorData>
       return Err(response?.data.type ?? '', {
-        code: Number(response?.status ?? '000'),
+        code: response?.status ?? 0,
         message: response?.data.message ?? '',
       })
     }
@@ -34,24 +28,41 @@ export class AxiosHttpClient implements IHttpClient {
     try {
       const resp = await this.api.get(path, {
         params,
-        headers: {
-          'Authorization': 'Bearer ' + this.token
-        }
       })
       return Ok(resp.data)
     } catch (err) {
       const { response } = err as AxiosError<ApiErrorData>
       return Err(response?.data.type ?? '', {
-        code: Number(response?.status ?? '000'),
+        code: response?.status ?? 0,
         message: response?.data.message ?? ''
       })
     }
   }
 
   setToken(token: string) {
-    this.token = token
+    this.api.interceptors.request.use(config => {
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    })
   }
 
+  setUnauthorizedErrorInterceptor(callback: (errorData: ApiErrorData) => Promise<void>): void {
+    const LIMIT = 3
+    let attempts = 0
+    this.api.interceptors.request.use(
+      response => response,
+      async (error: AxiosError<ApiErrorData>) => {
+        const { response, config } = error
+        if (error.status === 401 && attempts <= LIMIT) {
+          await callback(response?.data as ApiErrorData)
+          attempts++
+          return this.api(config as AxiosRequestConfig<any>)
+        }
+        attempts = 0
+        return Promise.reject(error);
+      }
+    )
+  }
 
 
 }

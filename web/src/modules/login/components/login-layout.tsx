@@ -1,7 +1,15 @@
 import { Logo } from "@/components/logo";
 import { ReactNode } from "react";
 
-export function LoginLayout({children}: {children: ReactNode}) {
+export function LoginLayout({children, isLoading}: {children: ReactNode, isLoading: boolean}) {
+
+
+  if(isLoading){
+    return (
+      <div>Loading...</div>
+    )
+  }
+
   return (
     <div className="grid min-h-svh lg:grid-cols-1 w-full">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -12,7 +20,7 @@ export function LoginLayout({children}: {children: ReactNode}) {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            {children}
+              {children}
           </div>
         </div>
       </div>

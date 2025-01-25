@@ -9,8 +9,8 @@ import { AppSidebarProps } from "./components/sidebar.view";
 export class LayoutController {
 
   pages: AppSidebarProps['pages'] = [
-    { title: "Dashboard", url: "/", icon: SquareKanban, isActive: true},
-    { title: "Técnicos", url: "/dash", icon: Users},
+    { title: "Dashboard", url: "/", icon: SquareKanban, isActive: true },
+    { title: "Técnicos", url: "/dash", icon: Users },
     { title: "Produtos", url: "#", icon: Package },
     { title: "Equipamentos", url: "#", icon: Cable },
     { title: "Restreamento", url: "#", icon: MapPin },
@@ -23,11 +23,11 @@ export class LayoutController {
       username: "leandro123",
       avatar: "https://github.com/leandrosantino.png",
     }
-    return {user}
+    return { user }
   }
 
-  usePages () {
-    const {open: sideBarIsOpen} = useSidebar()
+  usePages() {
+    const { open: sideBarIsOpen } = useSidebar()
     const navigate = useNavigate()
 
     const pages = this.pages
@@ -36,8 +36,8 @@ export class LayoutController {
       console.log(url)
       navigate(url)
     }
-    
-    return {sideBarIsOpen, pages, handleNavigate}
+
+    return { sideBarIsOpen, pages, handleNavigate }
   }
 
 

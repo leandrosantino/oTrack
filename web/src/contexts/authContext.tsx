@@ -3,7 +3,7 @@ import { type ReactNode, createContext, useContext, useState } from 'react'
 
 type AuthContextProps = {
   user: User | null
-  setUser(user: User): void
+  setUser(user: User | null): void
   isAuth(): boolean
 }
 
