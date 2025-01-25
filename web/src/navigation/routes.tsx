@@ -14,7 +14,7 @@ export function AppRoutes(){
     <Routes  >
       
       <Route Component={LoginBase} >
-        <Route path='signIn' Component={ Login } />
+        <Route path='login' Component={ Login } />
       </Route>
       
       <Route Component={ Layout } >

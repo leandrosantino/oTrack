@@ -7,7 +7,7 @@ export function AuthBase ({ requiredRoule }: { requiredRoule?: string }) {
 
   if(!isAuth()){
     return Navigate({
-      to: '/signin',
+      to: '/login',
       state: { from: location },
       replace: true,
     })

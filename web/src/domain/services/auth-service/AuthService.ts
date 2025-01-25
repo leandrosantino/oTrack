@@ -8,18 +8,26 @@ export class AuthService implements IAuthService {
 
   constructor(
     @inject('HttpClient') private readonly httpClient: IHttpClient
-  ){}
+  ) { }
 
 
   private async getLoginData(): Promise<User | null> {
-    return await this.httpClient.get('/user/profile')
+    const userDataResult = await this.httpClient.get<User>('/user/profile')
+    if (!userDataResult.ok) {
+      throw new Error(userDataResult.err.data.message)
+    }
+    return userDataResult.value
   }
 
   async login(username: string, password: string): Promise<User | null> {
-    const accessToken = await this.httpClient.post<string>('/auth/login', {username, password})
+    const loginResult = await this.httpClient.post<string>('/auth/login', { username, password })
 
-    if (accessToken) {
-      this.httpClient.setToken(accessToken)
+    if (!loginResult.ok) {
+      throw new Error(loginResult.err.data.message)
+    }
+
+    if (loginResult.value) {
+      this.httpClient.setToken(loginResult.value)
 
       return await this.getLoginData()
     }
