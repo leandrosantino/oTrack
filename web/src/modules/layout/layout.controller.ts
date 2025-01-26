@@ -33,7 +33,6 @@ export class LayoutController {
     const pages = this.pages
 
     function handleNavigate(url: string) {
-      console.log(url)
       navigate(url)
     }
 

@@ -1,24 +1,21 @@
 import { User } from '@/domain/entities/User';
 import { type IHttpClient } from '@/domain/providers/http-client/IHttpClient';
-import { inject, injectable } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import { IAuthService } from "./IAuthService";
 
-@injectable()
+@singleton()
 export class AuthService implements IAuthService {
 
   constructor(
     @inject('HttpClient') private readonly httpClient: IHttpClient
   ) { }
 
-  onRefreshToken(callback: (error?: any) => void) {
-    this.httpClient.setUnauthorizedErrorInterceptor(async (error) => {
-      let success = false
-      try {
-        await this.restoreSession()
-        success = true
-      } catch { }
-      callback(success ? null : error)
-    })
+  async logout(): Promise<void> {
+    await this.httpClient.post('/auth/logout', {})
+  }
+
+  onExpiresToken(callback: VoidFunction) {
+    this.httpClient.setExpiresTokenErrorInterceptor(callback)
   }
 
   async getProfile(): Promise<User | null> {
@@ -41,7 +38,7 @@ export class AuthService implements IAuthService {
     const refreshTokenResult = await this.httpClient.get<string>('/auth/refresh')
     if (!refreshTokenResult.ok) {
       this.httpClient.setToken('')
-      throw new Error(refreshTokenResult.err.type)
+      throw new Error(refreshTokenResult.err.data.message)
     }
     this.httpClient.setToken(refreshTokenResult.value)
   }

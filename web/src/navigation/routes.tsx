@@ -1,5 +1,5 @@
 import { Dashboard } from '@/modules/dashboard'
-import { Home } from '@/modules/home/home-view'
+import { Home } from '@/modules/home'
 import { Layout } from '@/modules/layout'
 import { Login } from '@/modules/login'
 import { BrowserRouter, Route, Routes } from 'react-router'

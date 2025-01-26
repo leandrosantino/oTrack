@@ -7,5 +7,5 @@ import { Err, Ok } from "./lib/result-handler";
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
 
-container.register('HttpClient', AxiosHttpClient)
-container.register('AuthService', AuthService)
+container.registerSingleton('HttpClient', AxiosHttpClient)
+container.registerSingleton('AuthService', AuthService)

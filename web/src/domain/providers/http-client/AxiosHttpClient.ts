@@ -1,10 +1,12 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { injectable } from 'tsyringe';
+import axios, { AxiosError } from 'axios';
+import { singleton } from 'tsyringe';
 import { ApiErrorData, HttpClientError, IHttpClient } from './IHttpClient';
 
 
-@injectable()
+@singleton()
 export class AxiosHttpClient implements IHttpClient {
+
+  token = ''
 
   private api = axios.create({
     baseURL: 'http://localhost:3000',
@@ -13,10 +15,18 @@ export class AxiosHttpClient implements IHttpClient {
 
   async post<T, B>(path: string, body: B): AsyncResult<T, HttpClientError> {
     try {
-      const resp = await this.api.post<T>(path, body, {})
+      const resp = await this.api.post<T>(path, body, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
       return Ok(resp.data)
     } catch (err) {
-      const { response } = err as AxiosError<ApiErrorData>
+      const axiosError = err as AxiosError<ApiErrorData>
+      const { response } = axiosError
+
+      this.refreshToken(axiosError)
+
       return Err(response?.data.type ?? '', {
         code: response?.status ?? 0,
         message: response?.data.message ?? '',
@@ -28,10 +38,17 @@ export class AxiosHttpClient implements IHttpClient {
     try {
       const resp = await this.api.get(path, {
         params,
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
       })
       return Ok(resp.data)
     } catch (err) {
-      const { response } = err as AxiosError<ApiErrorData>
+      const axiosError = err as AxiosError<ApiErrorData>
+      const { response } = axiosError
+
+      this.refreshToken(axiosError)
+
       return Err(response?.data.type ?? '', {
         code: response?.status ?? 0,
         message: response?.data.message ?? ''
@@ -39,26 +56,43 @@ export class AxiosHttpClient implements IHttpClient {
     }
   }
 
-  setToken(token: string) {
-    this.api.interceptors.request.use(config => {
-      config.headers.Authorization = `Bearer ${token}`;
-      return config;
-    })
+  private async refreshToken(err: AxiosError<ApiErrorData>) {
+    const { response, config } = err as AxiosError<ApiErrorData>
+    if (
+      !config?.url?.includes('refresh') &&
+      response?.status === 401 &&
+      response.data.type === 'EXPIRED_TOKEN'
+    ) {
+      try {
+        const { data, status } = await this.api.get('/auth/refresh')
+        if (status === 200) {
+          this.setToken(data)
+          switch (config?.method) {
+            case 'get': return await this.get(config?.url ?? '', config?.params)
+            case 'post': return await this.post(config?.url ?? '', config?.params.body)
+            default: break;
+          }
+          return await this.post(config?.url ?? '', config?.params.body)
+        }
+      } catch { }
+    }
   }
 
-  setUnauthorizedErrorInterceptor(callback: (errorData: ApiErrorData) => Promise<void>): void {
-    const LIMIT = 3
-    let attempts = 0
-    this.api.interceptors.request.use(
-      response => response,
-      async (error: AxiosError<ApiErrorData>) => {
+  setToken(token: string) {
+    this.token = token
+  }
+
+  setExpiresTokenErrorInterceptor(callback: VoidFunction): void {
+    this.api.interceptors.response.use(
+      response => {
+        return response
+      },
+      (error: AxiosError<ApiErrorData>) => {
         const { response, config } = error
-        if (error.status === 401 && attempts <= LIMIT) {
-          await callback(response?.data as ApiErrorData)
-          attempts++
-          return this.api(config as AxiosRequestConfig<any>)
+        if (config?.url?.includes('refresh') && response?.data.type === 'EXPIRED_TOKEN') {
+          console.log('error sndolkjnsakd')
+          callback()
         }
-        attempts = 0
         return Promise.reject(error);
       }
     )

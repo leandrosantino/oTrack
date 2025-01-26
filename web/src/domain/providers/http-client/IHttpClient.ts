@@ -3,7 +3,7 @@ export interface IHttpClient {
   post<T, B = any>(path: string, body: B): AsyncResult<T, HttpClientError>
   get<T, P = any>(path: string, params?: P): AsyncResult<T, HttpClientError>
   setToken(token: string): void
-  setUnauthorizedErrorInterceptor(callback: (errorData: ApiErrorData) => Promise<void>): void
+  setExpiresTokenErrorInterceptor(callback: VoidFunction): void
 }
 
 export type HttpClientError = {

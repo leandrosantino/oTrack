@@ -23,7 +23,7 @@ export class LoginController {
     }, [])
 
     useEffect(() => {
-      this.authService.onRefreshToken(err => { if (err) setUser(null) })
+      this.authService.onExpiresToken(() => { setUser(null) })
     }, [])
 
     const restoreSession = async () => {
@@ -49,7 +49,6 @@ export class LoginController {
 
     const setUserProfile = async () => {
       const userData = await this.authService.getProfile()
-      console.log(userData)
       if (userData) {
         setUser(userData)
       }
