@@ -43,6 +43,14 @@ export class AuthService implements IAuthService {
     return Ok({ accessToken, refreshToken })
   }
 
+  async signOut(refreshToken: JwtToken): Promise<void> {
+    const decodedResult = await this.jwtService.decode<RefreshTokenData>(refreshToken)
+    if (!decodedResult.ok) {
+      return
+    }
+    await this.userRepository.deleteTokenById(decodedResult.value.id)
+  }
+
   async refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenExceptions> {
     const jwtVerifyResult = await this.jwtService.verify<RefreshTokenData>(refreshToken)
 

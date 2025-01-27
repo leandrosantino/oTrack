@@ -89,6 +89,16 @@ export class AuthController implements ControllerInterface {
         .status(200).send(accessToken)
     })
 
-  };
+    app.post('/logout', {
+      schema: { tags: this.tags }
+    }, async (request, reply) => {
+      const refreshToken = request.cookies.refreshToken ?? '';
+      await this.authService.signOut(refreshToken)
+      reply.setCookie(this.refreshTokenCookiesName, '', this.refreshTokenCookiesOption).status(200)
+    })
+  }
 
-}
+
+};
+
+

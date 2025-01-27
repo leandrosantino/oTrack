@@ -11,7 +11,6 @@ export class JwtService implements IJwtService {
     @inject('Properties') private readonly properties: Properties,
   ) { }
 
-
   generateAccessToken(payload: object): string {
     return jwt.sign(payload, this.properties.env.JWT_SECRET, {
       expiresIn: this.properties.env.ACCESS_TOKEN_EXPIRES
@@ -35,6 +34,12 @@ export class JwtService implements IJwtService {
     return Ok(data)
   }
 
-
+  async decode<T>(token: string): AsyncResult<T, TokenExceptions> {
+    const decoded = jwt.decode(token)
+    if (!decoded) {
+      return Err(TokenExceptions.INVALID_TOKEN)
+    }
+    return Ok(decoded as T)
+  }
 
 }

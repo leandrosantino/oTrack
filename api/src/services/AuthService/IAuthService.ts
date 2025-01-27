@@ -6,6 +6,7 @@ import { TokenExceptions } from "services/JwtService/TokenExceptions";
 
 export interface IAuthService {
   signIn(authData: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions>
+  signOut(refreshToken: JwtToken): Promise<void>
   verifyToken(token: JwtToken): AsyncResult<AccessTokenData, TokenExceptions>
   refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenExceptions>
 }
