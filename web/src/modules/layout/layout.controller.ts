@@ -1,12 +1,18 @@
 import { useSidebar } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts/authContext";
+import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
 import { Cable, MapPin, Package, Settings2, SquareKanban, Users } from "lucide-react";
 import { useNavigate } from "react-router";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { AppSidebarProps } from "./components/sidebar.view";
 
 
 @injectable()
 export class LayoutController {
+
+  constructor(
+    @inject('AuthService') private readonly authService: IAuthService
+  ) { }
 
   pages: AppSidebarProps['pages'] = [
     { title: "Dashboard", url: "/", icon: SquareKanban, isActive: true },
@@ -17,26 +23,31 @@ export class LayoutController {
     { title: "Configurações", url: "#", icon: Settings2 },
   ]
 
-  useUserData() {
-    const user: AppSidebarProps['user'] = {
-      name: "Leandro Santino",
-      username: "leandro123",
+  use() {
+
+    const { user, setUser } = useAuth()
+
+    const userData: AppSidebarProps['user'] = {
+      name: user?.name ?? '',
+      username: user?.username ?? '',
       avatar: "https://github.com/leandrosantino.png",
     }
-    return { user }
-  }
 
-  usePages() {
     const { open: sideBarIsOpen } = useSidebar()
     const navigate = useNavigate()
 
     const pages = this.pages
 
-    function handleNavigate(url: string) {
+    const handleLogout = () => {
+      this.authService.logout()
+      setUser(null)
+    }
+
+    const handleNavigate = (url: string) => {
       navigate(url)
     }
 
-    return { sideBarIsOpen, pages, handleNavigate }
+    return { sideBarIsOpen, pages, handleNavigate, user: userData, handleLogout }
   }
 
 

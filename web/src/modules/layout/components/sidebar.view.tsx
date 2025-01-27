@@ -14,9 +14,10 @@ export type AppSidebarProps = {
   }>,
   sideBarIsOpen: boolean
   onNavigate(url: string): void
+  handleLogout: VoidFunction
 } & React.ComponentProps<typeof Sidebar>
 
-export function AppSidebar({ pages, user, sideBarIsOpen, onNavigate, ...props }: AppSidebarProps) {
+export function AppSidebar({ pages, user, sideBarIsOpen, onNavigate, handleLogout, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -38,7 +39,7 @@ export function AppSidebar({ pages, user, sideBarIsOpen, onNavigate, ...props }:
       </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser { ...{handleLogout, user} }/>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

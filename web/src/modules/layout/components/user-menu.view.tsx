@@ -9,9 +9,10 @@ export type UserMenuProps = {
     username: string
     avatar: string
   }
+  handleLogout: VoidFunction
 }
 
-export function NavUser({ user }: UserMenuProps) {
+export function NavUser({ user, handleLogout }: UserMenuProps) {
   const { isMobile } = useSidebar()
 
   return (
@@ -75,7 +76,7 @@ export function NavUser({ user }: UserMenuProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleLogout()} >
               <LogOut />
               Log out
             </DropdownMenuItem>

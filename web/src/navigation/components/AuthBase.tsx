@@ -6,21 +6,21 @@ export function AuthBase ({ requiredRoule }: { requiredRoule?: string }) {
   const location = useLocation()
 
   if(!isAuth()){
-    return Navigate({
+    return <Navigate { ...{
       to: '/login',
       state: { from: location },
       replace: true,
-    })
+    } } />
   }
   
   if(requiredRoule && user?.roule != requiredRoule){
-    return Navigate({
+    return <Navigate { ...{
       to: '/unauthorized',
       state: { from: location },
       replace: true,
-    })
+    } } />
   }
 
-  return Outlet({})
+  return <Outlet />
 }
 
