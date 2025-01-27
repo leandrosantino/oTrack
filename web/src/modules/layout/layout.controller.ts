@@ -2,7 +2,8 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/authContext";
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
 import { Cable, MapPin, Package, Settings2, SquareKanban, Users } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { inject, injectable } from "tsyringe";
 import { AppSidebarProps } from "./components/sidebar.view";
 
@@ -15,7 +16,7 @@ export class LayoutController {
   ) { }
 
   pages: AppSidebarProps['pages'] = [
-    { title: "Dashboard", url: "/", icon: SquareKanban, isActive: true },
+    { title: "Dashboard", url: "/", icon: SquareKanban },
     { title: "Técnicos", url: "/dash", icon: Users },
     { title: "Produtos", url: "#", icon: Package },
     { title: "Equipamentos", url: "#", icon: Cable },
@@ -24,8 +25,22 @@ export class LayoutController {
   ]
 
   use() {
-
     const { user, setUser } = useAuth()
+    const { pathname } = useLocation()
+
+    const [pages, setPages] = useState<AppSidebarProps['pages']>(this.pages)
+
+    useEffect(() => {
+      const updatedPages: AppSidebarProps['pages'] = pages.map(page => {
+        page.isActive = false
+        if (page.url === pathname) {
+          page.isActive = true
+        }
+        return page
+      })
+      setPages(updatedPages)
+    }, [pathname])
+
 
     const userData: AppSidebarProps['user'] = {
       name: user?.name ?? '',
@@ -35,8 +50,6 @@ export class LayoutController {
 
     const { open: sideBarIsOpen } = useSidebar()
     const navigate = useNavigate()
-
-    const pages = this.pages
 
     const handleLogout = () => {
       this.authService.logout()
