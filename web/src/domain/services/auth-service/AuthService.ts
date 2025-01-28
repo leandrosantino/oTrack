@@ -23,20 +23,16 @@ export class AuthService implements IAuthService {
   }
 
   setAuthErrorInterceptor() {
-    this.httpClient.setErrorInterceptor(async (err) => {
+    this.httpClient.setErrorInterceptor(async (err, config) => {
       if (
-        !err.config.url.includes('refresh') &&
+        !config.url.includes('refresh') &&
         err.code === 401 &&
         err.type === 'EXPIRED_TOKEN'
       ) {
         try {
           console.log('refreshToken')
           await this.refreshToken()
-          switch (err.config.method) {
-            case 'get': return await this.httpClient.get(err.config.url ?? '', err.config.params)
-            case 'post': return await this.httpClient.post(err.config.url ?? '', err.config.params.body)
-            default: return null;
-          }
+          return await this.httpClient.call(config)
         } catch (err) {
           this.onExpiresToken()
           return null

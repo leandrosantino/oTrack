@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { singleton } from 'tsyringe';
-import { ApiErrorData, HttpClientError, HttpClientErrorHandler, IHttpClient } from './IHttpClient';
+import { ApiErrorData, HttpClientConfig, HttpClientError, HttpClientErrorHandler, IHttpClient } from './IHttpClient';
 
 
 @singleton()
@@ -25,9 +25,6 @@ export class AxiosHttpClient implements IHttpClient {
       const axiosError = err as AxiosError<ApiErrorData>
       const { response } = axiosError
 
-      const resp = await this.errorInterceptor(axiosError)
-      if (resp) return resp
-
       return Err({
         type: response?.data.type ?? '',
         code: response?.status ?? 0,
@@ -49,9 +46,6 @@ export class AxiosHttpClient implements IHttpClient {
       const axiosError = err as AxiosError<ApiErrorData>
       const { response } = axiosError
 
-      const resp = await this.errorInterceptor(axiosError)
-      if (resp) return resp
-
       return Err({
         type: response?.data.type ?? '',
         code: response?.status ?? 0,
@@ -64,25 +58,45 @@ export class AxiosHttpClient implements IHttpClient {
     this.token = token
   }
 
-  errorInterceptor: (err: AxiosError<ApiErrorData>) => Promise<any> = async () => { }
+  async call(config: HttpClientConfig): Promise<any> {
+    return await this.api({
+      url: config.url,
+      method: config.method,
+      params: {
+        ...config.params,
+        body: config.body
+      },
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      }
+    })
+  }
 
   setErrorInterceptor(errorHandler: HttpClientErrorHandler): void {
-    this.errorInterceptor = async (error: AxiosError<ApiErrorData>) => {
-      const axiosError = error as AxiosError<ApiErrorData>
-      const { response } = axiosError
+    this.api.interceptors.response.use(
+      response => response,
+      async (error: AxiosError<ApiErrorData>) => {
+        const axiosError = error as AxiosError<ApiErrorData>
+        const { response } = axiosError
 
-      return await errorHandler({
-        type: response?.data.type ?? '',
-        code: response?.status ?? 0,
-        message: response?.data.message ?? '',
-        config: {
+        const handlerResponse = await errorHandler({
+          type: response?.data.type ?? '',
+          code: response?.status ?? 0,
+          message: response?.data.message ?? ''
+        }, {
           body: response?.config?.params?.body,
           params: response?.config?.params,
           url: response?.config?.url ?? '',
           method: response?.config.method ?? '',
-        },
-      })
-    }
+        })
+
+        if (handlerResponse !== null) {
+          return handlerResponse
+        }
+
+        return Promise.reject(error)
+      }
+    )
 
   }
 

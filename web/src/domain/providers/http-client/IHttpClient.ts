@@ -4,16 +4,17 @@ export interface IHttpClient {
   get<T, P = any>(path: string, params?: P): AsyncResult<T, HttpClientError>
   setToken(token: string): void
   setErrorInterceptor(errorHandler: HttpClientErrorHandler): void
+  call(config: HttpClientConfig): Promise<any>
 }
 
-export type HttpClientErrorHandler = (error: HttpClientError & {
-  config: {
-    method: string
-    url: string,
-    body?: any,
-    params?: any
-  }
-}) => Promise<any | null>
+export type HttpClientErrorHandler = (error: HttpClientError, config: HttpClientConfig) => Promise<any | null>
+
+export type HttpClientConfig = {
+  method: string
+  url: string,
+  body?: any,
+  params?: any
+}
 
 export type HttpClientError = {
   type: string
