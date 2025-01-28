@@ -23,13 +23,13 @@ export class LoginController {
     }, [])
 
     useEffect(() => {
-      this.authService.onExpiresToken(() => { setUser(null) })
+      this.authService.setOnExpiresToken(() => { setUser(null) })
     }, [])
 
     const restoreSession = async () => {
       setIsLoadingSession(true)
       try {
-        await this.authService.restoreSession()
+        await this.authService.refreshToken()
         await setUserProfile()
       } catch (err) {
         console.log(err)

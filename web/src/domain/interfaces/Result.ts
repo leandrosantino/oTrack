@@ -7,7 +7,7 @@ export interface IErrorHandler<T> {
 export type Result<T, E> = {
   ok: true; value: T
 } | {
-  ok: false; err: IErrorHandler<E>
+  ok: false; err: E
 }
 
 export type AsyncResult<T, E> = Promise<Result<T, E>>

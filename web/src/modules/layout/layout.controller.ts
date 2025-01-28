@@ -51,8 +51,8 @@ export class LayoutController {
     const { open: sideBarIsOpen } = useSidebar()
     const navigate = useNavigate()
 
-    const handleLogout = () => {
-      this.authService.logout()
+    const handleLogout = async () => {
+      await this.authService.logout()
       setUser(null)
     }
 

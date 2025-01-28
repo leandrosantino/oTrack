@@ -8,14 +8,42 @@ export class AuthService implements IAuthService {
 
   constructor(
     @inject('HttpClient') private readonly httpClient: IHttpClient
-  ) { }
+  ) {
+    this.setAuthErrorInterceptor()
+  }
+
+  onExpiresToken: VoidFunction = () => { }
+
+  setOnExpiresToken(callback: VoidFunction) {
+    this.onExpiresToken = callback
+  }
 
   async logout(): Promise<void> {
     await this.httpClient.post('/auth/logout', {})
   }
 
-  onExpiresToken(callback: VoidFunction) {
-    this.httpClient.setExpiresTokenErrorInterceptor(callback)
+  setAuthErrorInterceptor() {
+    this.httpClient.setErrorInterceptor(async (err) => {
+      if (
+        !err.config.url.includes('refresh') &&
+        err.code === 401 &&
+        err.type === 'EXPIRED_TOKEN'
+      ) {
+        try {
+          console.log('refreshToken')
+          await this.refreshToken()
+          switch (err.config.method) {
+            case 'get': return await this.httpClient.get(err.config.url ?? '', err.config.params)
+            case 'post': return await this.httpClient.post(err.config.url ?? '', err.config.params.body)
+            default: return null;
+          }
+        } catch (err) {
+          this.onExpiresToken()
+          return null
+        }
+      }
+      return null
+    })
   }
 
   async getProfile(): Promise<User | null> {
@@ -34,11 +62,11 @@ export class AuthService implements IAuthService {
     this.httpClient.setToken(accessTokenResult.value)
   }
 
-  async restoreSession(): Promise<void> {
+  async refreshToken(): Promise<void> {
     const refreshTokenResult = await this.httpClient.get<string>('/auth/refresh')
     if (!refreshTokenResult.ok) {
       this.httpClient.setToken('')
-      throw new Error(refreshTokenResult.err.data.message)
+      throw new Error(refreshTokenResult.err.message)
     }
     this.httpClient.setToken(refreshTokenResult.value)
   }

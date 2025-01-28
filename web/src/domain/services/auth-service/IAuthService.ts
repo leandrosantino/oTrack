@@ -5,6 +5,7 @@ export interface IAuthService {
   login(username: string, password: string): Promise<void>
   logout(): Promise<void>
   getProfile(): Promise<User | null>
-  restoreSession(): Promise<void>
-  onExpiresToken(callback: VoidFunction): void
+  refreshToken(): Promise<void>
+  onExpiresToken(): void
+  setOnExpiresToken(callback: VoidFunction): void
 }

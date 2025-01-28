@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { singleton } from 'tsyringe';
-import { ApiErrorData, HttpClientError, IHttpClient } from './IHttpClient';
+import { ApiErrorData, HttpClientError, HttpClientErrorHandler, IHttpClient } from './IHttpClient';
 
 
 @singleton()
@@ -25,11 +25,13 @@ export class AxiosHttpClient implements IHttpClient {
       const axiosError = err as AxiosError<ApiErrorData>
       const { response } = axiosError
 
-      this.refreshToken(axiosError)
+      const resp = await this.errorInterceptor(axiosError)
+      if (resp) return resp
 
-      return Err(response?.data.type ?? '', {
+      return Err({
+        type: response?.data.type ?? '',
         code: response?.status ?? 0,
-        message: response?.data.message ?? '',
+        message: response?.data.message ?? ''
       })
     }
   }
@@ -47,34 +49,14 @@ export class AxiosHttpClient implements IHttpClient {
       const axiosError = err as AxiosError<ApiErrorData>
       const { response } = axiosError
 
-      this.refreshToken(axiosError)
+      const resp = await this.errorInterceptor(axiosError)
+      if (resp) return resp
 
-      return Err(response?.data.type ?? '', {
+      return Err({
+        type: response?.data.type ?? '',
         code: response?.status ?? 0,
         message: response?.data.message ?? ''
       })
-    }
-  }
-
-  private async refreshToken(err: AxiosError<ApiErrorData>) {
-    const { response, config } = err as AxiosError<ApiErrorData>
-    if (
-      !config?.url?.includes('refresh') &&
-      response?.status === 401 &&
-      response.data.type === 'EXPIRED_TOKEN'
-    ) {
-      try {
-        const { data, status } = await this.api.get('/auth/refresh')
-        if (status === 200) {
-          this.setToken(data)
-          switch (config?.method) {
-            case 'get': return await this.get(config?.url ?? '', config?.params)
-            case 'post': return await this.post(config?.url ?? '', config?.params.body)
-            default: break;
-          }
-          return await this.post(config?.url ?? '', config?.params.body)
-        }
-      } catch { }
     }
   }
 
@@ -82,20 +64,26 @@ export class AxiosHttpClient implements IHttpClient {
     this.token = token
   }
 
-  setExpiresTokenErrorInterceptor(callback: VoidFunction): void {
-    this.api.interceptors.response.use(
-      response => {
-        return response
-      },
-      (error: AxiosError<ApiErrorData>) => {
-        const { response, config } = error
-        if (config?.url?.includes('refresh') && response?.data.type === 'EXPIRED_TOKEN') {
-          console.log('error sndolkjnsakd')
-          callback()
-        }
-        return Promise.reject(error);
-      }
-    )
+  errorInterceptor: (err: AxiosError<ApiErrorData>) => Promise<any> = async () => { }
+
+  setErrorInterceptor(errorHandler: HttpClientErrorHandler): void {
+    this.errorInterceptor = async (error: AxiosError<ApiErrorData>) => {
+      const axiosError = error as AxiosError<ApiErrorData>
+      const { response } = axiosError
+
+      return await errorHandler({
+        type: response?.data.type ?? '',
+        code: response?.status ?? 0,
+        message: response?.data.message ?? '',
+        config: {
+          body: response?.config?.params?.body,
+          params: response?.config?.params,
+          url: response?.config?.url ?? '',
+          method: response?.config.method ?? '',
+        },
+      })
+    }
+
   }
 
 
