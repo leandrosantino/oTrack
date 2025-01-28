@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from "lucide-react"
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Sparkles } from "lucide-react"
 
 export type UserMenuProps = {
   user: {
@@ -9,11 +9,11 @@ export type UserMenuProps = {
     username: string
     avatar: string
   }
-  handleLogout: VoidFunction
+  handleLogout: VoidFunction,
+  isMobile: boolean
 }
 
-export function NavUser({ user, handleLogout }: UserMenuProps) {
-  const { isMobile } = useSidebar()
+export function NavUser({ user, handleLogout, isMobile }: UserMenuProps) {
 
   return (
     <SidebarMenu>
@@ -26,7 +26,7 @@ export function NavUser({ user, handleLogout }: UserMenuProps) {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg font-bold bg-zinc-200">{user.name.slice(0, 2).toLocaleUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -64,11 +64,7 @@ export function NavUser({ user, handleLogout }: UserMenuProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+                Conta
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />
@@ -76,7 +72,7 @@ export function NavUser({ user, handleLogout }: UserMenuProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleLogout()} >
+            <DropdownMenuItem onClick={() => handleLogout()} className="text-destructive" >
               <LogOut />
               Log out
             </DropdownMenuItem>
