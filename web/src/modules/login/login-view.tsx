@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { LoginLayout } from "./components/login-layout"
 import { LoginController } from "./login.controller"
+import { useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 type props = {
   controller: LoginController
@@ -12,6 +14,8 @@ type props = {
 export function LoginView({ controller }: props) {
 
   const {handleLogin, passwordField, usernameField, isLoadingSession} = controller.use()
+
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <LoginLayout isLoading={isLoadingSession} >
@@ -37,7 +41,23 @@ export function LoginView({ controller }: props) {
                 Esqueceu a senha?
               </a>
             </div>
-            <Input id="password" type="password" required value={passwordField.value} onChange={e => passwordField.set(e.target.value)} />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              value={passwordField.value}
+              onChange={(e) => passwordField.set(e.target.value)}
+            />
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="show-password"
+                onCheckedChange={() => setShowPassword((prev) => !prev)}
+                className="cursor-pointer"
+              />
+              <Label htmlFor="show-password" className="text-sm font-normal">
+                Exibir senha
+              </Label>
+            </div>
           </div>
           <Button type="submit" className="w-full" onClick={() => handleLogin()} >
             Entrar
