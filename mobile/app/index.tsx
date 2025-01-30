@@ -38,12 +38,11 @@ export default function Home(){
             accuracy: LocationAccuracy.Balanced,
             timeInterval: 1000,
             distanceInterval: 1,
-            // showsBackgroundLocationIndicator: true,
-            // foregroundService:{
-            //   notificationBody: 'Usando a localização',
-            //   notificationTitle: 'PortalFacility',
-            //   notificationColor: '#RRGGBB'
-            // }
+            foregroundService:{
+              notificationBody: 'Usando a localização',
+              notificationTitle: 'PortalFacility',
+              notificationColor: '#RRGGBB'
+            }
           });
         }
 
@@ -146,8 +145,8 @@ TaskManager.defineTask<{locations: LocationObject[]}>(LOCATION_TASK_NAME, async 
           longitude: coords.longitude
         }
       }));
-      console.log(timestamp,"/ lat: ", coords.latitude, ", lng: ", coords.longitude, '\n')
     }
+    console.log(timestamp,"/ lat: ", coords.latitude, ", lng: ", coords.longitude, '\n')
   }
 });
 

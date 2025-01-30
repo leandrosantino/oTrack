@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [react({
     tsDecorators: true
   })],
+  server: {
+    host: true
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

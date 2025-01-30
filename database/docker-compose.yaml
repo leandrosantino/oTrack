@@ -6,6 +6,6 @@ services:
     environment:
       POSTGRES_PASSWORD: "admin123"
       POSTGRES_USER: "leandro"
-      POSTGRES_DB: "facility"
+      POSTGRES_DB: "otrack"
     ports:
       - 5432:5432
