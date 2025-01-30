@@ -55,6 +55,9 @@ export class AuthService implements IAuthService {
     const jwtVerifyResult = await this.jwtService.verify<RefreshTokenData>(refreshToken)
 
     if (!jwtVerifyResult.ok) {
+      if (jwtVerifyResult.err.type === TokenExceptions.EXPIRED_TOKEN) {
+        await this.signOut(refreshToken)
+      }
       return Err(jwtVerifyResult.err.type)
     }
 
