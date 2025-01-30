@@ -65,14 +65,18 @@ describe("AuthService", () => {
 
   describe("refreshTokens", () => {
 
-    it("should return EXPIRES_TOKEN if the refresh token is expired", async () => {
+    it("should return EXPIRED_TOKEN and run signOut if the refresh token is expired", async () => {
       const expiredToken = 'expiredRefreshToken'
 
       when(jwtServiceMock.verify('expiredRefreshToken')).thenResolve(Err(TokenExceptions.EXPIRED_TOKEN))
+      when(jwtServiceMock.decode('expiredRefreshToken')).thenResolve(Ok({ id: 1, userId: 2 }))
+      when(userRepositoryMock.deleteTokenById(1)).thenResolve(true)
 
       const result = await authService.refreshTokens(expiredToken)
 
       assert(!result.ok)
+      verify(userRepositoryMock.deleteTokenById(1)).once()
+      verify(jwtServiceMock.decode('expiredRefreshToken')).once()
       result.err.case(TokenExceptions.EXPIRED_TOKEN, () => assert(true))
     })
 
@@ -158,6 +162,24 @@ describe("AuthService", () => {
       assert(result.ok)
       assert.deepStrictEqual(result.value, accessTokenData)
     })
+  })
+
+
+  describe('signOut', () => {
+
+    it('Should delete refresh token reference of database', async () => {
+      when(jwtServiceMock.decode('refreshToken')).thenResolve(Ok({ id: 1, userId: 2 }))
+      when(userRepositoryMock.deleteTokenById(1)).thenResolve(true)
+      await authService.signOut('refreshToken')
+      verify(userRepositoryMock.deleteTokenById(1)).once()
+    })
+
+    it('Should return void if recive a invalid refresh token', async () => {
+      when(jwtServiceMock.decode('refreshToken')).thenResolve(Err(TokenExceptions.INVALID_TOKEN))
+      await authService.signOut('refreshToken')
+      verify(userRepositoryMock.deleteTokenById(1)).never()
+    })
+
   })
 
 })

@@ -19,6 +19,7 @@ class MockTokenExpiredError extends MockJsonWebTokenError {
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
   verify: jest.fn(),
+  decode: jest.fn(),
   TokenExpiredError: class MockJsonWebTokenError extends Error {
     name = 'JsonWebTokenError';
     constructor(message: string) {
@@ -107,6 +108,28 @@ describe('JwtService', () => {
       expect(accessToken).toEqual('refreshToken')
       expect(jwt.sign).toHaveBeenCalledWith({}, propertiesInstance.env.JWT_SECRET, { expiresIn: propertiesInstance.env.REFRESH_TOKEN_EXPIRES })
 
+    })
+
+  })
+
+  describe('decode', () => {
+
+    it('Should return token payload decoded', async () => {
+
+      (jwt.decode as jest.Mock).mockReturnValue({})
+
+      const decoded = await jwtService.decode('token')
+      expect(decoded).toStrictEqual(Ok({}))
+      expect(jwt.decode).toHaveBeenCalledWith('token')
+    })
+
+    it('Should return INVALID_TOKEN if recive a invalid token', async () => {
+
+      (jwt.decode as jest.Mock).mockReturnValue(null)
+
+      const decoded = await jwtService.decode('token')
+      expect(decoded).toStrictEqual(Err(TokenExceptions.INVALID_TOKEN))
+      expect(jwt.decode).toHaveBeenCalledWith('token')
     })
 
   })
