@@ -22,7 +22,8 @@ app.register(fastifyWebsocket)
 app.register(fastifyCors, {
   origin: [
     'http://localhost:5173',
-    'http://10.0.0.106:5173'
+    'http://10.0.0.106:5173',
+    'http://10.0.0.106:4173'
   ],
   credentials: true
 })
