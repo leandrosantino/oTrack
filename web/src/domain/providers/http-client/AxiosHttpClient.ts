@@ -6,18 +6,18 @@ import { ApiErrorData, HttpClientConfig, HttpClientError, HttpClientErrorHandler
 @singleton()
 export class AxiosHttpClient implements IHttpClient {
 
-  token = ''
+  #token = ''
 
-  private api = axios.create({
+  #api = axios.create({
     baseURL: 'http://10.0.0.106:3000',
     withCredentials: true,
   })
 
   async post<T, B>(path: string, body: B): AsyncResult<T, HttpClientError> {
     try {
-      const resp = await this.api.post<T>(path, body, {
+      const resp = await this.#api.post<T>(path, body, {
         headers: {
-          Authorization: `Bearer ${this.token}`
+          Authorization: `Bearer ${this.#token}`
         }
       })
       return Ok(resp.data)
@@ -35,10 +35,10 @@ export class AxiosHttpClient implements IHttpClient {
 
   async get<T, P>(path: string, params?: P): AsyncResult<T, HttpClientError> {
     try {
-      const resp = await this.api.get(path, {
+      const resp = await this.#api.get(path, {
         params,
         headers: {
-          Authorization: `Bearer ${this.token}`
+          Authorization: `Bearer ${this.#token}`
         }
       })
       return Ok(resp.data)
@@ -55,11 +55,11 @@ export class AxiosHttpClient implements IHttpClient {
   }
 
   setToken(token: string) {
-    this.token = token
+    this.#token = token
   }
 
   async call(config: HttpClientConfig): Promise<any> {
-    return await this.api({
+    return await this.#api({
       url: config.url,
       method: config.method,
       params: {
@@ -67,13 +67,13 @@ export class AxiosHttpClient implements IHttpClient {
         body: config.body
       },
       headers: {
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${this.#token}`
       }
     })
   }
 
   setErrorInterceptor(errorHandler: HttpClientErrorHandler): void {
-    this.api.interceptors.response.use(
+    this.#api.interceptors.response.use(
       response => response,
       async (error: AxiosError<ApiErrorData>) => {
         const axiosError = error as AxiosError<ApiErrorData>

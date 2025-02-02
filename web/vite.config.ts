@@ -10,6 +10,19 @@ export default defineConfig({
   server: {
     host: true
   },
+  build: {
+    minify: 'terser', // Usa Terser em vez do esbuild
+    terserOptions: {
+      sourceMap: false,
+      compress: {
+        drop_console: true, // Remove console.logs
+      },
+      mangle: {
+        keep_classnames: false, // Ofusca nomes de classes
+        keep_fnames: false, // Ofusca nomes de funções
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
