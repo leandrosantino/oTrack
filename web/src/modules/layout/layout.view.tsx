@@ -11,20 +11,21 @@ type props = {
 
 export function LayoutView({controller }: props) {
 
-  const {pages, logoIsMinimize, handleNavigate, user, handleLogout, isMobile} = controller.use()
+  const user = controller.useUser()
+  const isMobile = controller.useIsMobile()
 
   return (<>
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Logo { ...{minimize: logoIsMinimize} } />        
+        <Logo { ...{minimize: controller.logoIsMinimize.value} } />        
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Resources</SidebarGroupLabel>
           <SidebarMenu>
-            {pages.map((item) => (
+            {controller.pagesState.value.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton tooltip={item.title} isActive={item.isActive} onClick={() => handleNavigate(item.url)} >
+                <SidebarMenuButton tooltip={item.title} isActive={item.isActive} onClick={() => controller.handleNavigate(item.url)} >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
@@ -34,7 +35,7 @@ export function LayoutView({controller }: props) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser { ...{handleLogout, user, isMobile} }/>
+        <NavUser { ...{user, isMobile} } handleLogout={controller.handleLogout}/>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

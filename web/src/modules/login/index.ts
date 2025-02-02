@@ -2,6 +2,7 @@ import { container } from "tsyringe";
 import { LoginView } from "./login-view";
 import { LoginController } from "./login.controller";
 
-
-const controller = container.resolve(LoginController)
-export const Login = () => LoginView({ controller })
+export function Login() {
+  const controller = container.resolve(LoginController)
+  return LoginView({ controller })
+}

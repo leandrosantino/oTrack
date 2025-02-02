@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { LoginLayout } from "./components/login-layout"
 import { LoginController } from "./login.controller"
-import { useState } from "react"
-import { Checkbox } from "@/components/ui/checkbox"
 
 type props = {
   controller: LoginController
@@ -13,12 +12,8 @@ type props = {
 
 export function LoginView({ controller }: props) {
 
-  const {handleLogin, passwordField, usernameField, isLoadingSession} = controller.use()
-
-  const [showPassword, setShowPassword] = useState(false)
-
   return (
-    <LoginLayout isLoading={isLoadingSession} >
+    <LoginLayout isLoading={controller.isLoadingSession.value} >
       <form onSubmit={e => e.preventDefault()} className={cn("flex flex-col gap-6")}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Bem Vindo!</h1>
@@ -28,8 +23,12 @@ export function LoginView({ controller }: props) {
         </div>
         <div className="grid gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="email">Usuário</Label>
-            <Input id="email" type="text" required value={usernameField.value} onChange={e => usernameField.set(e.target.value)} />
+            <Label htmlFor="username">Usuário</Label>
+            <Input 
+              id="username" type="text" 
+              required value={controller.username.value} 
+              onChange={e => controller.username.set(e.target.value)} 
+            />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
@@ -43,15 +42,15 @@ export function LoginView({ controller }: props) {
             </div>
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
+              type={controller.showPassword.value ? "text" : "password"}
               required
-              value={passwordField.value}
-              onChange={(e) => passwordField.set(e.target.value)}
+              value={controller.password.value}
+              onChange={(e) => controller.password.set(e.target.value)}
             />
             <div className="flex items-center gap-2">
               <Checkbox
                 id="show-password"
-                onCheckedChange={() => setShowPassword((prev) => !prev)}
+                onCheckedChange={() => controller.showPassword.set((prev) => !prev)}
                 className="cursor-pointer"
               />
               <Label htmlFor="show-password" className="text-sm font-normal">
@@ -59,7 +58,7 @@ export function LoginView({ controller }: props) {
               </Label>
             </div>
           </div>
-          <Button type="submit" className="w-full" onClick={() => handleLogin()} >
+          <Button type="submit" className="w-full" onClick={() => controller.handleLogin()} >
             Entrar
           </Button>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
