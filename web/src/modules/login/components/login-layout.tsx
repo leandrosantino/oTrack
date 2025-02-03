@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 
 export function LoginLayout({children, isLoading}: {children: ReactNode, isLoading: boolean}) {
 
-
   if(isLoading){
     return (
       <div className="w-full flex flex-col justify-center items-center gap-4" >

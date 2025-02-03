@@ -21,16 +21,18 @@ export function LoginView({ controller }: props) {
             Insira seu usuário e senha para acessar sua conta.
           </p>
         </div>
-        <div className="grid gap-6">
-          <div className="grid gap-2">
+        <div className="grid">
+          <div className="grid gap-1 mb-2">
             <Label htmlFor="username">Usuário</Label>
             <Input 
               id="username" type="text" 
+              className={controller.usernameError.value != '' ? 'border-destructive' : ''}
               required value={controller.username.value} 
               onChange={e => controller.username.set(e.target.value)} 
             />
+            <span className="text-destructive text-xs h-5 text-end" >{controller.usernameError.value}</span>
           </div>
-          <div className="grid gap-2">
+          <div className="grid gap-1 mb-5">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
               <a
@@ -41,24 +43,28 @@ export function LoginView({ controller }: props) {
               </a>
             </div>
             <Input
-              id="password"
-              type={controller.showPassword.value ? "text" : "password"}
               required
+              id="password"
+              className={controller.passwordError.value != '' ? 'border-destructive' : ''}
+              type={controller.showPassword.value ? "text" : "password"}
               value={controller.password.value}
               onChange={(e) => controller.password.set(e.target.value)}
             />
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="show-password"
-                onCheckedChange={() => controller.showPassword.set((prev) => !prev)}
-                className="cursor-pointer"
-              />
-              <Label htmlFor="show-password" className="text-sm font-normal">
-                Exibir senha
-              </Label>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2 pl-1 my-1">
+                <Checkbox
+                  id="show-password"
+                  onCheckedChange={() => controller.showPassword.set((prev) => !prev)}
+                  className="cursor-pointer"
+                  />
+                <Label htmlFor="show-password" className="text-sm font-normal">
+                  Exibir senha
+                </Label>
+              </div>
+              <span className="text-destructive text-xs h-5 w-fit" >{controller.passwordError.value}</span>
             </div>
           </div>
-          <Button type="submit" className="w-full" onClick={() => controller.handleLogin()} >
+          <Button type="submit" className="w-full mb-6" onClick={() => controller.handleLogin()} >
             Entrar
           </Button>
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

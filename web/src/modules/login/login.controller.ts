@@ -2,25 +2,33 @@ import { useAuth } from "@/contexts/authContext";
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
 import { useStateObject } from "@/lib/useStateObject";
 import { useEffect } from "react";
-import { inject, injectable } from "tsyringe";
+import { inject, singleton } from "tsyringe";
 
-@injectable()
+@singleton()
 export class LoginController {
 
   private auth = useAuth()
 
   isLoadingSession = useStateObject(false)
+  showPassword = useStateObject(false)
   username = useStateObject('')
   password = useStateObject('')
-  showPassword = useStateObject(false)
+  usernameError = useStateObject('')
+  passwordError = useStateObject('')
 
   constructor(
     @inject('AuthService') private readonly authService: IAuthService
   ) {
     useEffect(() => { this.restoreSession() }, [])
+
     useEffect(() => {
       this.authService.setOnExpiresToken(() => { this.auth.setUser(null) })
     }, [])
+
+    useEffect(() => {
+      this.usernameError.set('')
+      this.passwordError.set('')
+    }, [this.username.value, this.password.value])
   }
 
   async restoreSession() {
@@ -47,7 +55,9 @@ export class LoginController {
       await this.authService.login(this.username.value, this.password.value)
       await this.setUserProfile()
     } catch (err) {
-      console.log(err)
+      const message = (err as Error).message
+      if (message === 'USER_NOT_FOUND') this.usernameError.set('Usuário inválido')
+      if (message === 'INVALID_PASSWORD') this.passwordError.set('Senha incorreta')
     }
   }
 
