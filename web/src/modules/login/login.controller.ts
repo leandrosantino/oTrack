@@ -2,9 +2,9 @@ import { useAuth } from "@/contexts/authContext";
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
 import { useStateObject } from "@/lib/useStateObject";
 import { useEffect } from "react";
-import { inject, singleton } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 
-@singleton()
+@injectable()
 export class LoginController {
 
   private auth = useAuth()

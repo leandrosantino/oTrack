@@ -5,7 +5,7 @@ import { useStateObject } from "@/lib/useStateObject";
 import { Cable, LucideIcon, MapPin, PackageCheck, ScanBarcode, Settings2, SquareKanban, UserRoundCog } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { inject, singleton } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { UserMenuProps } from "./components/user-menu.view";
 
 type PagesData = Array<{
@@ -16,7 +16,7 @@ type PagesData = Array<{
   isActive?: boolean
 }>
 
-@singleton()
+@injectable()
 export class LayoutController {
 
   pages: PagesData = [
