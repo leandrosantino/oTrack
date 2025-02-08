@@ -60,7 +60,7 @@ app.register(fastifySwaggerUi, {
   transformStaticCSP: (header) => header
 })
 
-app.setErrorHandler(errorMiddleware.build)
+app.setErrorHandler(errorMiddleware.build())
 
 //Local Plugins
 app.register(authController.routes, { prefix: 'auth' })

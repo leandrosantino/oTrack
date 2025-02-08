@@ -1,7 +1,7 @@
-import { injectable } from "tsyringe"
+import { singleton } from "tsyringe"
 import z from "zod"
 
-@injectable()
+@singleton()
 export class Properties {
 
   private envSchema = z.object({

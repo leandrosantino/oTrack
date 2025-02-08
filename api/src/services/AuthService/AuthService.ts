@@ -8,6 +8,7 @@ import { AsyncResult } from "interfaces/Result";
 import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
 import { TokenExceptions } from "services/JwtService/TokenExceptions";
 import { IJwtService } from "services/JwtService/IJwtService";
+import { Logger } from "interfaces/Logger";
 
 
 @injectable()
@@ -17,6 +18,7 @@ export class AuthService implements IAuthService {
     @inject('UserRepository') private readonly userRepository: IUserRepository,
     @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher,
     @inject('JwtService') private readonly jwtService: IJwtService,
+    @inject('Logger') private readonly logger: Logger
   ) { }
 
   async signIn({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions> {
@@ -66,7 +68,7 @@ export class AuthService implements IAuthService {
 
     if (savedTokenData === null) {
       await this.userRepository.deleteTokensByUserId(refreshTokenData.userId)
-      // Enviar alerta ao desenvolvedor que ouve uma tentativa suspeita de renovar um token de acesso
+      this.logger.info('Attempt to refresh tokens using a discarded token')
       return Err(TokenExceptions.INVALID_TOKEN)
     }
 
