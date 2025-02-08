@@ -2,8 +2,7 @@ import { container } from "tsyringe";
 import { AuthService } from "./services/AuthService/AuthService";
 import { AuthController } from "controllers/AuthController";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import { WebSocketController } from "controllers/WebSocketController";
-import { EventListener } from "utils/EventListener";
+import { LocationSharingController } from "controllers/LocationSharingController";
 import { UserRepository } from "repository/UserRepository";
 import { UsersController } from "controllers/UsersController";
 
@@ -14,12 +13,12 @@ import { UserService } from "services/UserService/UserService";
 import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
 import { JwtService } from "services/JwtService/JwtService";
 import { LocalLogger } from "utils/LocalLogger";
+import { LocationSharing } from "services/LocationSharing/LocationSharing";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
 
 container.register('AuthMiddleware', AuthMiddleware)
-container.register('EventListener', EventListener)
 
 container.register('UserRepository', UserRepository)
 
@@ -27,6 +26,7 @@ container.register('AuthService', AuthService)
 container.register('UserService', UserService)
 container.register('PasswordHasher', PasswordHasher)
 container.register('JwtService', JwtService)
+container.register('LocationSharing', LocationSharing)
 
 container.register('Logger', LocalLogger)
 
@@ -38,4 +38,4 @@ export const errorMiddleware = container.resolve(ErrorMiddleware)
 
 export const authController = container.resolve(AuthController)
 export const usersController = container.resolve(UsersController)
-export const webSocketController = container.resolve(WebSocketController)
+export const locationSharingController = container.resolve(LocationSharingController)

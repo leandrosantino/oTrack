@@ -2,7 +2,7 @@ import "reflect-metadata";
 import Dotenv from 'dotenv'
 
 import Fastify from "fastify";
-import { authController, errorMiddleware, properties, usersController, webSocketController } from "factory";
+import { authController, errorMiddleware, properties, usersController, locationSharingController } from "factory";
 import { fastifyWebsocket } from "@fastify/websocket";
 import { fastifyCors } from "@fastify/cors";
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
@@ -65,7 +65,7 @@ app.setErrorHandler(errorMiddleware.build())
 //Local Plugins
 app.register(authController.routes, { prefix: 'auth' })
 app.register(usersController.routes, { prefix: 'user' })
-app.register(webSocketController.routes)
+app.register(locationSharingController.routes)
 
 
 app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
