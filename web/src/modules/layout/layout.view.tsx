@@ -44,10 +44,10 @@ export function LayoutView({controller }: props) {
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          Dashboard
+          {controller.pageTitle.value}
         </div>
       </header>
-      <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <main className="flex flex-1 flex-col items-center gap-4 p-6">
         <Outlet />
       </main>
     </SidebarInset>
