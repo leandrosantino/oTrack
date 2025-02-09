@@ -8,7 +8,8 @@ export class Properties {
     JWT_SECRET: z.string(),
     ACCESS_TOKEN_EXPIRES: z.string(),
     REFRESH_TOKEN_EXPIRES: z.string(),
-    COOKIE_SECRET: z.string()
+    COOKIE_SECRET: z.string(),
+    CORS_ORIGINS: z.string()
   })
 
   public env = {} as z.infer<typeof this.envSchema>
