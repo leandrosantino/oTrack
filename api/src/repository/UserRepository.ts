@@ -6,6 +6,7 @@ import { injectable } from "tsyringe";
 
 @injectable()
 export class UserRepository implements IUserRepository {
+
   async createToken(userId: User["id"]): Promise<Omit<UserToken, "user">> {
     const createdToken = await prisma.tokens.create({
       data: { userId }
@@ -70,6 +71,9 @@ export class UserRepository implements IUserRepository {
     throw new Error("Method not implemented.");
   }
   findMany(): Promise<User[]> {
+    throw new Error("Method not implemented.");
+  }
+  update(entity: Omit<User, "tokens">): Promise<Omit<User, "tokens">> {
     throw new Error("Method not implemented.");
   }
 

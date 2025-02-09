@@ -1,6 +1,7 @@
 
 import { UserExceptions } from 'entities/user/UserExceptions';
-import { SignInExceptions, TokenExceptions } from 'services/AuthService/AuthExceptions';
+import { SignInExceptions } from 'services/AuthService/AuthExceptions';
+import { TokenExceptions } from 'services/JwtService/TokenExceptions';
 
 export type ErrorTypes =
   UserExceptions |

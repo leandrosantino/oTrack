@@ -3,4 +3,5 @@ export interface EntityRepository<Entity, Id> {
   getById(id: Id): Promise<Entity | null>
   findMany(): Promise<Entity[]>
   create(entity: Omit<Entity, 'id'>): Promise<Entity>
+  update(entity: Entity): Promise<Entity>
 }

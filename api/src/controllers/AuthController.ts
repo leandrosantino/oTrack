@@ -13,8 +13,7 @@ import { TokenExceptions } from "services/JwtService/TokenExceptions";
 export class AuthController implements ControllerInterface {
 
   constructor(
-    @inject('AuthService') private readonly authService: IAuthService,
-    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware
+    @inject('AuthService') private readonly authService: IAuthService
   ) { }
 
   private readonly tags = ['Authentication']

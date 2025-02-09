@@ -1,13 +1,16 @@
 import { User } from "entities/user/User";
-import { WS_EVENT_DATA_SCHEMA } from "schemas/WsEventDataSchema";
-import { singleton } from "tsyringe";
 import { WebSocket, RawData, EventEmitter } from "ws";
+import z from "zod";
 
-@singleton()
 export class WsClient {
 
   private listener: EventEmitter
   profile: User
+
+  WS_EVENT_DATA_SCHEMA = z.object({
+    event: z.string(),
+    payload: z.any()
+  })
 
   constructor(
     private readonly socket: WebSocket,
@@ -22,7 +25,7 @@ export class WsClient {
   private onMessange(chunk: RawData) {
     try {
       const data = JSON.parse(chunk.toString())
-      const { event, payload } = WS_EVENT_DATA_SCHEMA.parse(data)
+      const { event, payload } = this.WS_EVENT_DATA_SCHEMA.parse(data)
       this.listener.emit(event, payload)
     } catch { }
   }
