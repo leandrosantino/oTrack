@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
+import { OrderCard } from "./components/order-card.view"
 import { ServiceOrdersController } from "./service-orders.controller"
 
 type props = {
@@ -17,8 +17,8 @@ export function ServiceOrdersView({controller}: props){
       <DragDropContext onDragEnd={controller.onDragEnd} onDragStart={controller.onDragStart} onDragUpdate={controller.onDragUpdate} >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
           {Object.values(controller.columns.value).map((column) => (
-            <Card key={column.id} className="bg-gray-50/50" >
-              <CardHeader>
+            <Card key={column.id} className="bg-transparent border-0 shadow-transparent" >
+              <CardHeader className="p-4" >
                 <CardTitle className="text-sm font-medium">
                   {column.title} ({column.orders.length})
                 </CardTitle>
@@ -27,23 +27,18 @@ export function ServiceOrdersView({controller}: props){
                 {(provided) => (
                   <CardContent 
                     {...provided.droppableProps} ref={provided.innerRef} 
-                    className="space-y-3 sm:max-h-[calc(100vh-14.9rem)] lg:h-[calc(100vh-14.9rem)] overflow-y-auto"
+                    className="space-y-3 sm:max-h-[calc(100vh-14.9rem)] lg:h-[calc(100vh-14.9rem)] overflow-y-auto p-3 pt-0"
                   >
-                    {column.orders.map((orders, index) => (
-                      <Draggable key={orders.id} draggableId={orders.id.toString()} index={index}>
+                    {column.orders.map((order, index) => (
+                      <Draggable key={order.id} draggableId={order.id.toString()} index={index}>
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="bg-white rounded-lg shadow-sm p-3 border border-gray-100 "
+                            // className="bg-white rounded-lg shadow-sm p-3 border border-gray-100 "
                           >
-                            <div className="flex justify-between items-start gap-2">
-                              <p className="text-sm">{orders.description}</p>
-                              <Badge variant="secondary" className={controller.priorityColors[orders.priority]}>
-                                {orders.priority}
-                              </Badge>
-                            </div>
+                            <OrderCard data={order} />
                           </div>
                         )}
                       </Draggable>
