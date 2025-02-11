@@ -20,7 +20,11 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
   }
 
   async findMany(): Promise<ServiceOrder[]> {
-    const serviceOrder = await prisma.serviceOrders.findMany()
+    const serviceOrder = await prisma.serviceOrders.findMany({
+      orderBy: {
+        index: 'asc'
+      }
+    })
     return serviceOrder as ServiceOrder[]
   }
 
