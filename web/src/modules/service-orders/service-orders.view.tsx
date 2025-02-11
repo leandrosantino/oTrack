@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
-import { OrderCard } from "./components/order-card.view"
+import { OrderCard } from "./components/order-card"
 import { ServiceOrdersController } from "./service-orders.controller"
 
 type props = {

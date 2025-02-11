@@ -7,10 +7,9 @@ type props = {
   data: ServiceOrder
 }
 
-const priorityColors = {
-  low: "bg-orange-100 text-orange-800",
-  medium: "bg-blue-100 text-blue-800",
-  high: "bg-blue-100 text-blue-800",
+const priorityColors: Record<ServiceOrder['priority'], string> = {
+  corrective: "bg-orange-100 text-orange-800",
+  scheduled: "bg-blue-100 text-blue-800",
 }
 
 export function OrderCard({data}: props) {
@@ -18,7 +17,7 @@ export function OrderCard({data}: props) {
     <Card 
       className={cn(
         "px-2",
-        data.priority === 'low' ? " hover:bg-orange-50/50" : " hover:bg-blue-50/50",
+        data.priority === 'corrective' ? " hover:bg-orange-50/50" : " hover:bg-blue-50/50",
         data.status === 'done' && "border-green-500 hover:bg-green-50/50"
       )} 
     >
@@ -30,7 +29,7 @@ export function OrderCard({data}: props) {
           priorityColors[data.priority],
           data.status === 'done' && "bg-green-100 text-green-800",
         )} >
-          {data.priority === 'low' ? "Corretiva" : "Programada"}
+          {data.priority === 'corrective' ? "Corretiva" : "Programada"}
         </Badge>
       </CardHeader>
       <CardContent className="p-2 text-sm h-16" >

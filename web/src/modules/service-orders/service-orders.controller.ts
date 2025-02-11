@@ -57,6 +57,8 @@ export class ServiceOrdersController {
     const [removed] = sourceOrders.splice(sourceIndex, 1);
     destOrders.splice(destIndex, 0, removed);
 
+    destOrders[destIndex].status = destId as ServiceOrder['status'];
+
     this.columns.set({
       ...this.columns.value,
       [sourceId]: { ...sourceColumn, orders: sourceOrders },
@@ -75,6 +77,7 @@ export class ServiceOrdersController {
     }
     this.handleCrossColumnMove(source.droppableId, destination.droppableId, source.index, destination.index);
   };
+
 
   onDragStart = () => {
     if (window.navigator.vibrate) {

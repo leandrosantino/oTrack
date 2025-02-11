@@ -4,5 +4,5 @@ export interface ServiceOrder {
   date: Date
   userId: number
   status: 'pending' | 'inProgress' | 'done'
-  priority: "low" | "medium" | "high"
+  priority: "scheduled" | "corrective"
 }
