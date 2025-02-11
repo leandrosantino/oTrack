@@ -1,9 +1,12 @@
-import { OrderStatus } from "./OrderStatus";
+import { ServiceOrderStatus } from "./ServiceOrderStatus";
+import { ServiceOrderType } from "./ServiceOrderType";
 
 export interface ServiceOrder {
   id: number;
   description: string;
   date: Date
-  status: OrderStatus
-  userId: number
+  status: ServiceOrderStatus
+  type: ServiceOrderType
+  userId: number,
+  index: number
 }
