@@ -5,19 +5,15 @@ import { cn } from "@/lib/utils";
 
 type props = {
   data: ServiceOrder
+  typeColors: Record<ServiceOrder['type'], string>
 }
 
-const priorityColors: Record<ServiceOrder['priority'], string> = {
-  corrective: "bg-orange-100 text-orange-800",
-  scheduled: "bg-blue-100 text-blue-800",
-}
-
-export function OrderCard({data}: props) {
+export function OrderCard({data, typeColors}: props) {
   return (
     <Card 
       className={cn(
         "px-2",
-        data.priority === 'corrective' ? " hover:bg-orange-50/50" : " hover:bg-blue-50/50",
+        data.type === 'corrective' ? " hover:bg-orange-50/50" : " hover:bg-blue-50/50",
         data.status === 'done' && "border-green-500 hover:bg-green-50/50"
       )} 
     >
@@ -26,10 +22,10 @@ export function OrderCard({data}: props) {
           OS - {data.id}
         </h1>
         <Badge variant="secondary" className={cn(
-          priorityColors[data.priority],
+          typeColors[data.type],
           data.status === 'done' && "bg-green-100 text-green-800",
         )} >
-          {data.priority === 'corrective' ? "Corretiva" : "Programada"}
+          {data.type === 'corrective' ? "Corretiva" : "Programada"}
         </Badge>
       </CardHeader>
       <CardContent className="p-2 text-sm h-16" >

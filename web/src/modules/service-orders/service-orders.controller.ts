@@ -1,9 +1,9 @@
 import { ServiceOrder } from "@/domain/entities/ServiceOrder";
+import type { IServiceOrdersService } from "@/domain/services/service-orders-service/IServiceOrdersService";
 import { useStateObject } from "@/lib/useStateObject";
 import { DropResult } from "@hello-pangea/dnd";
 import { useEffect } from "react";
-import { injectable } from "tsyringe";
-import { serviceOrders } from ".";
+import { inject, injectable } from "tsyringe";
 
 type Column = {
   id: string
@@ -16,26 +16,35 @@ export class ServiceOrdersController {
 
   public columns = useStateObject<Record<string, Column>>({
     pending: { id: "pending", title: "Pendente", orders: [] },
-    inProgress: { id: "inProgress", title: "Em Andamento", orders: [], },
+    in_progress: { id: "in_progress", title: "Em Andamento", orders: [], },
     done: { id: "done", title: "Concluído", orders: [], },
   })
 
-  public priorityColors = {
-    low: "bg-blue-100 text-blue-800",
-    medium: "bg-yellow-100 text-yellow-800",
-    high: "bg-red-100 text-red-800",
+  public typeColors: Record<ServiceOrder['type'], string> = {
+    corrective: "bg-orange-100 text-orange-800",
+    scheduled: "bg-blue-100 text-blue-800",
   }
 
-  constructor() {
+  public loading = useStateObject(false)
+
+  constructor(
+    @inject('ServiceOrdersService') private readonly serviceOrdersService: IServiceOrdersService
+  ) {
     useEffect(() => { this.loadServiceOrders() }, [])
   }
 
-  private loadServiceOrders() {
-    const oldColumns = { ...this.columns.value }
-    serviceOrders.forEach(item => {
-      oldColumns[item.status].orders.push(item)
-    })
-    this.columns.set(oldColumns)
+  private async loadServiceOrders() {
+    this.loading.set(true)
+    try {
+      const serviceOrders = await this.serviceOrdersService.getAll()
+      const oldColumns = { ...this.columns.value }
+      serviceOrders.forEach(item => {
+        oldColumns[item.status].orders.push(item)
+      })
+      this.columns.set(oldColumns)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   private handleSameColumnMove(columnId: string, startIndex: number, endIndex: number) {

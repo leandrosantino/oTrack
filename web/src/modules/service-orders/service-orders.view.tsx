@@ -38,7 +38,7 @@ export function ServiceOrdersView({controller}: props){
                             {...provided.dragHandleProps}
                             // className="bg-white rounded-lg shadow-sm p-3 border border-gray-100 "
                           >
-                            <OrderCard data={order} />
+                            <OrderCard typeColors={controller.typeColors} data={order} />
                           </div>
                         )}
                       </Draggable>
