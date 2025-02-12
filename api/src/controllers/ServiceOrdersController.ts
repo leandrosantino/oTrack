@@ -18,13 +18,7 @@ export class ServiceOrdersController implements ControllerInterface {
     @inject('CreateServiceOrderObserver') private readonly createServiceOrder: CreateServiceOrderObserver,
     @inject('ListServiceOrders') private readonly listServiceOrders: ListServiceOrders,
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
-  ) {
-
-    this.createServiceOrder.subscribe(() => {
-      console.log('Service order created')
-    })
-
-  }
+  ) { }
 
   private CREATE_SERVICE_ORDER_SCHEMA = z.object({
     id: z.number(),

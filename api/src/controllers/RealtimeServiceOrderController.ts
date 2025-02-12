@@ -7,20 +7,19 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { Roules } from "entities/user/Roule";
 import { WsClient } from "utils/WsClient";
 import { User } from "entities/user/User";
-import { ILocationSharing } from "services/LocationSharing/ILocationSharing";
+import { IRealtimeServiceOrderService } from "services/RealtimeServiceOrderService/IRealtimeServiceOrderService";
 
 @injectable()
-export class LocationSharingController implements ControllerInterface {
+export class RealtimeServiceOrderController implements ControllerInterface {
 
   constructor(
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
-    @inject('LocationSharing') private readonly locationSharing: ILocationSharing
+    @inject('RealtimeServiceOrderService') private readonly realtimeServiceOrderService: IRealtimeServiceOrderService
   ) { }
 
   webSocketHandler(socket: WebSocket, request: FastifyRequest) {
-    const { id } = request.query as { id: number };
-    const client = new WsClient(socket, { id: Number(id), roule: Roules.ADMIN } as User)
-    this.locationSharing.execute(client)
+    const client = new WsClient(socket, request.user)
+    this.realtimeServiceOrderService.execute(client)
   }
 
   routes: FastifyPluginAsyncZod = async (app) => {
@@ -31,7 +30,7 @@ export class LocationSharingController implements ControllerInterface {
         security: [{ BearerAuth: [] }],
       },
       method: 'GET',
-      url: '/location',
+      url: '/realtime',
       handler: () => { },
       wsHandler: (...params) => this.webSocketHandler(...params)
     })

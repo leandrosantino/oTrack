@@ -34,7 +34,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     }) as ServiceOrder
   }
 
-  async update(entity: ServiceOrder): Promise<ServiceOrder> {
+  async update(entity: Partial<ServiceOrder>): Promise<ServiceOrder> {
     return await prisma.serviceOrders.update({
       where: { id: entity.id },
       data: entity

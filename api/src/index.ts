@@ -2,7 +2,7 @@ import "reflect-metadata";
 import Dotenv from 'dotenv'
 
 import Fastify from "fastify";
-import { authController, errorMiddleware, properties, usersController, locationSharingController, serviceOrdersController } from "factory";
+import { authController, errorMiddleware, properties, usersController, locationSharingController, serviceOrdersController, realtimeServiceOrderController } from "factory";
 import { fastifyWebsocket } from "@fastify/websocket";
 import { fastifyCors } from "@fastify/cors";
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
@@ -62,6 +62,7 @@ app.setErrorHandler(errorMiddleware.build())
 app.register(authController.routes, { prefix: 'auth' })
 app.register(usersController.routes, { prefix: 'user' })
 app.register(serviceOrdersController.routes, { prefix: 'service-order' })
+app.register(realtimeServiceOrderController.routes, { prefix: 'service-order' })
 app.register(locationSharingController.routes)
 
 

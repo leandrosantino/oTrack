@@ -1,11 +1,12 @@
 import { User } from "entities/user/User";
+import { AccessTokenData } from "services/AuthService/IAuthService";
 import { WebSocket, RawData, EventEmitter } from "ws";
 import z from "zod";
 
 export class WsClient {
 
   private listener: EventEmitter
-  profile: User
+  profile?: AccessTokenData
 
   WS_EVENT_DATA_SCHEMA = z.object({
     event: z.string(),
@@ -14,7 +15,7 @@ export class WsClient {
 
   constructor(
     private readonly socket: WebSocket,
-    profile: User,
+    profile?: AccessTokenData,
   ) {
     this.profile = profile
     this.listener = new EventEmitter()

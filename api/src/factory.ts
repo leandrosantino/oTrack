@@ -19,6 +19,9 @@ import { ServiceOrdersController } from "controllers/ServiceOrdersController";
 import { CreateServiceOrder } from "use-cases/service-order/CreateServiceOrder";
 import { ListServiceOrders } from "use-cases/service-order/ListServiceOrders";
 import { CreateServiceOrderObserver } from "use-cases/service-order/CreateServiceOrderObserver";
+import { RealtimeServiceOrderService } from "services/RealtimeServiceOrderService/RealtimeServiceOrderService";
+import { RealtimeServiceOrderController } from "controllers/RealtimeServiceOrderController";
+import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -34,9 +37,11 @@ container.register('PasswordHasher', PasswordHasher)
 container.register('JwtService', JwtService)
 container.register('LocationSharing', LocationSharing)
 
-container.registerSingleton('CreateServiceOrder', CreateServiceOrder);
-container.registerSingleton('CreateServiceOrderObserver', CreateServiceOrderObserver);
-container.registerSingleton('ListServiceOrders', ListServiceOrders);
+container.registerSingleton('CreateServiceOrder', CreateServiceOrder)
+container.registerSingleton('CreateServiceOrderObserver', CreateServiceOrderObserver)
+container.registerSingleton('UpdateServiceOrder', UpdateServiceOrder)
+container.registerSingleton('ListServiceOrders', ListServiceOrders)
+container.registerSingleton('RealtimeServiceOrderService', RealtimeServiceOrderService)
 
 container.register('Logger', LocalLogger)
 
@@ -50,3 +55,4 @@ export const authController = container.resolve(AuthController)
 export const usersController = container.resolve(UsersController)
 export const locationSharingController = container.resolve(LocationSharingController)
 export const serviceOrdersController = container.resolve(ServiceOrdersController)
+export const realtimeServiceOrderController = container.resolve(RealtimeServiceOrderController)
