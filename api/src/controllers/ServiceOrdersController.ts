@@ -1,4 +1,3 @@
-import { ServiceOrder } from "entities/service-order/ServiceOrder";
 import { ServiceOrderStatus } from "entities/service-order/ServiceOrderStatus";
 import { ServiceOrderType } from "entities/service-order/ServiceOrderType";
 import { Roules } from "entities/user/Roule";
@@ -6,16 +5,17 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { ControllerInterface } from "interfaces/ControllerInterface";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { inject, singleton } from "tsyringe";
-import { CreateServiceOrder } from "use-cases/service-order/CreateServiceOrder";
-import { CreateServiceOrderObserver } from "use-cases/service-order/CreateServiceOrderObserver";
 import { ListServiceOrders } from "use-cases/service-order/ListServiceOrders";
+import { ICreateServiceOrder } from "use-cases/service-order/types";
+import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import z from "zod";
 
 @singleton()
 export class ServiceOrdersController implements ControllerInterface {
 
   constructor(
-    @inject('CreateServiceOrderObserver') private readonly createServiceOrder: CreateServiceOrderObserver,
+    @inject('CreateServiceOrderObserver') private readonly createServiceOrder: ICreateServiceOrder,
+    @inject('UpdateServiceOrderKanbanPosition') private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
     @inject('ListServiceOrders') private readonly listServiceOrders: ListServiceOrders,
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
   ) { }
@@ -26,7 +26,6 @@ export class ServiceOrdersController implements ControllerInterface {
     date: z.date(),
     status: z.nativeEnum(ServiceOrderStatus),
     userId: z.number(),
-    index: z.number(),
     type: z.nativeEnum(ServiceOrderType),
   })
 
@@ -56,7 +55,7 @@ export class ServiceOrdersController implements ControllerInterface {
         description: 'Get all service orders',
         security: [{ BearerAuth: [] }],
       }
-    }, async (request, reply) => {
+    }, async (_, reply) => {
       const serviceOrders = await this.listServiceOrders.execute()
       reply.status(200).send(serviceOrders)
     })

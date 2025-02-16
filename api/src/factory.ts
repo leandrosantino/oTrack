@@ -18,10 +18,12 @@ import { ServiceOrderRepository } from "repository/ServiceOrderRepository";
 import { ServiceOrdersController } from "controllers/ServiceOrdersController";
 import { CreateServiceOrder } from "use-cases/service-order/CreateServiceOrder";
 import { ListServiceOrders } from "use-cases/service-order/ListServiceOrders";
-import { CreateServiceOrderObserver } from "use-cases/service-order/CreateServiceOrderObserver";
 import { RealtimeServiceOrderService } from "services/RealtimeServiceOrderService/RealtimeServiceOrderService";
 import { RealtimeServiceOrderController } from "controllers/RealtimeServiceOrderController";
 import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
+import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
+import { CreateServiceOrderObservable } from "use-cases/service-order/wrappers/CreateServiceOrderObservable";
+import { UpdateServiceOrderObservable } from "use-cases/service-order/wrappers/UpdateServiceOrderObservable";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -38,8 +40,10 @@ container.register('JwtService', JwtService)
 container.register('LocationSharing', LocationSharing)
 
 container.registerSingleton('CreateServiceOrder', CreateServiceOrder)
-container.registerSingleton('CreateServiceOrderObserver', CreateServiceOrderObserver)
+container.registerSingleton('CreateServiceOrderObserver', CreateServiceOrderObservable)
 container.registerSingleton('UpdateServiceOrder', UpdateServiceOrder)
+container.registerSingleton('UpdateServiceOrderObservable', UpdateServiceOrderObservable)
+container.registerSingleton('UpdateServiceOrderKanbanPosition', UpdateServiceOrderKanbanPosition)
 container.registerSingleton('ListServiceOrders', ListServiceOrders)
 container.registerSingleton('RealtimeServiceOrderService', RealtimeServiceOrderService)
 

@@ -6,6 +6,13 @@ import { injectable } from "tsyringe";
 @injectable()
 export class ServiceOrderRepository implements IServiceOrderRepository {
 
+  async getHigherIndex(): Promise<number> {
+    const { _max } = await prisma.serviceOrders.aggregate({
+      _max: { index: true }
+    })
+    return _max?.index || 0
+  }
+
   async exists(id: number): Promise<boolean> {
     return !!await prisma.serviceOrders.findUnique({
       where: { id }
@@ -22,7 +29,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
   async findMany(): Promise<ServiceOrder[]> {
     const serviceOrder = await prisma.serviceOrders.findMany({
       orderBy: {
-        index: 'asc'
+        index: 'desc'
       }
     })
     return serviceOrder as ServiceOrder[]

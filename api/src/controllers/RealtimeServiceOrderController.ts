@@ -17,13 +17,15 @@ export class RealtimeServiceOrderController implements ControllerInterface {
     @inject('RealtimeServiceOrderService') private readonly realtimeServiceOrderService: IRealtimeServiceOrderService
   ) { }
 
+  i = 1
+
   webSocketHandler(socket: WebSocket, request: FastifyRequest) {
-    const client = new WsClient(socket, request.user)
+    const client = new WsClient(socket, { username: `Usuário ${this.i++}` } as User)
     this.realtimeServiceOrderService.execute(client)
   }
 
   routes: FastifyPluginAsyncZod = async (app) => {
-    app.addHook('onRequest', this.authMiddleware.build([Roules.ADMIN]))
+    // app.addHook('onRequest', this.authMiddleware.build([Roules.ADMIN]))
     app.route({
       schema: {
         tags: ['websocket'],
