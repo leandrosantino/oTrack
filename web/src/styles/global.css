@@ -18,6 +18,7 @@
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
+    --scrollbar: 240 4.9% 83.9%;
     --accent: 240 4.8% 95.9%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
@@ -74,14 +75,38 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%}
-}
-
-@layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+  }
+
+  .scrollbar-show::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--scrollbar));
+  }
+  .scrollbar-hide::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+  
+  .scrollbar {
+    scrollbar-width: auto;
+  }
+
+  *{
+    @apply scrollbar scrollbar-show;
   }
 }
 

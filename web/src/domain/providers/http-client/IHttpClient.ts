@@ -1,6 +1,7 @@
 
 export interface IHttpClient {
   post<T, B = any>(path: string, body: B): AsyncResult<T, HttpClientError>
+  put<T, B = any>(path: string, body: B): AsyncResult<T, HttpClientError>
   get<T, P = any>(path: string, params?: P): AsyncResult<T, HttpClientError>
   setToken(token: string): void
   setErrorInterceptor(errorHandler: HttpClientErrorHandler): void

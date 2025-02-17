@@ -3,6 +3,7 @@ export interface ServiceOrder {
   description: string;
   date: Date
   userId: number
-  status: 'pending' | 'inProgress' | 'done'
+  index: number
+  status: 'pending' | 'in_progress' | 'done'
   type: "scheduled" | "corrective"
 }

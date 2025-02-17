@@ -19,7 +19,7 @@ export function OrderCard({data, typeColors}: props) {
     >
       <CardHeader className="flex-row justify-between items-center p-2 border-b border-border" > 
         <h1 className="font-medium text-sm" >
-          OS - {data.id}
+          OS - {data.id} - I: {data.index}
         </h1>
         <Badge variant="secondary" className={cn(
           typeColors[data.type],

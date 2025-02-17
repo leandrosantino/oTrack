@@ -67,4 +67,12 @@ export class AuthService implements IAuthService {
     this.httpClient.setToken(refreshTokenResult.value)
   }
 
+  async generateWebSocketTicket() {
+    const webSocketTicketResult = await this.httpClient.get<string>('/auth/websocket-ticket')
+    if (!webSocketTicketResult.ok) {
+      throw new Error(webSocketTicketResult.err.message)
+    }
+    return webSocketTicketResult.value
+  }
+
 }

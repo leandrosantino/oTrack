@@ -8,4 +8,5 @@ export interface IAuthService {
   refreshToken(): Promise<void>
   onExpiresToken(): void
   setOnExpiresToken(callback: VoidFunction): void
+  generateWebSocketTicket(): Promise<string>
 }

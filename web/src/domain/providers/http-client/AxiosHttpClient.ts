@@ -9,13 +9,33 @@ export class AxiosHttpClient implements IHttpClient {
   #token = ''
 
   #api = axios.create({
-    baseURL: 'http://10.0.0.108:3000',
+    baseURL: 'http://localhost:3000',
     withCredentials: true,
   })
 
   async post<T, B>(path: string, body: B): AsyncResult<T, HttpClientError> {
     try {
       const resp = await this.#api.post<T>(path, body, {
+        headers: {
+          Authorization: `Bearer ${this.#token}`
+        }
+      })
+      return Ok(resp.data)
+    } catch (err) {
+      const axiosError = err as AxiosError<ApiErrorData>
+      const { response } = axiosError
+
+      return Err({
+        type: response?.data.type ?? '',
+        code: response?.status ?? 0,
+        message: response?.data.message ?? ''
+      })
+    }
+  }
+
+  async put<T, B>(path: string, body: B): AsyncResult<T, HttpClientError> {
+    try {
+      const resp = await this.#api.put<T>(path, body, {
         headers: {
           Authorization: `Bearer ${this.#token}`
         }

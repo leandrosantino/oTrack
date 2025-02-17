@@ -14,11 +14,13 @@ type Column = {
 @injectable()
 export class ServiceOrdersController {
 
-  public columns = useStateObject<Record<string, Column>>({
+  private readonly startColumns: Record<string, Column> = {
     pending: { id: "pending", title: "Pendente", orders: [] },
     in_progress: { id: "in_progress", title: "Em Andamento", orders: [], },
     done: { id: "done", title: "Concluído", orders: [], },
-  })
+  }
+
+  public columns = useStateObject<Record<string, Column>>({ ...this.startColumns })
 
   public typeColors: Record<ServiceOrder['type'], string> = {
     corrective: "bg-orange-100 text-orange-800",
@@ -28,38 +30,88 @@ export class ServiceOrdersController {
   public loading = useStateObject(false)
 
   constructor(
-    @inject('ServiceOrdersService') private readonly serviceOrdersService: IServiceOrdersService
+    @inject('ServiceOrdersService') private readonly serviceOrdersService: IServiceOrdersService,
   ) {
     useEffect(() => { this.loadServiceOrders() }, [])
+    useEffect(() => { this.startSocket() }, [])
+  }
+
+  private async startSocket() {
+    await this.serviceOrdersService.startRealtime()
+    this.serviceOrdersService.onCreated((order: ServiceOrder) => {
+      const column = this.columns.value[order.status]
+      column.orders = [order, ...column.orders]
+      this.columns.set({ ...this.columns.value, [order.status]: column })
+    })
+    this.serviceOrdersService.onUpdated(() => { this.loadServiceOrders() })
   }
 
   private async loadServiceOrders() {
     this.loading.set(true)
     try {
       const serviceOrders = await this.serviceOrdersService.getAll()
-      const oldColumns = { ...this.columns.value }
+      this.startColumns['pending'].orders = []
+      this.startColumns['in_progress'].orders = []
+      this.startColumns['done'].orders = []
+      console.log('updated')
       serviceOrders.forEach(item => {
-        oldColumns[item.status].orders.push(item)
+        this.startColumns[item.status].orders.push(item)
       })
-      this.columns.set(oldColumns)
+      this.columns.set(this.startColumns)
+      this.loading.set(false)
     } catch (err) {
       console.log(err)
     }
   }
 
-  private handleSameColumnMove(columnId: string, startIndex: number, endIndex: number) {
+  private updatingOrder = useStateObject(false)
+
+  private async handleSameColumnMove(columnId: string, startIndex: number, endIndex: number) {
+    if (this.updatingOrder.value) return
+    this.updatingOrder.set(true)
     const column = this.columns.value[columnId];
     const updatedOrders = this.reorderList(column.orders, startIndex, endIndex);
+
+    const movingOrder = column.orders[startIndex]
+    let previousIndex = 0
+    let postIndex = 0
+    if (startIndex < endIndex) {
+      previousIndex = column.orders[endIndex]?.index
+      postIndex = column.orders[endIndex + 1]?.index
+    }
+    if (startIndex > endIndex) {
+      previousIndex = column.orders[endIndex - 1]?.index
+      postIndex = column.orders[endIndex]?.index
+    }
+    const updated = await this.serviceOrdersService.updateKanbanPosition({
+      id: movingOrder.id,
+      previousIndex,
+      postIndex,
+      status: columnId as ServiceOrder['status']
+    })
+    movingOrder.index = updated.index
 
     this.columns.set({
       ...this.columns.value,
       [columnId]: { ...column, orders: updatedOrders },
     });
+    this.updatingOrder.set(false)
   };
 
-  private handleCrossColumnMove(sourceId: string, destId: string, sourceIndex: number, destIndex: number) {
+  private async handleCrossColumnMove(sourceId: string, destId: string, sourceIndex: number, destIndex: number) {
     const sourceColumn = this.columns.value[sourceId];
     const destColumn = this.columns.value[destId];
+
+    const movingOrder = this.columns.value[sourceId].orders[sourceIndex]
+    const previousIndex = this.columns.value[destId].orders[destIndex - 1]?.index
+    const postIndex = this.columns.value[destId].orders[destIndex]?.index
+    const updated = await this.serviceOrdersService.updateKanbanPosition({
+      id: movingOrder.id,
+      previousIndex,
+      postIndex,
+      status: destId as ServiceOrder['status']
+    })
+    movingOrder.index = updated.index
 
     const sourceOrders = Array.from(sourceColumn.orders);
     const destOrders = Array.from(destColumn.orders);
@@ -76,17 +128,16 @@ export class ServiceOrdersController {
   };
 
 
-  public onDragEnd = (result: DropResult<string>) => {
+  public onDragEnd = async (result: DropResult<string>) => {
     const { source, destination } = result;
     if (!destination) return;
     if (source.droppableId === destination.droppableId && source.index === destination.index) return;
     if (source.droppableId === destination.droppableId) {
-      this.handleSameColumnMove(source.droppableId, source.index, destination.index)
+      await this.handleSameColumnMove(source.droppableId, source.index, destination.index)
       return
     }
-    this.handleCrossColumnMove(source.droppableId, destination.droppableId, source.index, destination.index);
+    await this.handleCrossColumnMove(source.droppableId, destination.droppableId, source.index, destination.index);
   };
-
 
   onDragStart = () => {
     if (window.navigator.vibrate) {
@@ -99,7 +150,6 @@ export class ServiceOrdersController {
       window.navigator.vibrate(20);
     }
   }
-
 
   private reorderList<T>(list: T[], startIndex: number, endIndex: number): T[] {
     const result = Array.from(list);

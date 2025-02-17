@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { OrderCard } from "./components/order-card"
 import { ServiceOrdersController } from "./service-orders.controller"
@@ -27,7 +28,10 @@ export function ServiceOrdersView({controller}: props){
                 {(provided) => (
                   <CardContent 
                     {...provided.droppableProps} ref={provided.innerRef} 
-                    className="space-y-3 sm:max-h-[calc(100vh-14.9rem)] lg:h-[calc(100vh-14.9rem)] overflow-y-auto p-3 pt-0"
+                    className={cn(
+                      "space-y-3 sm:max-h-[calc(100vh-14.9rem)] lg:h-[calc(100vh-14.9rem)] overflow-y-auto p-1 pt-0",
+                      "scrollbar scrollbar-hide hover:scrollbar-show"
+                    )}
                   >
                     {column.orders.map((order, index) => (
                       <Draggable key={order.id} draggableId={order.id.toString()} index={index}>
