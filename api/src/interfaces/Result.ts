@@ -2,11 +2,13 @@
 import { UserExceptions } from 'entities/user/UserExceptions';
 import { SignInExceptions } from 'services/AuthService/AuthExceptions';
 import { TokenExceptions } from 'services/JwtService/TokenExceptions';
+import { TicketExceptions } from 'services/WebSocketAuthService.ts/TicketExceptions';
 
 export type ErrorTypes =
   UserExceptions |
   SignInExceptions |
-  TokenExceptions
+  TokenExceptions |
+  TicketExceptions
 
 export interface IErrorHandler<T> {
   type: T

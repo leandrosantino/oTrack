@@ -7,7 +7,7 @@ import { TokenExceptions } from "services/JwtService/TokenExceptions";
 export interface IAuthService {
   signIn(authData: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions>
   signOut(refreshToken: JwtToken): Promise<void>
-  verifyToken(token: JwtToken): AsyncResult<AccessTokenData, TokenExceptions>
+  verifyToken(token: JwtToken): AsyncResult<UserProfile, TokenExceptions>
   refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenExceptions>
 }
 
@@ -23,7 +23,7 @@ export type AuthResponseDTO = {
 
 export type JwtToken = string
 
-export type AccessTokenData = Pick<User, 'id' | 'displayName' | 'username' | 'roule'>
+export type UserProfile = Pick<User, 'id' | 'displayName' | 'username' | 'roule'>
 export type RefreshTokenData = {
   id: UserToken['id']
   userId: User['id']

@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IAuthService, AuthRequestDTO, JwtToken, AccessTokenData, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
+import { IAuthService, AuthRequestDTO, JwtToken, UserProfile, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
 import { IUserRepository } from 'entities/user/IUserRepository'
 import { SignInExceptions } from "./AuthExceptions";
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
@@ -88,9 +88,9 @@ export class AuthService implements IAuthService {
 
   }
 
-  async verifyToken(token: JwtToken): AsyncResult<AccessTokenData, TokenExceptions> {
+  async verifyToken(token: JwtToken): AsyncResult<UserProfile, TokenExceptions> {
 
-    const jwtVerifyResult = await this.jwtService.verify<AccessTokenData>(token)
+    const jwtVerifyResult = await this.jwtService.verify<UserProfile>(token)
 
     if (!jwtVerifyResult.ok) {
       return Err(jwtVerifyResult.err.type)

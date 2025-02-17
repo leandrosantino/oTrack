@@ -24,16 +24,20 @@ import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
 import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import { CreateServiceOrderObservable } from "use-cases/service-order/wrappers/CreateServiceOrderObservable";
 import { UpdateServiceOrderObservable } from "use-cases/service-order/wrappers/UpdateServiceOrderObservable";
+import { WebSocketAuthService } from "services/WebSocketAuthService.ts/WebSocketAuthService";
+import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
 
 container.register('AuthMiddleware', AuthMiddleware)
+container.register('WebSocketAuthMiddleware', WebSocketAuthMiddleware)
 
 container.register('UserRepository', UserRepository)
 container.register('ServiceOrderRepository', ServiceOrderRepository)
 
 container.register('AuthService', AuthService)
+container.registerSingleton('WebSocketAuthService', WebSocketAuthService)
 container.register('UserService', UserService)
 container.register('PasswordHasher', PasswordHasher)
 container.register('JwtService', JwtService)

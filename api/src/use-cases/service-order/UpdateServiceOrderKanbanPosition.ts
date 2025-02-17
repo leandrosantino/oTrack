@@ -18,8 +18,6 @@ export class UpdateServiceOrderKanbanPosition {
       index = (postIndex + previousIndex) / 2
     }
 
-    console.log(previousIndex, postIndex)
-
     return await this.updateServiceOrder.execute({ id, index, status })
   }
 

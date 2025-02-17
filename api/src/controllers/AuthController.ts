@@ -8,12 +8,17 @@ import { ERROR_SCHEMA } from "schemas/ErrorSchema";
 import { SignInExceptions } from "services/AuthService/AuthExceptions";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { TokenExceptions } from "services/JwtService/TokenExceptions";
+import { Roules } from "entities/user/Roule";
+import { User } from "entities/user/User";
+import { IWebSocketAuthService } from "services/WebSocketAuthService.ts/IWebSocketAuthService";
 
 @injectable()
 export class AuthController implements ControllerInterface {
 
   constructor(
-    @inject('AuthService') private readonly authService: IAuthService
+    @inject('AuthService') private readonly authService: IAuthService,
+    @inject('WebSocketAuthService') private readonly webSocketAuthService: IWebSocketAuthService,
+    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware
   ) { }
 
   private readonly tags = ['Authentication']
@@ -95,6 +100,23 @@ export class AuthController implements ControllerInterface {
       await this.authService.signOut(refreshToken)
       reply.setCookie(this.refreshTokenCookiesName, '', this.refreshTokenCookiesOption).status(200)
     })
+
+    app.get('/websocket-ticket', {
+      onRequest: this.authMiddleware.build([Roules.ADMIN]),
+      schema: {
+        tags: this.tags,
+        description: 'Get a websocket ticket',
+        response: {
+          200: z.string()
+        },
+        security: [{ BearerAuth: [] }],
+      },
+    }, async (request, reply) => {
+      const user = request.user as User
+      const ticket = await this.webSocketAuthService.generateTicket(user)
+      reply.send(ticket)
+    })
+
   }
 
 
