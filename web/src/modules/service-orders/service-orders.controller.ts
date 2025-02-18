@@ -136,6 +136,7 @@ export class ServiceOrdersController {
       await this.handleSameColumnMove(source.droppableId, source.index, destination.index)
       return
     }
+    if (destination.droppableId === 'done') this.playSuccessSound()
     await this.handleCrossColumnMove(source.droppableId, destination.droppableId, source.index, destination.index);
   };
 
@@ -149,6 +150,11 @@ export class ServiceOrdersController {
     if (window.navigator.vibrate) {
       window.navigator.vibrate(20);
     }
+  }
+
+  private playSuccessSound() {
+    const audio = new Audio('/success.mp3');
+    audio.play();
   }
 
   private reorderList<T>(list: T[], startIndex: number, endIndex: number): T[] {
