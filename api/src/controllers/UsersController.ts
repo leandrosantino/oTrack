@@ -4,10 +4,10 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { inject, injectable } from "tsyringe";
 import z from "zod";
-import { IUserService } from "services/UserService/IUserService";
 import { UserCreateExceptions } from "entities/user/UserExceptions";
 import { ERROR_SCHEMA } from "schemas/ErrorSchema";
 import { USER_PROFILE_SCHEMA } from "schemas/UserProfileSchema";
+import { CreateUser } from "use-cases/user/CreateUser";
 
 
 @injectable()
@@ -15,7 +15,7 @@ export class UsersController implements ControllerInterface {
 
   constructor(
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
-    @inject('UserService') private readonly userService: IUserService
+    @inject('CreateUser') private readonly createUser: CreateUser
   ) { }
 
   private USER_SCHEMA = z.object({
@@ -42,7 +42,7 @@ export class UsersController implements ControllerInterface {
       }
     }, async (request, reply) => {
       const user = request.body
-      const createUserResult = await this.userService.create(user)
+      const createUserResult = await this.createUser.execute(user)
 
       if (!createUserResult.ok) {
         createUserResult.err

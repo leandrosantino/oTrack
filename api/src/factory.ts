@@ -9,7 +9,6 @@ import { UsersController } from "controllers/UsersController";
 import { Err, Ok } from 'utils/ResultHandler'
 import { Properties } from "utils/Properties";
 import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
-import { UserService } from "services/UserService/UserService";
 import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
 import { JwtService } from "services/JwtService/JwtService";
 import { LocalLogger } from "utils/LocalLogger";
@@ -28,6 +27,7 @@ import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 import { Observer } from "utils/Observer";
 import { UpdateKanbanPositionValidator } from "services/RealtimeServiceOrderService/UpdateKanbanPositionValidator";
 import { UserProfileValidator } from "services/AuthService/UserProfileValidator";
+import { CreateUser } from "use-cases/user/CreateUser";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -40,7 +40,7 @@ container.register('ServiceOrderRepository', ServiceOrderRepository)
 
 container.register('AuthService', AuthService)
 container.registerSingleton('WebSocketAuthService', WebSocketAuthService)
-container.register('UserService', UserService)
+container.registerSingleton('CreateUser', CreateUser)
 container.register('PasswordHasher', PasswordHasher)
 container.register('JwtService', JwtService)
 container.register('LocationSharing', LocationSharing)
