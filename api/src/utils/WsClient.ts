@@ -6,7 +6,7 @@ import z from "zod";
 export class WsClient {
 
   private listener: EventEmitter
-  profile?: UserProfile
+  profile: UserProfile
 
   WS_EVENT_DATA_SCHEMA = z.object({
     event: z.string(),
@@ -15,7 +15,7 @@ export class WsClient {
 
   constructor(
     private readonly socket: WebSocket,
-    profile?: UserProfile,
+    profile: UserProfile,
   ) {
     this.profile = profile
     this.listener = new EventEmitter()

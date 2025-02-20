@@ -1,5 +1,6 @@
+import { singleton } from "tsyringe"
 
-
+@singleton()
 export class Observer<T> {
 
   private substribers: ((data: T) => void)[] = []

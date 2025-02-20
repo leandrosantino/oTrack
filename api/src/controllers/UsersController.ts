@@ -7,7 +7,7 @@ import z from "zod";
 import { IUserService } from "services/UserService/IUserService";
 import { UserCreateExceptions } from "entities/user/UserExceptions";
 import { ERROR_SCHEMA } from "schemas/ErrorSchema";
-import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
+import { USER_PROFILE_SCHEMA } from "schemas/UserProfileSchema";
 
 
 @injectable()
@@ -59,7 +59,7 @@ export class UsersController implements ControllerInterface {
         description: 'Get user data encrypted in access token',
         security: [{ BearerAuth: [] }],
         response: {
-          200: TOKEN_DATA_SCHEMA
+          200: USER_PROFILE_SCHEMA
         }
       }
     }, async (request, reply) => {

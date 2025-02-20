@@ -4,10 +4,10 @@ import { IUserRepository } from 'entities/user/IUserRepository'
 import { SignInExceptions } from "./AuthExceptions";
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 import { AsyncResult } from "interfaces/Result";
-import { TOKEN_DATA_SCHEMA } from "schemas/TokenDataSchema";
 import { TokenExceptions } from "services/JwtService/TokenExceptions";
 import { IJwtService } from "services/JwtService/IJwtService";
 import { Logger } from "interfaces/Logger";
+import { Validator } from "interfaces/Validator";
 
 
 @injectable()
@@ -17,7 +17,8 @@ export class AuthService implements IAuthService {
     @inject('UserRepository') private readonly userRepository: IUserRepository,
     @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher,
     @inject('JwtService') private readonly jwtService: IJwtService,
-    @inject('Logger') private readonly logger: Logger
+    @inject('Logger') private readonly logger: Logger,
+    @inject('UserProfileValidator') private readonly userProfileValidator: Validator<UserProfile>,
   ) { }
 
   async signIn({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions> {
@@ -96,12 +97,12 @@ export class AuthService implements IAuthService {
       return Err(jwtVerifyResult.err.type)
     }
 
-    const { success, data: tokenData } = await TOKEN_DATA_SCHEMA.spa(jwtVerifyResult.value)
-    if (!success) {
+    const tokenDataParsResult = this.userProfileValidator.parse(jwtVerifyResult.value)
+    if (!tokenDataParsResult.ok) {
       return Err(TokenExceptions.INVALID_TOKEN)
     }
 
-    return Ok(tokenData)
+    return Ok(tokenDataParsResult.value)
   }
 
 

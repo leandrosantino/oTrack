@@ -23,9 +23,11 @@ import { RealtimeServiceOrderController } from "controllers/RealtimeServiceOrder
 import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
 import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import { CreateServiceOrderObservable } from "use-cases/service-order/wrappers/CreateServiceOrderObservable";
-import { UpdateServiceOrderObservable } from "use-cases/service-order/wrappers/UpdateServiceOrderObservable";
 import { WebSocketAuthService } from "services/WebSocketAuthService.ts/WebSocketAuthService";
 import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
+import { Observer } from "utils/Observer";
+import { UpdateKanbanPositionValidator } from "services/RealtimeServiceOrderService/UpdateKanbanPositionValidator";
+import { UserProfileValidator } from "services/AuthService/UserProfileValidator";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -44,14 +46,16 @@ container.register('JwtService', JwtService)
 container.register('LocationSharing', LocationSharing)
 
 container.registerSingleton('CreateServiceOrder', CreateServiceOrder)
-container.registerSingleton('CreateServiceOrderObserver', CreateServiceOrderObservable)
+container.registerSingleton('CreateServiceOrderObservable', CreateServiceOrderObservable)
 container.registerSingleton('UpdateServiceOrder', UpdateServiceOrder)
-container.registerSingleton('UpdateServiceOrderObservable', UpdateServiceOrderObservable)
 container.registerSingleton('UpdateServiceOrderKanbanPosition', UpdateServiceOrderKanbanPosition)
 container.registerSingleton('ListServiceOrders', ListServiceOrders)
 container.registerSingleton('RealtimeServiceOrderService', RealtimeServiceOrderService)
 
 container.register('Logger', LocalLogger)
+container.registerSingleton('CreateServiceOrderObserver', Observer)
+container.registerSingleton('UpdateKanbanPositionValidator', UpdateKanbanPositionValidator)
+container.registerSingleton('UserProfileValidator', UserProfileValidator)
 
 
 export const properties = container.resolve(Properties)

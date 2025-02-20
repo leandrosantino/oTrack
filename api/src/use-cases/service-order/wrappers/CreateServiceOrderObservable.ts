@@ -7,10 +7,9 @@ import { ICreateServiceOrder, CreateServiceOrderRequestDTO } from "../types";
 @singleton()
 export class CreateServiceOrderObservable implements ICreateServiceOrder {
 
-  private observer = new Observer<ServiceOrder>()
-
   constructor(
     @inject('CreateServiceOrder') private readonly createServiceOrder: CreateServiceOrder,
+    @inject('CreateServiceOrderObserver') private readonly observer: Observer<ServiceOrder>
   ) { }
 
   async execute(data: CreateServiceOrderRequestDTO) {
@@ -18,10 +17,5 @@ export class CreateServiceOrderObservable implements ICreateServiceOrder {
     this.observer.notifyAll(serviceOrder)
     return serviceOrder
   }
-
-  subscribe(cb: (data: ServiceOrder) => void): VoidFunction {
-    return this.observer.subscribe(cb);
-  }
-
 
 }

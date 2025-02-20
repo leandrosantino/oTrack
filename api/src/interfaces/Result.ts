@@ -3,12 +3,14 @@ import { UserExceptions } from 'entities/user/UserExceptions';
 import { SignInExceptions } from 'services/AuthService/AuthExceptions';
 import { TokenExceptions } from 'services/JwtService/TokenExceptions';
 import { TicketExceptions } from 'services/WebSocketAuthService.ts/TicketExceptions';
+import { ValidationExceptions } from './Validator';
 
 export type ErrorTypes =
   UserExceptions |
   SignInExceptions |
   TokenExceptions |
-  TicketExceptions
+  TicketExceptions |
+  ValidationExceptions
 
 export interface IErrorHandler<T> {
   type: T
@@ -20,10 +22,12 @@ export interface IErrorHandler<T> {
 }
 
 export type Result<T, E extends ErrorTypes> = {
+  orElseThrow: (message: string) => T
+} & ({
   ok: true; value: T
 } | {
   ok: false; err: IErrorHandler<E>
-}
+})
 
 export type AsyncResult<T, E extends ErrorTypes> = Promise<Result<T, E>>
 

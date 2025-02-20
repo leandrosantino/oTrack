@@ -18,7 +18,7 @@ export class RealtimeServiceOrderController implements ControllerInterface {
   ) { }
 
   webSocketHandler(socket: WebSocket, request: FastifyRequest) {
-    const client = new WsClient(socket, request.user)
+    const client = new WsClient(socket, request.user!)
     this.realtimeServiceOrderService.execute(client)
   }
 

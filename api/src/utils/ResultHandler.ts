@@ -22,5 +22,15 @@ class ErrorHandle<T> implements IErrorHandler<T> {
   }
 }
 
-export const Ok = <T>(value: T): Result<T, never> => ({ ok: true, value });
-export const Err = <E extends ErrorTypes>(error: E): Result<never, E> => ({ ok: false, err: new ErrorHandle<E>(error) });
+
+
+export const Ok = <T>(value: T): Result<T, never> => ({
+  ok: true,
+  value,
+  orElseThrow() { return value }
+});
+export const Err = <E extends ErrorTypes>(error: E): Result<never, E> => ({
+  ok: false,
+  err: new ErrorHandle<E>(error),
+  orElseThrow(message) { throw new Error(message) },
+});
