@@ -22,17 +22,16 @@ export class WebSocketAuthMiddleware {
       const verifyTicketResult = await this.webSocketAuthService.verifyTicket(ticket)
 
       if (!verifyTicketResult.ok) {
-        if (verifyTicketResult.err instanceof TicketException) reply.status(401)
-        return reply.send(verifyTicketResult.err.details())
+        return reply.status(401).send(verifyTicketResult.err.details())
       }
 
-      const { value: userData } = verifyTicketResult
+      const { value: userProfile } = verifyTicketResult
 
-      if (roles.length > 0 && !roles.includes(userData.roule)) {
+      if (roles.length > 0 && !roles.includes(userProfile.roule)) {
         return reply.status(403).send(new AuthException.Unauthorized().details())
       }
 
-      request.user = userData
+      request.user = userProfile
     };
   }
 

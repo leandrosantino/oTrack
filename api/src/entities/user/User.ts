@@ -6,6 +6,5 @@ export interface User {
   username: string
   password: string
   displayName: string
-  roule: Roules,
-  tokens: UserToken[]
+  roule: Roules
 }

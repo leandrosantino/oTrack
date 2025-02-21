@@ -3,6 +3,7 @@ import { User } from "entities/user/User"
 import { UserToken } from "entities/user/UserToken";
 import { TokenException } from "services/JwtService/TokenException";
 import { SignInException } from "entities/user/exceptions/SignInException";
+import { UserProfile } from "entities/user/UserProfile";
 
 export interface IAuthService {
   signIn(authData: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInException>
@@ -23,7 +24,6 @@ export type AuthResponseDTO = {
 
 export type JwtToken = string
 
-export type UserProfile = Pick<User, 'id' | 'displayName' | 'username' | 'roule'>
 export type RefreshTokenData = {
   id: UserToken['id']
   userId: User['id']

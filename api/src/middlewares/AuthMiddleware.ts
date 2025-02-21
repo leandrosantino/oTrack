@@ -25,17 +25,16 @@ export class AuthMiddleware {
       const verifyTokenResult = await this.authService.verifyToken(token)
 
       if (!verifyTokenResult.ok) {
-        if (verifyTokenResult.err instanceof TokenException) reply.status(401)
-        return reply.send(verifyTokenResult.err.details())
+        return reply.status(401).send(verifyTokenResult.err.details())
       }
 
-      const { value: userData } = verifyTokenResult
+      const { value: userProfile } = verifyTokenResult
 
-      if (roles.length > 0 && !roles.includes(userData.roule)) {
+      if (roles.length > 0 && !roles.includes(userProfile.roule)) {
         return reply.status(403).send(new AuthException.Unauthorized().details())
       }
 
-      request.user = userData
+      request.user = userProfile
     };
   }
 

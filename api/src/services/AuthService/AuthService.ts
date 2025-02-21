@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IAuthService, AuthRequestDTO, JwtToken, UserProfile, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
+import { IAuthService, AuthRequestDTO, JwtToken, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
 import { IUserRepository } from 'entities/user/IUserRepository'
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 import { AsyncResult } from "interfaces/Result";
@@ -8,6 +8,7 @@ import { IJwtService } from "services/JwtService/IJwtService";
 import { Logger } from "interfaces/Logger";
 import { Validator } from "interfaces/Validator";
 import { SignInException } from "entities/user/exceptions/SignInException";
+import { UserProfile } from "entities/user/UserProfile";
 
 
 @injectable()
@@ -34,13 +35,8 @@ export class AuthService implements IAuthService {
 
     const createdToken = await this.userRepository.createToken(user.id)
 
+    const accessToken = this.jwtService.generateAccessToken(new UserProfile(user))
     const refreshToken = this.jwtService.generateRefreshToken(createdToken)
-    const accessToken = this.jwtService.generateAccessToken({
-      id: user.id,
-      username: user.username,
-      displayName: user.displayName,
-      roule: user.roule
-    })
 
     return Ok({ accessToken, refreshToken })
   }
@@ -78,12 +74,7 @@ export class AuthService implements IAuthService {
     const createdToken = await this.userRepository.createToken(user.id)
 
     const newRefreshToken = this.jwtService.generateRefreshToken(createdToken)
-    const newAccessToken = this.jwtService.generateAccessToken({
-      id: user.id,
-      username: user.username,
-      displayName: user.displayName,
-      roule: user.roule
-    })
+    const newAccessToken = this.jwtService.generateAccessToken(new UserProfile(user))
 
     return Ok({ accessToken: newAccessToken, refreshToken: newRefreshToken })
 

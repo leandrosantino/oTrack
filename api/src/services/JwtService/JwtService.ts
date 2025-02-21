@@ -12,13 +12,13 @@ export class JwtService implements IJwtService {
   ) { }
 
   generateAccessToken(payload: object): string {
-    return jwt.sign(payload, this.properties.env.JWT_SECRET, {
+    return jwt.sign(Object.assign({}, payload), this.properties.env.JWT_SECRET, {
       expiresIn: this.properties.env.ACCESS_TOKEN_EXPIRES
     })
   }
 
   generateRefreshToken(payload: object): string {
-    return jwt.sign(payload, this.properties.env.JWT_SECRET, {
+    return jwt.sign(Object.assign({}, payload), this.properties.env.JWT_SECRET, {
       expiresIn: this.properties.env.REFRESH_TOKEN_EXPIRES
     })
   }

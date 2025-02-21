@@ -23,7 +23,7 @@ export class ErrorMiddleware {
         return
       }
 
-      this.logger.error('Unexpected internal server error: ' + error.message)
+      this.logger.error('Unexpected internal server error: ' + error.message + error.stack)
 
       reply.status(500).send({
         message: 'Unexpected internal server error',
