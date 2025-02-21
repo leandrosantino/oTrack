@@ -3,7 +3,7 @@ import { ControllerInterface } from "interfaces/ControllerInterface";
 import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import { ERROR_SCHEMA } from "schemas/ErrorSchema";
+import { ERROR_SCHEMA } from "utils/ErrorSchema";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { TokenException } from "services/JwtService/TokenException";
 import { Roules } from "entities/user/Roule";

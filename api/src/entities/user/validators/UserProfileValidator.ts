@@ -1,13 +1,21 @@
 import { UserProfile } from "entities/user/UserProfile";
 import { ValidationException, Validator } from "interfaces/Validator";
-import { USER_PROFILE_SCHEMA } from "schemas/UserProfileSchema";
 import { singleton } from "tsyringe";
+import z from "zod";
+import { Roules } from "../Roule";
 
 @singleton()
 export class UserProfileValidator implements Validator<UserProfile> {
 
+  static SCHEMA = z.object({
+    id: z.number(),
+    username: z.string(),
+    displayName: z.string(),
+    roule: z.nativeEnum(Roules),
+  })
+
   parse(data: UserProfile): Result<UserProfile, ValidationException> {
-    const { success, data: tokenData } = USER_PROFILE_SCHEMA.safeParse(data)
+    const { success, data: tokenData } = UserProfileValidator.SCHEMA.safeParse(data)
     if (!success) {
       return Err(new ValidationException.InvalidData())
     }

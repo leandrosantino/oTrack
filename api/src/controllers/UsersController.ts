@@ -4,10 +4,10 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { inject, injectable } from "tsyringe";
 import z from "zod";
-import { ERROR_SCHEMA } from "schemas/ErrorSchema";
-import { USER_PROFILE_SCHEMA } from "schemas/UserProfileSchema";
+import { ERROR_SCHEMA } from "utils/ErrorSchema";
 import { CreateUser } from "use-cases/user/CreateUser";
 import { CreateUserException } from "entities/user/exceptions/CreateUserException";
+import { UserProfileValidator } from "entities/user/validators/UserProfileValidator";
 
 
 @injectable()
@@ -57,7 +57,7 @@ export class UsersController implements ControllerInterface {
         description: 'Get user data encrypted in access token',
         security: [{ BearerAuth: [] }],
         response: {
-          200: USER_PROFILE_SCHEMA
+          200: UserProfileValidator.SCHEMA.describe('User Profile'),
         }
       }
     }, async (request, reply) => {
