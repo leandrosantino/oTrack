@@ -30,8 +30,8 @@ export class ServiceOrdersService implements IServiceOrdersService {
 
   async updateKanbanPosition(data: UpdateServiceOrderKanbanPositionRequestDTO): Promise<ServiceOrder> {
     return await new Promise<ServiceOrder>((resolve) => {
-      this.socketClient.emit('update', data)
-      this.socketClient.on('updateReturn', (updatedOrder: ServiceOrder) => {
+      this.socketClient.emit('updateKanbanPosition', data)
+      this.socketClient.on('updateKanbanPositionReturn', (updatedOrder: ServiceOrder) => {
         resolve(updatedOrder)
       })
     })
