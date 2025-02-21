@@ -37,7 +37,7 @@ export class UsersController implements ControllerInterface {
         body: this.USER_SCHEMA.omit({ id: true }),
         response: {
           201: this.USER_SCHEMA.describe('Created User'),
-          401: ERROR_SCHEMA(new CreateUserException.UserAlreadyExists())
+          401: ERROR_SCHEMA(CreateUserException.UserAlreadyExists)
         }
       }
     }, async (request, reply) => {

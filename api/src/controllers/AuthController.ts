@@ -48,8 +48,8 @@ export class AuthController implements ControllerInterface {
         body: this.LOGIN_RESQUEST_BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),
-          404: ERROR_SCHEMA(new SignInException.UserNotFound()),
-          401: ERROR_SCHEMA(new SignInException.InvalidPassword()),
+          404: ERROR_SCHEMA(SignInException.UserNotFound),
+          401: ERROR_SCHEMA(SignInException.InvalidPassword),
         }
       }
     }, async (request, reply) => {
@@ -74,7 +74,7 @@ export class AuthController implements ControllerInterface {
         tags: this.tags,
         response: {
           200: z.string().describe('Access Token'),
-          401: ERROR_SCHEMA(new TokenException.ExpiredToken()).or(ERROR_SCHEMA(new TokenException.InvalidToken()))
+          401: ERROR_SCHEMA(TokenException.ExpiredToken).or(ERROR_SCHEMA(TokenException.InvalidToken))
         }
       }
     }, async (request, reply) => {
