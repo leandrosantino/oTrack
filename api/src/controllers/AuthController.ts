@@ -1,4 +1,3 @@
-import { IAuthService } from "services/AuthService/IAuthService";
 import { inject, injectable } from "tsyringe";
 import { ControllerInterface } from "interfaces/ControllerInterface";
 import z from "zod";
@@ -11,14 +10,19 @@ import { Roules } from "entities/user/Roule";
 import { User } from "entities/user/User";
 import { IWebSocketAuthService } from "services/WebSocketAuthService/IWebSocketAuthService";
 import { SignInException } from "entities/user/exceptions/SignInException";
+import { RefreshTokens } from "use-cases/authentication/RefreshTokens";
+import { SignIn } from "use-cases/authentication/SignIn";
+import { SignOut } from "use-cases/authentication/SignOut";
 
 @injectable()
 export class AuthController implements ControllerInterface {
 
   constructor(
-    @inject('AuthService') private readonly authService: IAuthService,
     @inject('WebSocketAuthService') private readonly webSocketAuthService: IWebSocketAuthService,
-    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware
+    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
+    @inject('RefreshTokens') private readonly refreshTokens: RefreshTokens,
+    @inject('SignIn') private readonly signIn: SignIn,
+    @inject('SignOut') private readonly signOut: SignOut
   ) { }
 
   private readonly tags = ['Authentication']
@@ -50,7 +54,7 @@ export class AuthController implements ControllerInterface {
       }
     }, async (request, reply) => {
       const { password, username } = request.body
-      const result = await this.authService.signIn({ password, username })
+      const result = await this.signIn.execute({ password, username })
 
       if (result.ok) {
         const { accessToken, refreshToken } = result.value
@@ -75,7 +79,7 @@ export class AuthController implements ControllerInterface {
       }
     }, async (request, reply) => {
       const refreshToken = request.cookies.refreshToken ?? '';
-      const result = await this.authService.refreshTokens(refreshToken)
+      const result = await this.refreshTokens.execute(refreshToken)
 
       if (result.ok) {
         const { accessToken, refreshToken: newRefreshToken } = result.value
@@ -93,7 +97,7 @@ export class AuthController implements ControllerInterface {
       schema: { tags: this.tags }
     }, async (request, reply) => {
       const refreshToken = request.cookies.refreshToken ?? '';
-      await this.authService.signOut(refreshToken)
+      await this.signOut.execute(refreshToken)
       reply.setCookie(this.refreshTokenCookiesName, '', this.refreshTokenCookiesOption).status(200)
     })
 

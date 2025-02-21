@@ -1,5 +1,4 @@
 import { container } from "tsyringe";
-import { AuthService } from "./services/AuthService/AuthService";
 import { AuthController } from "controllers/AuthController";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { LocationSharingController } from "controllers/LocationSharingController";
@@ -26,8 +25,12 @@ import { WebSocketAuthService } from "services/WebSocketAuthService/WebSocketAut
 import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 import { Observer } from "utils/Observer";
 import { UpdateKanbanPositionValidator } from "services/RealtimeServiceOrderService/UpdateKanbanPositionValidator";
-import { UserProfileValidator } from "services/AuthService/UserProfileValidator";
 import { CreateUser } from "use-cases/user/CreateUser";
+import { RefreshTokens } from "use-cases/authentication/RefreshTokens";
+import { SignIn } from "use-cases/authentication/SignIn";
+import { SignOut } from "use-cases/authentication/SignOut";
+import { VerifyToken } from "use-cases/authentication/VerifyToken";
+import { UserProfileValidator } from "entities/user/validators/UserProfileValidator";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -38,7 +41,11 @@ container.register('WebSocketAuthMiddleware', WebSocketAuthMiddleware)
 container.register('UserRepository', UserRepository)
 container.register('ServiceOrderRepository', ServiceOrderRepository)
 
-container.register('AuthService', AuthService)
+container.register('RefreshTokens', RefreshTokens)
+container.register('SignIn', SignIn)
+container.register('SignOut', SignOut)
+container.register('VerifyToken', VerifyToken)
+
 container.registerSingleton('WebSocketAuthService', WebSocketAuthService)
 container.registerSingleton('CreateUser', CreateUser)
 container.register('PasswordHasher', PasswordHasher)

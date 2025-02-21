@@ -3,7 +3,6 @@ import { inject, injectable } from "tsyringe";
 import { Roules } from "entities/user/Roule";
 import { AuthException } from "entities/user/exceptions/AuthException";
 import { IWebSocketAuthService } from "services/WebSocketAuthService/IWebSocketAuthService";
-import { TicketException } from "services/WebSocketAuthService/TicketException";
 
 
 @injectable()

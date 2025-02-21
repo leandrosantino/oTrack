@@ -1,16 +1,16 @@
 import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
-import { IAuthService } from "services/AuthService/IAuthService";
 import { Roules } from "entities/user/Roule";
 import { TokenException } from "services/JwtService/TokenException";
 import { AuthException } from "entities/user/exceptions/AuthException";
+import { VerifyToken } from "use-cases/authentication/VerifyToken";
 
 
 @injectable()
 export class AuthMiddleware {
 
   constructor(
-    @inject('AuthService') private readonly authService: IAuthService
+    @inject('VerifyToken') private readonly verifyToken: VerifyToken
   ) { }
 
   build(roles: Roules[] = []): RouteHandlerMethod {
@@ -22,7 +22,7 @@ export class AuthMiddleware {
       }
 
       const token = authHeader.split(' ')[1]
-      const verifyTokenResult = await this.authService.verifyToken(token)
+      const verifyTokenResult = await this.verifyToken.execute(token)
 
       if (!verifyTokenResult.ok) {
         return reply.status(401).send(verifyTokenResult.err.details())
