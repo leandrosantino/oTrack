@@ -4,10 +4,10 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { inject, injectable } from "tsyringe";
 import z from "zod";
-import { UserCreateExceptions } from "entities/user/UserExceptions";
 import { ERROR_SCHEMA } from "schemas/ErrorSchema";
 import { USER_PROFILE_SCHEMA } from "schemas/UserProfileSchema";
 import { CreateUser } from "use-cases/user/CreateUser";
+import { CreateUserException } from "entities/user/exceptions/CreateUserException";
 
 
 @injectable()
@@ -37,20 +37,18 @@ export class UsersController implements ControllerInterface {
         body: this.USER_SCHEMA.omit({ id: true }),
         response: {
           201: this.USER_SCHEMA.describe('Created User'),
-          401: ERROR_SCHEMA(UserCreateExceptions.USER_ALREADY_EXISTS).describe('User already exists')
+          401: ERROR_SCHEMA(new CreateUserException.UserAlreadyExists())
         }
       }
     }, async (request, reply) => {
       const user = request.body
-      const createUserResult = await this.createUser.execute(user)
+      const result = await this.createUser.execute(user)
 
-      if (!createUserResult.ok) {
-        createUserResult.err
-          .case(UserCreateExceptions.USER_ALREADY_EXISTS, () => reply.status(401).send(createUserResult.err.throw('user already exists')))
-        return
-      }
+      if (result.ok) return reply.status(201).send(result.value)
 
-      reply.status(201).send(createUserResult.value)
+      if (result.err instanceof CreateUserException.UserAlreadyExists) reply.status(400)
+
+      return reply.send(result.err.details())
     })
 
     app.get('/profile', {

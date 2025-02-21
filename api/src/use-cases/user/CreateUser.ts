@@ -1,3 +1,4 @@
+import { CreateUserException } from "entities/user/exceptions/CreateUserException"
 import { IUserRepository } from "entities/user/IUserRepository"
 import { User } from "entities/user/User"
 import { UserCreateExceptions } from "entities/user/UserExceptions"
@@ -11,11 +12,11 @@ export class CreateUser {
     @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher
   ) { }
 
-  async execute(user: Omit<User, "id" | "tokens">): AsyncResult<Omit<User, "tokens">, UserCreateExceptions> {
+  async execute(user: Omit<User, "id" | "tokens">): AsyncResult<Omit<User, "tokens">, CreateUserException> {
     const alreadyExists = await this.userRepository.existsByUsername(user.username)
 
     if (alreadyExists) {
-      return Err(UserCreateExceptions.USER_ALREADY_EXISTS)
+      return Err(new CreateUserException.UserAlreadyExists())
     }
     user.password = await this.passwordHasher.hash(user.password)
 

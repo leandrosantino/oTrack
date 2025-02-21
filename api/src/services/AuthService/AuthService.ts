@@ -1,13 +1,13 @@
 import { inject, injectable } from "tsyringe";
 import { IAuthService, AuthRequestDTO, JwtToken, UserProfile, RefreshTokenData, AuthResponseDTO } from "./IAuthService";
 import { IUserRepository } from 'entities/user/IUserRepository'
-import { SignInExceptions } from "./AuthExceptions";
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 import { AsyncResult } from "interfaces/Result";
-import { TokenExceptions } from "services/JwtService/TokenExceptions";
+import { TokenException } from "services/JwtService/TokenException";
 import { IJwtService } from "services/JwtService/IJwtService";
 import { Logger } from "interfaces/Logger";
 import { Validator } from "interfaces/Validator";
+import { SignInException } from "entities/user/exceptions/SignInException";
 
 
 @injectable()
@@ -21,15 +21,15 @@ export class AuthService implements IAuthService {
     @inject('UserProfileValidator') private readonly userProfileValidator: Validator<UserProfile>,
   ) { }
 
-  async signIn({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInExceptions> {
+  async signIn({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInException> {
     const user = await this.userRepository.getByUsername(username)
 
     if (!user) {
-      return Err(SignInExceptions.USER_NOT_FOUND)
+      return Err(new SignInException.UserNotFound())
     }
 
     if (!(await this.passwordHasher.verify(password, user.password))) {
-      return Err(SignInExceptions.INVALID_PASSWORD)
+      return Err(new SignInException.UserNotFound())
     }
 
     const createdToken = await this.userRepository.createToken(user.id)
@@ -53,14 +53,14 @@ export class AuthService implements IAuthService {
     await this.userRepository.deleteTokenById(decodedResult.value.id)
   }
 
-  async refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenExceptions> {
+  async refreshTokens(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenException> {
     const jwtVerifyResult = await this.jwtService.verify<RefreshTokenData>(refreshToken)
 
     if (!jwtVerifyResult.ok) {
-      if (jwtVerifyResult.err.type === TokenExceptions.EXPIRED_TOKEN) {
+      if (jwtVerifyResult.err instanceof TokenException.ExpiredToken) {
         await this.signOut(refreshToken)
       }
-      return Err(jwtVerifyResult.err.type)
+      return Err(jwtVerifyResult.err)
     }
 
     const refreshTokenData = jwtVerifyResult.value
@@ -69,7 +69,7 @@ export class AuthService implements IAuthService {
     if (savedTokenData === null) {
       await this.userRepository.deleteTokensByUserId(refreshTokenData.userId)
       this.logger.info('Attempt to refresh tokens using a discarded token')
-      return Err(TokenExceptions.INVALID_TOKEN)
+      return Err(new TokenException.InvalidToken())
     }
 
     const { user } = savedTokenData
@@ -89,17 +89,17 @@ export class AuthService implements IAuthService {
 
   }
 
-  async verifyToken(token: JwtToken): AsyncResult<UserProfile, TokenExceptions> {
+  async verifyToken(token: JwtToken): AsyncResult<UserProfile, TokenException> {
 
     const jwtVerifyResult = await this.jwtService.verify<UserProfile>(token)
 
     if (!jwtVerifyResult.ok) {
-      return Err(jwtVerifyResult.err.type)
+      return Err(jwtVerifyResult.err)
     }
 
     const tokenDataParsResult = this.userProfileValidator.parse(jwtVerifyResult.value)
     if (!tokenDataParsResult.ok) {
-      return Err(TokenExceptions.INVALID_TOKEN)
+      return Err(new TokenException.InvalidToken())
     }
 
     return Ok(tokenDataParsResult.value)

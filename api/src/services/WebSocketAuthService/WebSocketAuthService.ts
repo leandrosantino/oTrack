@@ -1,8 +1,7 @@
 import { singleton } from "tsyringe";
 import { IWebSocketAuthService, TicketData } from "./IWebSocketAuthService";
-import { TokenExceptions } from "services/JwtService/TokenExceptions";
 import { createId } from '@paralleldrive/cuid2';
-import { TicketExceptions } from "./TicketExceptions";
+import { TicketException } from "./TicketException";
 
 @singleton()
 export class WebSocketAuthService implements IWebSocketAuthService {
@@ -15,10 +14,10 @@ export class WebSocketAuthService implements IWebSocketAuthService {
     return ticket
   }
 
-  async verifyTicket(ticket: string): AsyncResult<TicketData, TicketExceptions> {
+  async verifyTicket(ticket: string): AsyncResult<TicketData, TicketException> {
     const ticketData = this.tickets.get(ticket)
     if (!ticketData) {
-      return Err(TicketExceptions.INVALID_TICKET)
+      return Err(new TicketException.InvalidTicket())
     }
     this.tickets.delete(ticket)
     return Ok(ticketData)

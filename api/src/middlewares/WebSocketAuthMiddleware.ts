@@ -1,9 +1,9 @@
 import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
 import { Roules } from "entities/user/Roule";
-import { AuthException } from "services/AuthService/AuthExceptions";
-import { IWebSocketAuthService } from "services/WebSocketAuthService.ts/IWebSocketAuthService";
-import { TicketExceptions } from "services/WebSocketAuthService.ts/TicketExceptions";
+import { AuthException } from "entities/user/exceptions/AuthException";
+import { IWebSocketAuthService } from "services/WebSocketAuthService/IWebSocketAuthService";
+import { TicketException } from "services/WebSocketAuthService/TicketException";
 
 
 @injectable()
@@ -17,30 +17,19 @@ export class WebSocketAuthMiddleware {
     return async (request, reply) => {
       const { ticket } = request.params as { ticket: string }
 
-      if (!ticket) {
-        reply.status(401).send({
-          message: 'You are not authenticated',
-          type: AuthException.UNAUTHENTICATED
-        })
-        return
-      }
+      if (!ticket) return reply.status(401).send(new AuthException.Unauthticated().details())
 
       const verifyTicketResult = await this.webSocketAuthService.verifyTicket(ticket)
 
       if (!verifyTicketResult.ok) {
-        const { err } = verifyTicketResult
-        err.case(TicketExceptions.INVALID_TICKET, () => reply.status(401).send(err.throw('invalid ticket')))
-        return
+        if (verifyTicketResult.err instanceof TicketException) reply.status(401)
+        return reply.send(verifyTicketResult.err.details())
       }
 
       const { value: userData } = verifyTicketResult
 
       if (roles.length > 0 && !roles.includes(userData.roule)) {
-        reply.status(403).send({
-          message: 'You do not have permission to access this resource',
-          type: AuthException.UNAUTHORIZED
-        })
-        return
+        return reply.status(403).send(new AuthException.Unauthorized().details())
       }
 
       request.user = userData

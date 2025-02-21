@@ -1,10 +1,10 @@
-import { TokenExceptions } from "./TokenExceptions"
+import { TokenException } from "./TokenException"
 
 export interface IJwtService {
 
   generateAccessToken(payload: object): string
   generateRefreshToken(payload: object): string
-  verify<T>(token: string): AsyncResult<T, TokenExceptions>
-  decode<T>(token: string): AsyncResult<T, TokenExceptions>
+  verify<T>(token: string): AsyncResult<T, TokenException>
+  decode<T>(token: string): AsyncResult<T, TokenException>
 
 }

@@ -28,7 +28,7 @@ export class RealtimeServiceOrderService implements IRealtimeServiceOrderService
 
     client.on('updateKanbanPosition', async (data) => {
       try {
-        const { id, status, previousIndex, postIndex } = this.updateKanbanPositionValidator.parse(data).orElseThrow('invalid data')
+        const { id, status, previousIndex, postIndex } = this.updateKanbanPositionValidator.parse(data).orElseThrow()
         const updatedServiceOrder = await this.updateServiceOrderKanbanPosition.execute({ id, status, previousIndex, postIndex })
         client.emit('updateKanbanPositionReturn', updatedServiceOrder)
         this.clients

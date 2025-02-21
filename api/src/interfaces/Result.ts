@@ -1,33 +1,12 @@
+import { Exception } from "utils/Exception";
 
-import { UserExceptions } from 'entities/user/UserExceptions';
-import { SignInExceptions } from 'services/AuthService/AuthExceptions';
-import { TokenExceptions } from 'services/JwtService/TokenExceptions';
-import { TicketExceptions } from 'services/WebSocketAuthService.ts/TicketExceptions';
-import { ValidationExceptions } from './Validator';
-
-export type ErrorTypes =
-  UserExceptions |
-  SignInExceptions |
-  TokenExceptions |
-  TicketExceptions |
-  ValidationExceptions
-
-export interface IErrorHandler<T> {
-  type: T
-  case(type: T, callback: () => void): IErrorHandler<T>
-  throw(message: string): {
-    type: T,
-    message: string
-  }
-}
-
-export type Result<T, E extends ErrorTypes> = {
-  orElseThrow: (message: string) => T
+export type Result<T, E extends Exception> = {
+  orElseThrow: () => T
 } & ({
   ok: true; value: T
 } | {
-  ok: false; err: IErrorHandler<E>
+  ok: false; err: E
 })
 
-export type AsyncResult<T, E extends ErrorTypes> = Promise<Result<T, E>>
+export type AsyncResult<T, E extends Exception> = Promise<Result<T, E>>
 

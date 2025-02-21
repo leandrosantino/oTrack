@@ -22,7 +22,7 @@ import { RealtimeServiceOrderController } from "controllers/RealtimeServiceOrder
 import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
 import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import { CreateServiceOrderObservable } from "use-cases/service-order/wrappers/CreateServiceOrderObservable";
-import { WebSocketAuthService } from "services/WebSocketAuthService.ts/WebSocketAuthService";
+import { WebSocketAuthService } from "services/WebSocketAuthService/WebSocketAuthService";
 import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 import { Observer } from "utils/Observer";
 import { UpdateKanbanPositionValidator } from "services/RealtimeServiceOrderService/UpdateKanbanPositionValidator";

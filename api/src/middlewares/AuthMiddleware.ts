@@ -2,8 +2,8 @@ import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
 import { IAuthService } from "services/AuthService/IAuthService";
 import { Roules } from "entities/user/Roule";
-import { AuthException } from "services/AuthService/AuthExceptions";
-import { TokenExceptions } from "services/JwtService/TokenExceptions";
+import { TokenException } from "services/JwtService/TokenException";
+import { AuthException } from "entities/user/exceptions/AuthException";
 
 
 @injectable()
@@ -18,31 +18,21 @@ export class AuthMiddleware {
       const authHeader = request.headers.authorization
 
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        reply.status(401).send({
-          message: 'You are not authenticated',
-          type: AuthException.UNAUTHENTICATED
-        })
-        return
+        return reply.status(401).send(new AuthException.Unauthticated().details())
       }
 
       const token = authHeader.split(' ')[1]
       const verifyTokenResult = await this.authService.verifyToken(token)
 
       if (!verifyTokenResult.ok) {
-        const { err } = verifyTokenResult
-        err.case(TokenExceptions.INVALID_TOKEN, () => reply.status(401).send(err.throw('invalid token')))
-        err.case(TokenExceptions.EXPIRED_TOKEN, () => reply.status(401).send(err.throw('expires token')))
-        return
+        if (verifyTokenResult.err instanceof TokenException) reply.status(401)
+        return reply.send(verifyTokenResult.err.details())
       }
 
       const { value: userData } = verifyTokenResult
 
       if (roles.length > 0 && !roles.includes(userData.roule)) {
-        reply.status(403).send({
-          message: 'You do not have permission to access this resource',
-          type: AuthException.UNAUTHORIZED
-        })
-        return
+        return reply.status(403).send(new AuthException.Unauthorized().details())
       }
 
       request.user = userData

@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { Properties } from "utils/Properties";
 import { IJwtService } from "./IJwtService";
-import { TokenExceptions } from "./TokenExceptions";
+import { TokenException } from "./TokenException";
 import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 
 @injectable()
@@ -23,21 +23,21 @@ export class JwtService implements IJwtService {
     })
   }
 
-  async verify<T>(token: string): AsyncResult<T, TokenExceptions> {
+  async verify<T>(token: string): AsyncResult<T, TokenException> {
     const { err, data } = await new Promise<{ err: any, data: any }>(resolve => {
       jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
 
-    if (err instanceof TokenExpiredError) return Err(TokenExceptions.EXPIRED_TOKEN)
-    if (err instanceof JsonWebTokenError) return Err(TokenExceptions.INVALID_TOKEN)
+    if (err instanceof TokenExpiredError) return Err(new TokenException.ExpiredToken())
+    if (err instanceof JsonWebTokenError) return Err(new TokenException.InvalidToken())
 
     return Ok(data)
   }
 
-  async decode<T>(token: string): AsyncResult<T, TokenExceptions> {
+  async decode<T>(token: string): AsyncResult<T, TokenException> {
     const decoded = jwt.decode(token)
     if (!decoded) {
-      return Err(TokenExceptions.INVALID_TOKEN)
+      return Err(new TokenException.InvalidToken())
     }
     return Ok(decoded as T)
   }
