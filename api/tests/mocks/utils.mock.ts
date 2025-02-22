@@ -1,5 +1,5 @@
 import { mock, instance } from "ts-mockito";
-import { Properties } from "utils/Properties";
+import { Properties } from "infra/Properties";
 
 const propertiesMock = mock<Properties>()
 export const propertiesInstance = instance(propertiesMock)

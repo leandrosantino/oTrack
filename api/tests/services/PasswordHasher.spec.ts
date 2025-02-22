@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { PasswordHasher } from 'services/PasswordHasher/PasswordHasher';
+import { BcryptPasswordHasher } from 'infra/adapters/BcryptPasswordHasher';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn(),
@@ -7,7 +7,7 @@ jest.mock('bcrypt', () => ({
 }));
 
 describe('PasswordHasher', () => {
-  const passwordHasher = new PasswordHasher();
+  const passwordHasher = new BcryptPasswordHasher();
 
   describe('hash', () => {
     it('should hash a password using bcrypt', async () => {

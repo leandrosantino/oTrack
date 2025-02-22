@@ -8,7 +8,9 @@ module.exports = config({
   output: {
     path: __dirname + "/build",
   },
-  externalModules: Object.keys(dependencies),
+  externalModules: Object.keys(dependencies).concat([
+    'ws'
+  ]),
   options: {
     root: '.',
     jsc: {

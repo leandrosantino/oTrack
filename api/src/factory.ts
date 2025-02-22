@@ -1,36 +1,36 @@
 import { container } from "tsyringe";
-import { AuthController } from "controllers/AuthController";
-import { AuthMiddleware } from "middlewares/AuthMiddleware";
-import { LocationSharingController } from "controllers/LocationSharingController";
-import { UserRepository } from "repository/UserRepository";
-import { UsersController } from "controllers/UsersController";
+import { AuthController } from "infra/controllers/AuthController";
+import { AuthMiddleware } from "infra/middlewares/AuthMiddleware";
+import { LocationSharingController } from "infra/controllers/LocationSharingController";
+import { UserRepository } from "infra/repositories/UserRepository";
+import { UsersController } from "infra/controllers/UsersController";
 
-import { Err, Ok } from 'utils/ResultHandler'
-import { Properties } from "utils/Properties";
-import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
-import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
-import { JwtService } from "services/JwtService/JwtService";
-import { LocalLogger } from "utils/LocalLogger";
-import { LocationSharing } from "services/LocationSharing/LocationSharing";
-import { ServiceOrderRepository } from "repository/ServiceOrderRepository";
-import { ServiceOrdersController } from "controllers/ServiceOrdersController";
-import { CreateServiceOrder } from "use-cases/service-order/CreateServiceOrder";
-import { ListServiceOrders } from "use-cases/service-order/ListServiceOrders";
-import { RealtimeServiceOrderService } from "services/RealtimeServiceOrderService/RealtimeServiceOrderService";
-import { RealtimeServiceOrderController } from "controllers/RealtimeServiceOrderController";
-import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
-import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
-import { CreateServiceOrderObservable } from "use-cases/service-order/wrappers/CreateServiceOrderObservable";
-import { WebSocketAuthService } from "services/WebSocketAuthService/WebSocketAuthService";
-import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
-import { Observer } from "utils/Observer";
-import { UpdateKanbanPositionValidator } from "services/RealtimeServiceOrderService/UpdateKanbanPositionValidator";
-import { CreateUser } from "use-cases/user/CreateUser";
-import { RefreshTokens } from "use-cases/authentication/RefreshTokens";
-import { SignIn } from "use-cases/authentication/SignIn";
-import { SignOut } from "use-cases/authentication/SignOut";
-import { VerifyToken } from "use-cases/authentication/VerifyToken";
-import { UserProfileValidator } from "entities/user/validators/UserProfileValidator";
+import { Properties } from "infra/Properties";
+import { BcryptPasswordHasher } from "infra/adapters/BcryptPasswordHasher";
+import { ErrorMiddleware } from "infra/middlewares/ErrorMiddleware";
+import { LocalLogger } from "infra/adapters/LocalLogger";
+import { LocationSharing } from "application/use-cases/user/LocationSharing";
+import { ServiceOrderRepository } from "infra/repositories/ServiceOrderRepository";
+import { ServiceOrdersController } from "infra/controllers/ServiceOrdersController";
+import { CreateServiceOrder } from "application/use-cases/service-order/CreateServiceOrder";
+import { ListServiceOrders } from "application/use-cases/service-order/ListServiceOrders";
+import { RealtimeServiceOrderController } from "infra/controllers/RealtimeServiceOrderController";
+import { UpdateServiceOrder } from "application/use-cases/service-order/UpdateServiceOrder";
+import { UpdateServiceOrderKanbanPosition } from "application/use-cases/service-order/UpdateServiceOrderKanbanPosition";
+import { CreateServiceOrderObservable } from "application/use-cases/service-order/wrappers/CreateServiceOrderObservable";
+import { WebSocketAuthMiddleware } from "infra/middlewares/WebSocketAuthMiddleware";
+import { Observer } from "application/events/Observer";
+import { UpdateKanbanPositionValidator } from "application/validation/UpdateKanbanPositionValidator";
+import { CreateUser } from "application/use-cases/user/CreateUser";
+import { RefreshTokens } from "application/use-cases/authentication/RefreshTokens";
+import { SignIn } from "application/use-cases/authentication/SignIn";
+import { SignOut } from "application/use-cases/authentication/SignOut";
+import { VerifyToken } from "application/use-cases/authentication/VerifyToken";
+import { UserProfileValidator } from "application/validation/UserProfileValidator";
+import { JwtProvider } from "infra/adapters/JwtProvider";
+import { Ok, Err } from "domain/result/ResultHandler";
+import { WebSocketAuthenticator } from "infra/websocket/WebSocketAuthenticator";
+import { RealtimeSharingServiceOrder } from "application/use-cases/service-order/RealtimeSharingServiceOrder";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -46,10 +46,10 @@ container.register('SignIn', SignIn)
 container.register('SignOut', SignOut)
 container.register('VerifyToken', VerifyToken)
 
-container.registerSingleton('WebSocketAuthService', WebSocketAuthService)
+container.registerSingleton('WebSocketAuthService', WebSocketAuthenticator)
 container.registerSingleton('CreateUser', CreateUser)
-container.register('PasswordHasher', PasswordHasher)
-container.register('JwtService', JwtService)
+container.register('PasswordHasher', BcryptPasswordHasher)
+container.register('JwtService', JwtProvider)
 container.register('LocationSharing', LocationSharing)
 
 container.registerSingleton('CreateServiceOrder', CreateServiceOrder)
@@ -57,7 +57,7 @@ container.registerSingleton('CreateServiceOrderObservable', CreateServiceOrderOb
 container.registerSingleton('UpdateServiceOrder', UpdateServiceOrder)
 container.registerSingleton('UpdateServiceOrderKanbanPosition', UpdateServiceOrderKanbanPosition)
 container.registerSingleton('ListServiceOrders', ListServiceOrders)
-container.registerSingleton('RealtimeServiceOrderService', RealtimeServiceOrderService)
+container.registerSingleton('RealtimeServiceOrderService', RealtimeSharingServiceOrder)
 
 container.register('Logger', LocalLogger)
 container.registerSingleton('CreateServiceOrderObserver', Observer)
