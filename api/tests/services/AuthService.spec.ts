@@ -6,7 +6,7 @@ import { userRepositoryMock } from "../mocks/repositories.mock";
 import { jwtServiceMock, passwordHasherMock } from "../mocks/services.mock";
 import { propertiesInstance } from "../mocks/utils.mock";
 import { Roules } from "entities/user/Roule";
-import { TokenExceptions } from "services/JwtService/TokenException";
+import { TokenExceptions } from "entities/user/exceptions/TokenException";
 
 // Create AuthService instance with mocks
 const authService = new AuthService(

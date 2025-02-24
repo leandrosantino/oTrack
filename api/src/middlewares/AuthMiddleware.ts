@@ -1,7 +1,7 @@
 import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
 import { Roules } from "entities/user/Roule";
-import { TokenException } from "services/JwtService/TokenException";
+import { TokenException } from "entities/user/exceptions/TokenException";
 import { AuthException } from "entities/user/exceptions/AuthException";
 import { VerifyToken } from "use-cases/authentication/VerifyToken";
 

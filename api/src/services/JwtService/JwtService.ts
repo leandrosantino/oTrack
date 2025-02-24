@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { Properties } from "utils/Properties";
 import { IJwtService } from "./IJwtService";
-import { TokenException } from "./TokenException";
+import { TokenException } from "../../entities/user/exceptions/TokenException";
 import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 
 @injectable()

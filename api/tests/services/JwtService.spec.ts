@@ -1,7 +1,7 @@
 import { JwtService } from "services/JwtService/JwtService";
 import { propertiesInstance } from "../mocks/utils.mock";
 import jwt from 'jsonwebtoken'
-import { TokenExceptions } from "services/JwtService/TokenException";
+import { TokenExceptions } from "entities/user/exceptions/TokenException";
 
 class MockJsonWebTokenError extends Error {
   name = 'JsonWebTokenError';

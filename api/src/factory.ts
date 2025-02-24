@@ -11,26 +11,26 @@ import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
 import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
 import { JwtService } from "services/JwtService/JwtService";
 import { LocalLogger } from "utils/LocalLogger";
-import { LocationSharing } from "services/LocationSharing/LocationSharing";
 import { ServiceOrderRepository } from "repository/ServiceOrderRepository";
 import { ServiceOrdersController } from "controllers/ServiceOrdersController";
 import { CreateServiceOrder } from "use-cases/service-order/CreateServiceOrder";
 import { ListServiceOrders } from "use-cases/service-order/ListServiceOrders";
-import { RealtimeServiceOrderService } from "services/RealtimeServiceOrderService/RealtimeServiceOrderService";
 import { RealtimeServiceOrderController } from "controllers/RealtimeServiceOrderController";
 import { UpdateServiceOrder } from "use-cases/service-order/UpdateServiceOrder";
 import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import { CreateServiceOrderObservable } from "use-cases/service-order/wrappers/CreateServiceOrderObservable";
-import { WebSocketAuthService } from "services/WebSocketAuthService/WebSocketAuthService";
 import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 import { Observer } from "utils/Observer";
-import { UpdateKanbanPositionValidator } from "services/RealtimeServiceOrderService/UpdateKanbanPositionValidator";
 import { CreateUser } from "use-cases/user/CreateUser";
 import { RefreshTokens } from "use-cases/authentication/RefreshTokens";
 import { SignIn } from "use-cases/authentication/SignIn";
 import { SignOut } from "use-cases/authentication/SignOut";
 import { VerifyToken } from "use-cases/authentication/VerifyToken";
 import { UserProfileValidator } from "entities/user/validators/UserProfileValidator";
+import { UpdateKanbanPositionValidator } from "entities/service-order/validators/UpdateKanbanPositionValidator";
+import { GenerateTicket } from "use-cases/authentication/GenerateTicket";
+import { VerifyTicket } from "use-cases/authentication/VerifyTicket";
+import { CuidGenerator } from "services/CuidGenerator/CuidGenerator";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -41,23 +41,25 @@ container.register('WebSocketAuthMiddleware', WebSocketAuthMiddleware)
 container.register('UserRepository', UserRepository)
 container.register('ServiceOrderRepository', ServiceOrderRepository)
 
-container.register('RefreshTokens', RefreshTokens)
-container.register('SignIn', SignIn)
-container.register('SignOut', SignOut)
-container.register('VerifyToken', VerifyToken)
+container.registerSingleton('RefreshTokens', RefreshTokens)
+container.registerSingleton('SignIn', SignIn)
+container.registerSingleton('SignOut', SignOut)
+container.registerSingleton('VerifyToken', VerifyToken)
+container.registerSingleton('GenerateTicket', GenerateTicket)
+container.registerSingleton('VerifyTicket', VerifyTicket)
+container.registerSingleton('TicketsMap', Map)
 
-container.registerSingleton('WebSocketAuthService', WebSocketAuthService)
+
 container.registerSingleton('CreateUser', CreateUser)
 container.register('PasswordHasher', PasswordHasher)
 container.register('JwtService', JwtService)
-container.register('LocationSharing', LocationSharing)
+container.registerSingleton('CuidGenerator', CuidGenerator)
 
 container.registerSingleton('CreateServiceOrder', CreateServiceOrder)
 container.registerSingleton('CreateServiceOrderObservable', CreateServiceOrderObservable)
 container.registerSingleton('UpdateServiceOrder', UpdateServiceOrder)
 container.registerSingleton('UpdateServiceOrderKanbanPosition', UpdateServiceOrderKanbanPosition)
 container.registerSingleton('ListServiceOrders', ListServiceOrders)
-container.registerSingleton('RealtimeServiceOrderService', RealtimeServiceOrderService)
 
 container.register('Logger', LocalLogger)
 container.registerSingleton('CreateServiceOrderObserver', Observer)

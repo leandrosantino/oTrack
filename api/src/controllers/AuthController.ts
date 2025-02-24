@@ -5,20 +5,20 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { ERROR_SCHEMA } from "utils/ErrorSchema";
 import { CookieSerializeOptions } from "@fastify/cookie";
-import { TokenException } from "services/JwtService/TokenException";
+import { TokenException } from "entities/user/exceptions/TokenException";
 import { Roules } from "entities/user/Roule";
 import { User } from "entities/user/User";
-import { IWebSocketAuthService } from "services/WebSocketAuthService/IWebSocketAuthService";
 import { SignInException } from "entities/user/exceptions/SignInException";
 import { RefreshTokens } from "use-cases/authentication/RefreshTokens";
 import { SignIn } from "use-cases/authentication/SignIn";
 import { SignOut } from "use-cases/authentication/SignOut";
+import { GenerateTicket } from "use-cases/authentication/GenerateTicket";
 
 @injectable()
 export class AuthController implements ControllerInterface {
 
   constructor(
-    @inject('WebSocketAuthService') private readonly webSocketAuthService: IWebSocketAuthService,
+    @inject('GenerateTicket') private readonly generateTicket: GenerateTicket,
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
     @inject('RefreshTokens') private readonly refreshTokens: RefreshTokens,
     @inject('SignIn') private readonly signIn: SignIn,
@@ -113,7 +113,7 @@ export class AuthController implements ControllerInterface {
       },
     }, async (request, reply) => {
       const user = request.user as User
-      const ticket = await this.webSocketAuthService.generateTicket(user)
+      const ticket = await this.generateTicket.execute(user)
       reply.send(ticket)
     })
 

@@ -2,6 +2,7 @@ import { Exception } from "utils/Exception";
 
 export type Result<T, E extends Exception> = {
   orElseThrow: () => T
+  orElseNull: () => T | null
 } & ({
   ok: true; value: T
 } | {

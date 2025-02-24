@@ -1,9 +1,9 @@
-import { User } from "entities/user/User";
-import { UserProfile } from "services/AuthService/IAuthService";
+import { UserProfile } from "entities/user/UserProfile";
+import { EventClient } from "interfaces/EventCLient";
 import { WebSocket, RawData, EventEmitter } from "ws";
 import z from "zod";
 
-export class WsClient {
+export class WebSocketEventClient implements EventClient {
 
   private listener: EventEmitter
   profile: UserProfile

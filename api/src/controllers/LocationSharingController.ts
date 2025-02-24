@@ -5,33 +5,50 @@ import { WebSocket } from 'ws';
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { Roules } from "entities/user/Roule";
-import { WsClient } from "utils/WsClient";
+import { WebSocketEventClient } from "utils/WebSocketEventClient";
 import { User } from "entities/user/User";
-import { ILocationSharing } from "services/LocationSharing/ILocationSharing";
+import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 
 @injectable()
 export class LocationSharingController implements ControllerInterface {
 
   constructor(
-    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
-    @inject('LocationSharing') private readonly locationSharing: ILocationSharing
+    @inject('WebSocketAuthMiddleware') private readonly webSocketAuthMiddleware: WebSocketAuthMiddleware,
   ) { }
+
+  private clients = new Map<number, WebSocketEventClient>();
 
   webSocketHandler(socket: WebSocket, request: FastifyRequest) {
     const { id } = request.query as { id: number };
-    const client = new WsClient(socket, { id: Number(id), roule: Roules.ADMIN } as User)
-    this.locationSharing.execute(client)
+    const client = new WebSocketEventClient(socket, { id: Number(id), roule: Roules.ADMIN } as User)
+    this.clients.set(client.profile.id, client)
+
+    client.on('subscribe', (targetId: number) => {
+      const targetClient = this.clients.get(targetId)
+      if (!targetClient) {
+        client.emit('error', 'Erro - Usuário não encontrado ou desconectado');
+        return
+      }
+      targetClient.on('locationUpdate', (location: string) => {
+        client.emit('locationSender', { targetId, location })
+      });
+    })
+
+    client.onClose(() => {
+      console.log('Client closed')
+      this.clients.delete(client.profile.id)
+    })
   }
 
   routes: FastifyPluginAsyncZod = async (app) => {
-    app.addHook('onRequest', this.authMiddleware.build([Roules.ADMIN]))
+    app.addHook('onRequest', this.webSocketAuthMiddleware.build([Roules.ADMIN]))
     app.route({
       schema: {
         tags: ['websocket'],
         security: [{ BearerAuth: [] }],
       },
       method: 'GET',
-      url: '/location',
+      url: '/location/:ticket',
       handler: () => { },
       wsHandler: (...params) => this.webSocketHandler(...params)
     })

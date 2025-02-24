@@ -1,7 +1,7 @@
 import { IUserRepository } from "entities/user/IUserRepository"
 import { UserProfile } from "entities/user/UserProfile"
 import { IJwtService } from "services/JwtService/IJwtService"
-import { TokenException } from "services/JwtService/TokenException"
+import { TokenException } from "entities/user/exceptions/TokenException"
 import { singleton, inject } from "tsyringe"
 import { JwtToken, AuthResponseDTO, RefreshTokenData } from "./types"
 import { SignOut } from "./SignOut"

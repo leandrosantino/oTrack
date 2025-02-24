@@ -1,4 +1,4 @@
-import { TokenException } from "./TokenException"
+import { TokenException } from "../../entities/user/exceptions/TokenException"
 
 export interface IJwtService {
 

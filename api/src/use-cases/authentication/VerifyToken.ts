@@ -1,6 +1,6 @@
 import { UserProfile } from "entities/user/UserProfile"
 import { IJwtService } from "services/JwtService/IJwtService"
-import { TokenException } from "services/JwtService/TokenException"
+import { TokenException } from "entities/user/exceptions/TokenException"
 import { singleton, inject } from "tsyringe"
 import { JwtToken } from "./types"
 import { Validator } from "interfaces/Validator"

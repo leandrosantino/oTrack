@@ -9,7 +9,7 @@ export class UpdateServiceOrderKanbanPosition {
   ) { }
 
   async execute({ id, previousIndex, postIndex, status }: UpdateServiceOrderKanbanPositionRequestDTO) {
-    if (!previousIndex && !postIndex) return
+    if (!previousIndex && !postIndex) return null
 
     let index = 0
     if (postIndex && !previousIndex) index = postIndex + 100

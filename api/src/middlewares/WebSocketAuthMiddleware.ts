@@ -2,14 +2,14 @@ import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
 import { Roules } from "entities/user/Roule";
 import { AuthException } from "entities/user/exceptions/AuthException";
-import { IWebSocketAuthService } from "services/WebSocketAuthService/IWebSocketAuthService";
+import { VerifyTicket } from "use-cases/authentication/VerifyTicket";
 
 
 @injectable()
 export class WebSocketAuthMiddleware {
 
   constructor(
-    @inject('WebSocketAuthService') private readonly webSocketAuthService: IWebSocketAuthService
+    @inject('VerifyTicket') private readonly verifyTicket: VerifyTicket
   ) { }
 
   build(roles: Roules[] = []): RouteHandlerMethod {
@@ -18,7 +18,7 @@ export class WebSocketAuthMiddleware {
 
       if (!ticket) return reply.status(401).send(new AuthException.Unauthticated().details())
 
-      const verifyTicketResult = await this.webSocketAuthService.verifyTicket(ticket)
+      const verifyTicketResult = await this.verifyTicket.execute(ticket)
 
       if (!verifyTicketResult.ok) {
         return reply.status(401).send(verifyTicketResult.err.details())
