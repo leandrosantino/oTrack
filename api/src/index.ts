@@ -2,13 +2,14 @@ import "reflect-metadata";
 import Dotenv from 'dotenv'
 
 import Fastify from "fastify";
-import { authController, errorMiddleware, properties, usersController, locationSharingController, serviceOrdersController, realtimeServiceOrderController } from "factory";
 import { fastifyWebsocket } from "@fastify/websocket";
 import { fastifyCors } from "@fastify/cors";
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { fastifyCookie } from "@fastify/cookie";
+import { properties, errorMiddleware, authController, usersController, serviceOrdersController, realtimeServiceOrderController, locationSharingController } from "factory";
+
 
 Dotenv.config()
 
