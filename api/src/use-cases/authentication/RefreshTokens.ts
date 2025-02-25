@@ -5,7 +5,6 @@ import { TokenException } from "entities/user/exceptions/TokenException"
 import { singleton, inject } from "tsyringe"
 import { JwtToken, AuthResponseDTO, RefreshTokenData } from "./types"
 import { SignOut } from "./SignOut"
-import { Logger } from "interfaces/Logger"
 
 @singleton()
 export class RefreshTokens {
@@ -13,7 +12,6 @@ export class RefreshTokens {
   constructor(
     @inject('UserRepository') private readonly userRepository: IUserRepository,
     @inject('JwtService') private readonly jwtService: IJwtService,
-    @inject('Logger') private readonly logger: Logger,
     @inject('SignOut') private readonly signOut: SignOut
   ) { }
 
@@ -33,8 +31,7 @@ export class RefreshTokens {
 
     if (savedTokenData === null) {
       await this.userRepository.deleteTokensByUserId(refreshTokenData.userId)
-      this.logger.info('Attempt to refresh tokens using a discarded token')
-      return Err(new TokenException.InvalidToken())
+      return Err(new TokenException.AlreadyUsedToken())
     }
 
     const { user } = savedTokenData

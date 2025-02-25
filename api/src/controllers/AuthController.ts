@@ -13,6 +13,7 @@ import { RefreshTokens } from "use-cases/authentication/RefreshTokens";
 import { SignIn } from "use-cases/authentication/SignIn";
 import { SignOut } from "use-cases/authentication/SignOut";
 import { GenerateTicket } from "use-cases/authentication/GenerateTicket";
+import { Logger } from "interfaces/Logger";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -22,7 +23,8 @@ export class AuthController implements ControllerInterface {
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
     @inject('RefreshTokens') private readonly refreshTokens: RefreshTokens,
     @inject('SignIn') private readonly signIn: SignIn,
-    @inject('SignOut') private readonly signOut: SignOut
+    @inject('SignOut') private readonly signOut: SignOut,
+    @inject('Logger') private readonly logger: Logger
   ) { }
 
   private readonly tags = ['Authentication']
@@ -89,6 +91,11 @@ export class AuthController implements ControllerInterface {
       }
 
       if (result.err instanceof TokenException) reply.status(401)
+
+      if (result.err instanceof TokenException.AlreadyUsedToken) {
+        this.logger.info('Attempt to refresh tokens using a discarded token')
+        return reply.send(new TokenException.InvalidToken().details())
+      }
 
       return reply.send(result.err.details())
     })

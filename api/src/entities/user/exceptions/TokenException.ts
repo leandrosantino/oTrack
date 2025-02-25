@@ -20,4 +20,13 @@ export class TokenException extends Exception {
     }
   };
 
+  static AlreadyUsedToken = class extends TokenException {
+    constructor() {
+      super({
+        message: "Already used token",
+        type: "ALREADY_USED_TOKEN",
+      });
+    }
+  };
+
 }
