@@ -7,7 +7,7 @@ import { Roules } from "entities/user/Roule";
 import { WebSocketAuthMiddleware } from "middlewares/WebSocketAuthMiddleware";
 import { ServiceOrder } from "entities/service-order/ServiceOrder";
 import { Validator } from "interfaces/Validator";
-import { UpdateServiceOrderKanbanPositionRequestDTO } from "use-cases/service-order/types";
+import { UpdateServiceOrderKanbanPositionRequestDTO } from "use-cases/service-order/DTOs";
 import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import { Observer } from "utils/Observer";
 import { WebSocketEventClient } from "utils/WebSocketEventClient";

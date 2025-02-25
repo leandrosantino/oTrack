@@ -1,9 +1,9 @@
 import { IUserRepository } from "entities/user/IUserRepository"
 import { UserProfile } from "entities/user/UserProfile"
-import { IJwtService } from "services/JwtService/IJwtService"
+import { ITokenProvider } from "services/TokenProvider/ITokenProvider"
 import { TokenException } from "entities/user/exceptions/TokenException"
 import { singleton, inject } from "tsyringe"
-import { JwtToken, AuthResponseDTO, RefreshTokenData } from "./types"
+import { AuthResponseDTO, RefreshTokenData } from "./DTOs"
 import { SignOut } from "./SignOut"
 
 @singleton()
@@ -11,13 +11,13 @@ export class RefreshTokens {
 
   constructor(
     @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('JwtService') private readonly jwtService: IJwtService,
+    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider,
     @inject('SignOut') private readonly signOut: SignOut
   ) { }
 
 
-  async execute(refreshToken: JwtToken): AsyncResult<AuthResponseDTO, TokenException> {
-    const jwtVerifyResult = await this.jwtService.verify<RefreshTokenData>(refreshToken)
+  async execute(refreshToken: string): AsyncResult<AuthResponseDTO, TokenException> {
+    const jwtVerifyResult = await this.tokenProvider.verify<RefreshTokenData>(refreshToken)
 
     if (!jwtVerifyResult.ok) {
       if (jwtVerifyResult.err instanceof TokenException.ExpiredToken) {
@@ -39,8 +39,8 @@ export class RefreshTokens {
 
     const createdToken = await this.userRepository.createToken(user.id)
 
-    const newRefreshToken = this.jwtService.generateRefreshToken(createdToken)
-    const newAccessToken = this.jwtService.generateAccessToken(new UserProfile(user))
+    const newRefreshToken = this.tokenProvider.generateRefreshToken(createdToken)
+    const newAccessToken = this.tokenProvider.generateAccessToken(new UserProfile(user))
 
     return Ok({ accessToken: newAccessToken, refreshToken: newRefreshToken })
 

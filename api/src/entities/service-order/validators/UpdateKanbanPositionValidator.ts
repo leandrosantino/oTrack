@@ -1,7 +1,7 @@
 import { ServiceOrderStatus } from "entities/service-order/ServiceOrderStatus";
 import { ValidationException, Validator } from "interfaces/Validator";
 import { singleton } from "tsyringe";
-import { UpdateServiceOrderKanbanPositionRequestDTO } from "use-cases/service-order/types";
+import { UpdateServiceOrderKanbanPositionRequestDTO } from "use-cases/service-order/DTOs";
 import z from "zod";
 
 @singleton()

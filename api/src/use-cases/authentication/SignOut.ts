@@ -1,19 +1,19 @@
 import { IUserRepository } from "entities/user/IUserRepository"
-import { IJwtService } from "services/JwtService/IJwtService"
+import { ITokenProvider } from "services/TokenProvider/ITokenProvider"
 import { singleton, inject } from "tsyringe"
-import { JwtToken, RefreshTokenData } from "./types"
+import { RefreshTokenData } from "./DTOs"
 
 @singleton()
 export class SignOut {
 
   constructor(
     @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('JwtService') private readonly jwtService: IJwtService
+    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider
   ) { }
 
 
-  async execute(refreshToken: JwtToken): Promise<void> {
-    const decodedResult = await this.jwtService.decode<RefreshTokenData>(refreshToken)
+  async execute(refreshToken: string): Promise<void> {
+    const decodedResult = await this.tokenProvider.decode<RefreshTokenData>(refreshToken)
     if (!decodedResult.ok) {
       return
     }

@@ -1,9 +1,9 @@
 import { IServiceOrderRepository } from "entities/service-order/IServiceOrderRepository";
 import { inject, singleton } from "tsyringe";
-import { IUpdateServiceOrder, UpdateServiceOrderRequestDTO } from "./types";
+import { UpdateServiceOrderRequestDTO } from "./DTOs";
 
 @singleton()
-export class UpdateServiceOrder implements IUpdateServiceOrder {
+export class UpdateServiceOrder {
 
   constructor(
     @inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository

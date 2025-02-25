@@ -2,7 +2,8 @@ import { inject, singleton } from "tsyringe";
 import { ServiceOrder } from "entities/service-order/ServiceOrder";
 import { Observer } from "utils/Observer";
 import { CreateServiceOrder } from "../CreateServiceOrder";
-import { ICreateServiceOrder, CreateServiceOrderRequestDTO } from "../types";
+import { CreateServiceOrderRequestDTO } from "../DTOs";
+import { ICreateServiceOrder } from "../ICreateServiceOrder";
 
 @singleton()
 export class CreateServiceOrderObservable implements ICreateServiceOrder {

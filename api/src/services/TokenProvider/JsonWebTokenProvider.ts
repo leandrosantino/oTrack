@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
 import { Properties } from "utils/Properties";
-import { IJwtService } from "./IJwtService";
+import { ITokenProvider } from "./ITokenProvider";
 import { TokenException } from "../../entities/user/exceptions/TokenException";
 import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 
 @injectable()
-export class JwtService implements IJwtService {
+export class JsonWebTokenProvider implements ITokenProvider {
 
   constructor(
     @inject('Properties') private readonly properties: Properties,

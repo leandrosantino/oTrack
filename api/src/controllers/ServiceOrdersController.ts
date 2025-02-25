@@ -5,8 +5,8 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { ControllerInterface } from "interfaces/ControllerInterface";
 import { AuthMiddleware } from "middlewares/AuthMiddleware";
 import { inject, singleton } from "tsyringe";
+import { ICreateServiceOrder } from "use-cases/service-order/ICreateServiceOrder";
 import { ListServiceOrders } from "use-cases/service-order/ListServiceOrders";
-import { ICreateServiceOrder } from "use-cases/service-order/types";
 import { UpdateServiceOrderKanbanPosition } from "use-cases/service-order/UpdateServiceOrderKanbanPosition";
 import z from "zod";
 

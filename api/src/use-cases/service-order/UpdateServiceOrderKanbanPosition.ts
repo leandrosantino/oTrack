@@ -1,11 +1,12 @@
 import { inject, singleton } from "tsyringe";
-import { IUpdateServiceOrder, UpdateServiceOrderKanbanPositionRequestDTO } from "./types";
+import { UpdateServiceOrderKanbanPositionRequestDTO } from "./DTOs";
+import { UpdateServiceOrder } from "./UpdateServiceOrder";
 
 @singleton()
 export class UpdateServiceOrderKanbanPosition {
 
   constructor(
-    @inject('UpdateServiceOrder') private readonly updateServiceOrder: IUpdateServiceOrder
+    @inject('UpdateServiceOrder') private readonly updateServiceOrder: UpdateServiceOrder
   ) { }
 
   async execute({ id, previousIndex, postIndex, status }: UpdateServiceOrderKanbanPositionRequestDTO) {

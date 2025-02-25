@@ -1,4 +1,4 @@
-import { JwtService } from "services/JwtService/JwtService";
+import { JsonWebTokenProvider } from "services/TokenProvider/JsonWebTokenProvider";
 import { propertiesInstance } from "../mocks/utils.mock";
 import jwt from 'jsonwebtoken'
 import { TokenExceptions } from "entities/user/exceptions/TokenException";
@@ -34,7 +34,7 @@ jest.mock('jsonwebtoken', () => ({
   }
 }));
 
-const jwtService = new JwtService(
+const jwtService = new JsonWebTokenProvider(
   propertiesInstance
 )
 

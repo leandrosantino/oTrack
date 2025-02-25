@@ -1,6 +1,7 @@
 import { IServiceOrderRepository } from "entities/service-order/IServiceOrderRepository";
 import { inject, singleton } from "tsyringe";
-import { CreateServiceOrderRequestDTO, ICreateServiceOrder } from "./types";
+import { CreateServiceOrderRequestDTO } from "./DTOs";
+import { ICreateServiceOrder } from "./ICreateServiceOrder";
 
 @singleton()
 export class CreateServiceOrder implements ICreateServiceOrder {

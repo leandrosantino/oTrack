@@ -1,22 +1,21 @@
 import { UserProfile } from "entities/user/UserProfile"
-import { IJwtService } from "services/JwtService/IJwtService"
+import { ITokenProvider } from "services/TokenProvider/ITokenProvider"
 import { TokenException } from "entities/user/exceptions/TokenException"
 import { singleton, inject } from "tsyringe"
-import { JwtToken } from "./types"
 import { Validator } from "interfaces/Validator"
 
 @singleton()
 export class VerifyToken {
 
   constructor(
-    @inject('JwtService') private readonly jwtService: IJwtService,
+    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider,
     @inject('UserProfileValidator') private readonly userProfileValidator: Validator<UserProfile>
   ) { }
 
 
-  async execute(token: JwtToken): AsyncResult<UserProfile, TokenException> {
+  async execute(token: string): AsyncResult<UserProfile, TokenException> {
 
-    const jwtVerifyResult = await this.jwtService.verify<UserProfile>(token)
+    const jwtVerifyResult = await this.tokenProvider.verify<UserProfile>(token)
 
     if (!jwtVerifyResult.ok) {
       return Err(jwtVerifyResult.err)

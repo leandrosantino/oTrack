@@ -1,6 +1,6 @@
 import { TokenException } from "../../entities/user/exceptions/TokenException"
 
-export interface IJwtService {
+export interface ITokenProvider {
 
   generateAccessToken(payload: object): string
   generateRefreshToken(payload: object): string

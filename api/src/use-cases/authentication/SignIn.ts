@@ -1,9 +1,9 @@
 import { SignInException } from "entities/user/exceptions/SignInException";
 import { inject, singleton } from "tsyringe";
-import { AuthRequestDTO, AuthResponseDTO } from "./types";
+import { AuthRequestDTO, AuthResponseDTO } from "./DTOs";
 import { IUserRepository } from "entities/user/IUserRepository";
 import { UserProfile } from "entities/user/UserProfile";
-import { IJwtService } from "services/JwtService/IJwtService";
+import { ITokenProvider } from "services/TokenProvider/ITokenProvider";
 import { IPasswordHasher } from "services/PasswordHasher/IPasswordHasher";
 
 
@@ -13,7 +13,7 @@ export class SignIn {
   constructor(
     @inject('UserRepository') private readonly userRepository: IUserRepository,
     @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher,
-    @inject('JwtService') private readonly jwtService: IJwtService
+    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider
   ) { }
 
 
@@ -30,8 +30,8 @@ export class SignIn {
 
     const createdToken = await this.userRepository.createToken(user.id)
 
-    const accessToken = this.jwtService.generateAccessToken(new UserProfile(user))
-    const refreshToken = this.jwtService.generateRefreshToken(createdToken)
+    const accessToken = this.tokenProvider.generateAccessToken(new UserProfile(user))
+    const refreshToken = this.tokenProvider.generateRefreshToken(createdToken)
 
     return Ok({ accessToken, refreshToken })
   }

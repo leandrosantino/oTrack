@@ -13,10 +13,3 @@ export type UpdateServiceOrderKanbanPositionRequestDTO = {
   postIndex?: number
 }
 
-export interface ICreateServiceOrder {
-  execute(data: CreateServiceOrderRequestDTO): Promise<ServiceOrder>
-}
-
-export interface IUpdateServiceOrder {
-  execute(data: UpdateServiceOrderRequestDTO): Promise<ServiceOrder>
-}

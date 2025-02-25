@@ -9,7 +9,7 @@ import { Err, Ok } from 'utils/ResultHandler'
 import { Properties } from "utils/Properties";
 import { PasswordHasher } from "services/PasswordHasher/PasswordHasher";
 import { ErrorMiddleware } from "middlewares/ErrorMiddleware";
-import { JwtService } from "services/JwtService/JwtService";
+import { JsonWebTokenProvider } from "services/TokenProvider/JsonWebTokenProvider";
 import { LocalLogger } from "utils/LocalLogger";
 import { ServiceOrderRepository } from "repository/ServiceOrderRepository";
 import { ServiceOrdersController } from "controllers/ServiceOrdersController";
@@ -52,7 +52,7 @@ container.registerSingleton('TicketsMap', Map)
 
 container.registerSingleton('CreateUser', CreateUser)
 container.register('PasswordHasher', PasswordHasher)
-container.register('JwtService', JwtService)
+container.register('TokenProvider', JsonWebTokenProvider)
 container.registerSingleton('CuidGenerator', CuidGenerator)
 
 container.registerSingleton('CreateServiceOrder', CreateServiceOrder)

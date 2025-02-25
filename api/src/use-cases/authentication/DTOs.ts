@@ -7,11 +7,9 @@ export type AuthRequestDTO = {
 }
 
 export type AuthResponseDTO = {
-  accessToken: JwtToken
-  refreshToken: JwtToken
+  accessToken: string
+  refreshToken: string
 }
-
-export type JwtToken = string
 
 export type RefreshTokenData = {
   id: UserToken['id']
