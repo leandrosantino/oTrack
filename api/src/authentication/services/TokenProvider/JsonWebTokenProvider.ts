@@ -1,10 +1,10 @@
-import { inject, injectable } from "tsyringe";
+import { inject, singleton } from "tsyringe";
 import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 import { TokenException } from "authentication/exceptions/TokenException";
 import { Properties } from "shared/utils/Properties";
 import { ITokenProvider } from "./ITokenProvider";
 
-@injectable()
+@singleton()
 export class JsonWebTokenProvider implements ITokenProvider {
 
   constructor(

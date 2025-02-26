@@ -2,10 +2,6 @@ import { inject, injectable } from "tsyringe";
 import z from "zod";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { CookieSerializeOptions } from "@fastify/cookie";
-import { RefreshTokens } from "authentication/use-cases/RefreshTokens";
-import { SignIn } from "authentication/use-cases/SignIn";
-import { SignOut } from "authentication/use-cases/SignOut";
-import { GenerateTicket } from "authentication/use-cases/GenerateTicket";
 import { SignInException } from "authentication/exceptions/SignInException";
 import { TokenException } from "authentication/exceptions/TokenException";
 import { Roules } from "user/Roule";
@@ -13,7 +9,11 @@ import { User } from "user/User";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
 import { Logger } from "shared/Logging/Logger";
 import { AuthMiddleware } from "shared/middlewares/AuthMiddleware";
-import { ERROR_SCHEMA } from "shared/utils/ErrorSchema";
+import { ErrorSchema } from "shared/utils/ErrorSchema";
+import { GenerateTicket } from "authentication/usecases/GenerateTicket";
+import { RefreshTokens } from "authentication/usecases/RefreshTokens";
+import { SignIn } from "authentication/usecases/SignIn";
+import { SignOut } from "authentication/usecases/SignOut";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -50,8 +50,8 @@ export class AuthController implements ControllerInterface {
         body: this.LOGIN_RESQUEST_BODY_SCHEMA,
         response: {
           200: z.string().describe('Access Token'),
-          404: ERROR_SCHEMA(SignInException.UserNotFound),
-          401: ERROR_SCHEMA(SignInException.InvalidPassword),
+          404: ErrorSchema.build(SignInException.UserNotFound),
+          401: ErrorSchema.build(SignInException.InvalidPassword),
         }
       }
     }, async (request, reply) => {
@@ -76,7 +76,8 @@ export class AuthController implements ControllerInterface {
         tags: this.tags,
         response: {
           200: z.string().describe('Access Token'),
-          401: ERROR_SCHEMA(TokenException.ExpiredToken).or(ERROR_SCHEMA(TokenException.InvalidToken))
+          401: ErrorSchema.build(TokenException.ExpiredToken)
+            .or(ErrorSchema.build(TokenException.InvalidToken))
         }
       }
     }, async (request, reply) => {

@@ -1,7 +1,5 @@
 import { container } from "tsyringe"
 import { Observer } from "shared/utils/Observer"
-import { RealtimeServiceOrderController } from "./controllers/RealtimeServiceOrderController"
-import { ServiceOrdersController } from "./controllers/ServiceOrdersController"
 import { ServiceOrderRepository } from "./repository/ServiceOrderRepository"
 import { CreateServiceOrder } from "./usecases/CreateServiceOrder"
 import { ListServiceOrders } from "./usecases/ListServiceOrders"
@@ -11,7 +9,7 @@ import { UpdateKanbanPositionValidator } from "./validators/UpdateKanbanPosition
 import { CreateServiceOrderObservable } from "./wrappers/CreateServiceOrderObservable"
 
 //Repositories
-container.register('ServiceOrderRepository', ServiceOrderRepository)
+container.registerSingleton('ServiceOrderRepository', ServiceOrderRepository)
 
 //Use cases
 container.registerSingleton('CreateServiceOrder', CreateServiceOrder)

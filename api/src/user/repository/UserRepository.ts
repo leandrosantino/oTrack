@@ -1,10 +1,10 @@
 import { prisma } from "database";
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { IUserRepository } from "user/IUserRepository";
 import { User } from "user/User";
 import { UserToken } from "user/UserToken";
 
-@injectable()
+@singleton()
 export class UserRepository implements IUserRepository {
 
   async createToken(userId: User["id"]): Promise<Omit<UserToken, "user">> {

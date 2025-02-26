@@ -1,8 +1,8 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import chalk from "chalk";
 import { Logger } from "./Logger";
 
-@injectable()
+@singleton()
 export class LocalLogger implements Logger {
 
   info(message: string): void {

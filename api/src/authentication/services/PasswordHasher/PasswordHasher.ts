@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { IPasswordHasher } from "./IPasswordHasher";
 
-@injectable()
+@singleton()
 export class PasswordHasher implements IPasswordHasher {
   async hash(password: string): Promise<string> {
     const saltRounds = 10;

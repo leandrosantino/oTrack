@@ -18,7 +18,7 @@ import 'user/factory'
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
 
-container.register('Logger', LocalLogger)
+container.registerSingleton('Logger', LocalLogger)
 
 export const properties = container.resolve(Properties)
 container.registerInstance('Properties', properties)

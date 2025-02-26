@@ -1,5 +1,4 @@
 import { container } from "tsyringe"
-import { AuthController } from "./controllers/AuthController"
 import { CuidGenerator } from "./services/CuidGenerator/CuidGenerator"
 import { PasswordHasher } from "./services/PasswordHasher/PasswordHasher"
 import { JsonWebTokenProvider } from "./services/TokenProvider/JsonWebTokenProvider"
@@ -9,12 +8,10 @@ import { SignIn } from "./usecases/SignIn"
 import { SignOut } from "./usecases/SignOut"
 import { VerifyTicket } from "./usecases/VerifyTicket"
 import { VerifyToken } from "./usecases/VerifyToken"
-import { AuthMiddleware } from "shared/middlewares/AuthMiddleware"
-import { WebSocketAuthMiddleware } from "shared/middlewares/WebSocketAuthMiddleware"
 
 //Services
-container.register('PasswordHasher', PasswordHasher)
-container.register('TokenProvider', JsonWebTokenProvider)
+container.registerSingleton('PasswordHasher', PasswordHasher)
+container.registerSingleton('TokenProvider', JsonWebTokenProvider)
 container.registerSingleton('CuidGenerator', CuidGenerator)
 
 

@@ -6,7 +6,7 @@ import { CreateUser } from "./usecases/CreateUser"
 import { UserProfileValidator } from "./validators/UserProfileValidator"
 
 //Repository
-container.register('UserRepository', UserRepository)
+container.registerSingleton('UserRepository', UserRepository)
 
 //Use cases
 container.registerSingleton('CreateUser', CreateUser)

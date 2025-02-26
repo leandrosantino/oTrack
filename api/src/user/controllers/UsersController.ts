@@ -4,7 +4,7 @@ import z from "zod";
 import { CreateUser } from "user/usecases/CreateUser";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
 import { AuthMiddleware } from "shared/middlewares/AuthMiddleware";
-import { ERROR_SCHEMA } from "shared/utils/ErrorSchema";
+import { ErrorSchema } from "shared/utils/ErrorSchema";
 import { CreateUserException } from "user/exceptions/CreateUserException";
 import { Roules } from "user/Roule";
 import { UserProfileValidator } from "user/validators/UserProfileValidator";
@@ -36,7 +36,7 @@ export class UsersController implements ControllerInterface {
         body: this.USER_SCHEMA.omit({ id: true }),
         response: {
           201: this.USER_SCHEMA.describe('Created User'),
-          401: ERROR_SCHEMA(CreateUserException.UserAlreadyExists)
+          401: ErrorSchema.build(CreateUserException.UserAlreadyExists)
         }
       }
     }, async (request, reply) => {

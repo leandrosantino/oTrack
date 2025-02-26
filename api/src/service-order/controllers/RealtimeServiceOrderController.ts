@@ -4,7 +4,7 @@ import { WebSocket } from 'ws';
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { UpdateServiceOrderKanbanPositionRequestDTO } from "service-order/DTOs";
 import { ServiceOrder } from "service-order/ServiceOrder";
-import { UpdateServiceOrderKanbanPosition } from "service-order/use-cases/UpdateServiceOrderKanbanPosition";
+import { UpdateServiceOrderKanbanPosition } from "service-order/usecases/UpdateServiceOrderKanbanPosition";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
 import { Validator } from "shared/Validator/Validator";
 import { WebSocketAuthMiddleware } from "shared/middlewares/WebSocketAuthMiddleware";

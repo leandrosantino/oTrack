@@ -2,7 +2,7 @@ import { inject, singleton } from "tsyringe";
 import { ServiceOrder } from "service-order/ServiceOrder";
 import { CreateServiceOrderRequestDTO } from "service-order/DTOs";
 import { ICreateServiceOrder } from "service-order/interfaces/ICreateServiceOrder";
-import { CreateServiceOrder } from "service-order/use-cases/CreateServiceOrder";
+import { CreateServiceOrder } from "service-order/usecases/CreateServiceOrder";
 import { Observer } from "shared/utils/Observer";
 
 

@@ -1,6 +1,6 @@
 import { RouteHandlerMethod } from "fastify";
 import { inject, injectable } from "tsyringe";
-import { VerifyToken } from "authentication/use-cases/VerifyToken";
+import { VerifyToken } from "authentication/usecases/VerifyToken";
 import { AuthException } from "authentication/exceptions/AuthException";
 import { Roules } from "user/Roule";
 

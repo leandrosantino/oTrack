@@ -1,9 +1,9 @@
 import { prisma } from "database";
 import { IServiceOrderRepository } from "service-order/interfaces/IServiceOrderRepository";
 import { ServiceOrder } from "service-order/ServiceOrder";
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 
-@injectable()
+@singleton()
 export class ServiceOrderRepository implements IServiceOrderRepository {
 
   async getHigherIndex(): Promise<number> {
