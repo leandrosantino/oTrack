@@ -1,0 +1,50 @@
+
+services:
+
+  database2:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "admin123"
+      POSTGRES_USER: "leandro"
+      POSTGRES_DB: "otrack"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    networks:
+      - net
+    ports:
+      - 5432:5432
+
+  api:
+    build:
+      context: ./api
+    networks:
+      - net
+    depends_on:
+      database2:
+        condition: service_healthy
+        restart: true
+    ports:
+      - 3000:3000
+
+  web:
+    build:
+      context: ./web
+    networks:
+      - net
+    depends_on:
+      api:
+        condition: service_started
+        restart: true
+    ports:
+      - 5173:80
+
+networks:
+  net:
+    driver: bridge
+
+
+
