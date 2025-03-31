@@ -91,8 +91,32 @@ O sistema estará disponível em http://localhost:5173
 
 <br>
 
+## 🧪 Testando
+
+Acesse a url `http://localhost:5173`´ no seu navegador, isso abrirá a tela de login.
+
+<div align="center" >
+
+  <img src=".github/preview-login.png" alt="Diagrama do Sistema" width="700" >
+
+</div>
+
+
+Entre com as seguintes credenciais:
+
+```json
+{
+  "username": "johndoe",
+  "password": "123456"
+}
+```
+
+Pronto, agora é só explorar o oTrack.
+
+<br>
+
 ## 📌 Documentação da API
-Após subir os containers, acesse o endpoint abaixo para visualizar a documentação da API.
+Acesse o endpoint abaixo para visualizar a documentação swagger da API.
 
 ```
 GET http://localhost:3000/docs
