@@ -70,11 +70,24 @@ cd otrack
 ### 2️⃣ Configurar o ambiente
 Certifique-se de ter Docker e Docker Compose instalados.
 
-### 3️⃣ Subir os containers
+### 3️⃣ Compilar app web
+```sh
+cd web
+npm run build
+```
+
+### 4️⃣ Compilar api
+```sh
+cd api
+npm run build
+```
+
+### 5️⃣ Subir os containers
+Volte para o diretório principal e rode o seguinte comando:
 ```sh
 docker-compose up -d
 ```
-A API estará disponível em http://localhost:3000
+O sistema estará disponível em http://localhost:5173
 
 <br>
 
