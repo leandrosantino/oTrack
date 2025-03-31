@@ -1,7 +1,7 @@
 
 <div align="center">
   <h1> <img src=".github/logo.svg" width="30" > oTrack</h1>
-  <img src="https://skillicons.dev/icons?i=nodejs,typescript,react,postgresql,docker">
+  <img src="https://skillicons.dev/icons?i=nodejs,typescript,react,postgresql,docker,nginx">
 </div>
 <br>
 
