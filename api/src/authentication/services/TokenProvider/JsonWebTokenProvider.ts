@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import jwt, { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { TokenException } from "authentication/exceptions/TokenException";
 import { Properties } from "shared/utils/Properties";
 import { ITokenProvider } from "./ITokenProvider";
@@ -28,8 +28,8 @@ export class JsonWebTokenProvider implements ITokenProvider {
       jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
 
-    if (err instanceof TokenExpiredError) return Err(new TokenException.ExpiredToken())
-    if (err instanceof JsonWebTokenError) return Err(new TokenException.InvalidToken())
+    if (err instanceof jwt.TokenExpiredError) return Err(new TokenException.ExpiredToken())
+    if (err instanceof jwt.JsonWebTokenError) return Err(new TokenException.InvalidToken())
 
     return Ok(data)
   }

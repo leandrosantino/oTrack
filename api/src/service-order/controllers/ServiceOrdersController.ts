@@ -14,7 +14,7 @@ import z from "zod";
 export class ServiceOrdersController implements ControllerInterface {
 
   constructor(
-    @inject('CreateServiceOrderObserver') private readonly createServiceOrder: ICreateServiceOrder,
+    @inject('CreateServiceOrderObservable') private readonly createServiceOrder: ICreateServiceOrder,
     @inject('UpdateServiceOrderKanbanPosition') private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
     @inject('ListServiceOrders') private readonly listServiceOrders: ListServiceOrders,
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,

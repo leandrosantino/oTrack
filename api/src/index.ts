@@ -74,8 +74,8 @@ app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   }
   console.log(
     '\n' +
-    `🌍 Server is running at ${address}` +
+    `🌍 Server is running at http://localhost:3000` +
     '\n' +
-    `📖 Access docs in ${address}/docs`
+    `📖 Access docs in http://localhost:3000/docs`
   )
 })

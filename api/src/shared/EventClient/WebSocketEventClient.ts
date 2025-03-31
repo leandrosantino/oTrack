@@ -1,7 +1,8 @@
 import { UserProfile } from "user/UserProfile";
-import { WebSocket, RawData, EventEmitter } from "ws";
+import { WebSocket, RawData } from "ws";
 import z from "zod";
 import { EventClient } from "./EventCLient";
+import { EventEmitter } from 'node:events';
 
 export class WebSocketEventClient implements EventClient {
 
