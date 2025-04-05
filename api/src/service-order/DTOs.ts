@@ -4,7 +4,7 @@ export type CreateServiceOrderRequestDTO = Omit<ServiceOrder, 'id' | 'date' | 'i
   date: string;
 }
 
-export type UpdateServiceOrderRequestDTO = Partial<CreateServiceOrderRequestDTO> & { id: number, index: number }
+export type UpdateServiceOrderRequestDTO = Partial<CreateServiceOrderRequestDTO> & { id: number, index?: number }
 
 export type UpdateServiceOrderKanbanPositionRequestDTO = {
   id: number
