@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import Dotenv from 'dotenv'
 
 import Fastify from "fastify";
 import { fastifyWebsocket } from "@fastify/websocket";
@@ -9,9 +8,6 @@ import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { fastifyCookie } from "@fastify/cookie";
 import { properties, errorMiddleware, authController, usersController, serviceOrdersController, realtimeServiceOrderController, locationSharingController } from "factory";
-
-
-Dotenv.config()
 
 const app = Fastify().withTypeProvider<ZodTypeProvider>()
 app.setValidatorCompiler(validatorCompiler)
