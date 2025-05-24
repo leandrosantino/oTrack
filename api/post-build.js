@@ -49,7 +49,7 @@ fs.copyFileSync(
 );
 
 fs.copyFileSync(
-  path.join(__dirname, 'prod.env'),
+  path.join(__dirname, 'ex.env'),
   path.join(targetDir, '.env')
 );
 

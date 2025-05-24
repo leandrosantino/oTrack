@@ -15,7 +15,7 @@ module.exports = config({
   options: {
     root: '.',
     jsc: {
-      baseUrl: '/mnt/c/Dev/otrack/api/src',
+      baseUrl: __dirname + '/src',
       parser: {
         syntax: "typescript",
         decorators: true,

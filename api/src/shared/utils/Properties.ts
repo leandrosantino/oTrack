@@ -1,5 +1,8 @@
 import { singleton } from "tsyringe"
 import z from "zod"
+import Dotenv from 'dotenv'
+Dotenv.config()
+
 
 @singleton()
 export class Properties {
@@ -13,12 +16,12 @@ export class Properties {
   })
 
   public env = {} as z.infer<typeof this.envSchema>
-
+  //
   constructor() {
     try {
       this.env = this.envSchema.parse(process.env)
     } catch {
-      console.log('invalid enviroment variables')
+      throw new Error('invalid enviroment variables')
     }
   }
 
