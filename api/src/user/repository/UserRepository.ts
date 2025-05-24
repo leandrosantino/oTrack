@@ -44,9 +44,9 @@ export class UserRepository implements IUserRepository {
     return userToken as UserToken
   }
 
-  async existsByUsername(username: User["username"]): Promise<Boolean> {
+  async existsByEmail(email: User["email"]): Promise<Boolean> {
     const userExists = await prisma.users.findUnique({
-      where: { username }
+      where: { email }
     })
     return userExists != null
   }
@@ -58,9 +58,9 @@ export class UserRepository implements IUserRepository {
     return user as Omit<User, 'tokens'>
   }
 
-  async getByUsername(username: User["username"]): Promise<User | null> {
+  async getByEmail(email: User["email"]): Promise<User | null> {
     return await prisma.users.findUnique({
-      where: { username }
+      where: { email }
     }) as User
   }
 

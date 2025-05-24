@@ -7,10 +7,10 @@ import { ServiceOrder } from "service-order/ServiceOrder";
 import { UpdateServiceOrderKanbanPosition } from "service-order/usecases/UpdateServiceOrderKanbanPosition";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
 import { Validator } from "shared/Validator/Validator";
-import { WebSocketAuthMiddleware } from "shared/middlewares/WebSocketAuthMiddleware";
+import { WebSocketAuthMiddleware } from "authentication/middlewares/WebSocketAuthMiddleware";
 import { Observer } from "shared/utils/Observer";
 import { WebSocketEventClient } from "shared/EventClient/WebSocketEventClient";
-import { Roules } from "user/Roule";
+import { Role } from "user/Role";
 
 
 
@@ -57,7 +57,7 @@ export class RealtimeServiceOrderController implements ControllerInterface {
 
   routes: FastifyPluginAsyncZod = async (app) => {
     app.route({
-      onRequest: this.webSocketAuthMiddleware.build([Roules.ADMIN]),
+      onRequest: this.webSocketAuthMiddleware.build([Role.ADMIN]),
       schema: {
         tags: ['websocket'],
         security: [{ BearerAuth: [] }],

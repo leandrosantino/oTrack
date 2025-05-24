@@ -1,9 +1,10 @@
-import { Roules } from "./Roule"
+import { Role } from "./Role"
 
 export interface User {
   id: number,
-  username: string
+  email: string
   password: string
   displayName: string
-  roule: Roules
+  profilePictureUrl?: string
+  role: Role
 }

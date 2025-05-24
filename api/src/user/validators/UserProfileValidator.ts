@@ -1,6 +1,6 @@
 import { singleton } from "tsyringe";
 import z from "zod";
-import { Roules } from "../Roule";
+import { Role } from "../Role";
 import { Validator } from "shared/Validator/Validator";
 import { ValidationException } from "shared/Validator/ValidatorException";
 import { UserProfile } from "user/UserProfile";
@@ -10,9 +10,10 @@ export class UserProfileValidator implements Validator<UserProfile> {
 
   static SCHEMA = z.object({
     id: z.number(),
-    username: z.string(),
+    email: z.string().email(),
     displayName: z.string(),
-    roule: z.nativeEnum(Roules),
+    role: z.nativeEnum(Role),
+    profilePictureUrl: z.string().url().optional(),
   })
 
   parse(data: UserProfile): Result<UserProfile, ValidationException> {

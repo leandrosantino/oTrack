@@ -1,18 +1,21 @@
-import { Roules } from "./Roule";
+import { Role } from "./Role";
 import { User } from "./User";
 
 export class UserProfile {
 
   id: number;
-  username: string;
+  email: string;
   displayName: string;
-  roule: Roules;
+  profilePictureUrl?: string;
+  role: Role;
 
   constructor(user: User) {
     this.id = user.id
-    this.username = user.username
+    this.email = user.email
     this.displayName = user.displayName
-    this.roule = user.roule
+    this.role = user.role
+    this.profilePictureUrl = user.profilePictureUrl
+
   }
 
 }

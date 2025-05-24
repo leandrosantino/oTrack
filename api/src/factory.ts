@@ -1,7 +1,7 @@
 import { container } from "tsyringe";
-import { WebSocketAuthMiddleware } from "shared/middlewares/WebSocketAuthMiddleware";
+import { WebSocketAuthMiddleware } from "authentication/middlewares/WebSocketAuthMiddleware";
 import { LocalLogger } from "shared/Logging/LocalLogger";
-import { AuthMiddleware } from "shared/middlewares/AuthMiddleware";
+import { AuthMiddleware } from "authentication/middlewares/AuthMiddleware";
 import { ErrorMiddleware } from "shared/middlewares/ErrorMiddleware";
 import { Properties } from "shared/utils/Properties";
 import { AuthController } from "authentication/controllers/AuthController";
@@ -14,6 +14,7 @@ import { Ok, Err } from 'shared/Result/ResultHandler'
 import 'authentication/factory'
 import 'service-order/factory'
 import 'user/factory'
+import { RecoverPasswordController } from "authentication/controllers/RecoverPasswordController";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
@@ -33,3 +34,4 @@ export const serviceOrdersController = container.resolve(ServiceOrdersController
 export const realtimeServiceOrderController = container.resolve(RealtimeServiceOrderController)
 export const usersController = container.resolve(UsersController)
 export const locationSharingController = container.resolve(LocationSharingController)
+export const recoverPasswordController = container.resolve(RecoverPasswordController)

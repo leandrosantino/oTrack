@@ -3,10 +3,10 @@ import { inject, injectable } from "tsyringe";
 import z from "zod";
 import { CreateUser } from "user/usecases/CreateUser";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
-import { AuthMiddleware } from "shared/middlewares/AuthMiddleware";
+import { AuthMiddleware } from "authentication/middlewares/AuthMiddleware";
 import { ErrorSchema } from "shared/utils/ErrorSchema";
 import { CreateUserException } from "user/exceptions/CreateUserException";
-import { Roules } from "user/Roule";
+import { Role } from "user/Role";
 import { UserProfileValidator } from "user/validators/UserProfileValidator";
 
 @injectable()
@@ -19,15 +19,16 @@ export class UsersController implements ControllerInterface {
 
   private USER_SCHEMA = z.object({
     id: z.number(),
+    email: z.string(),
     displayName: z.string(),
-    username: z.string(),
     password: z.string(),
-    roule: z.nativeEnum(Roules),
+    role: z.nativeEnum(Role),
+    profilePictureUrl: z.string().url().optional(),
   })
 
   routes: FastifyPluginAsyncZod = async (app) => {
 
-    app.addHook('onRequest', this.authMiddleware.build([Roules.ADMIN]))
+    app.addHook('onRequest', this.authMiddleware.build([Role.ADMIN]))
 
     app.post('/', {
       schema: {

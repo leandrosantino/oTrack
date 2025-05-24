@@ -4,13 +4,13 @@ import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { SignInException } from "authentication/exceptions/SignInException";
 import { TokenException } from "authentication/exceptions/TokenException";
-import { Roules } from "user/Roule";
+import { Role } from "user/Role";
 import { User } from "user/User";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
 import { Logger } from "shared/Logging/Logger";
-import { AuthMiddleware } from "shared/middlewares/AuthMiddleware";
+import { AuthMiddleware } from "authentication/middlewares/AuthMiddleware";
 import { ErrorSchema } from "shared/utils/ErrorSchema";
-import { GenerateTicket } from "authentication/usecases/GenerateTicket";
+import { GenerateWebSocketTicket } from "authentication/usecases/GenerateWebSocketTicket";
 import { RefreshTokens } from "authentication/usecases/RefreshTokens";
 import { SignIn } from "authentication/usecases/SignIn";
 import { SignOut } from "authentication/usecases/SignOut";
@@ -19,7 +19,7 @@ import { SignOut } from "authentication/usecases/SignOut";
 export class AuthController implements ControllerInterface {
 
   constructor(
-    @inject('GenerateTicket') private readonly generateTicket: GenerateTicket,
+    @inject('GenerateWebSocketTicket') private readonly generateWebSocketTicket: GenerateWebSocketTicket,
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
     @inject('RefreshTokens') private readonly refreshTokens: RefreshTokens,
     @inject('SignIn') private readonly signIn: SignIn,
@@ -110,7 +110,7 @@ export class AuthController implements ControllerInterface {
     })
 
     app.get('/websocket-ticket', {
-      onRequest: this.authMiddleware.build([Roules.ADMIN]),
+      onRequest: this.authMiddleware.build([Role.ADMIN]),
       schema: {
         tags: this.tags,
         description: 'Get a websocket ticket',
@@ -121,7 +121,7 @@ export class AuthController implements ControllerInterface {
       },
     }, async (request, reply) => {
       const user = request.user as User
-      const ticket = await this.generateTicket.execute(user)
+      const ticket = await this.generateWebSocketTicket.execute(user)
       reply.send(ticket)
     })
 

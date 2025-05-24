@@ -5,10 +5,11 @@ export const prisma = new PrismaClient()
 ;(async () => {
   const user = await prisma.users.create({
     data: {
-      username: "johndoe",
+      email: "johndoe",
       displayName: "John Doe",
       password: "$2b$10$peYwQQPrunjipDOVOy.p9eRN.VNF9uSI2S.5mJm2V4mzRRwviczFy",
-      roule: "ADMIN",
+      role: "ADMIN",
+      profilePictureUrl: 'https://avatars.githubusercontent.com/u/76908036?v=4'
     },
   })
 

@@ -12,7 +12,7 @@ export class CreateUser {
   ) { }
 
   async execute(user: Omit<User, "id" | "tokens">): AsyncResult<Omit<User, "tokens">, CreateUserException> {
-    const alreadyExists = await this.userRepository.existsByUsername(user.username)
+    const alreadyExists = await this.userRepository.existsByEmail(user.email)
 
     if (alreadyExists) {
       return Err(new CreateUserException.UserAlreadyExists())

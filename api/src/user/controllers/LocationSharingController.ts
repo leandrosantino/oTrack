@@ -3,9 +3,9 @@ import { FastifyRequest } from 'fastify'
 import { WebSocket } from 'ws';
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
-import { WebSocketAuthMiddleware } from "shared/middlewares/WebSocketAuthMiddleware";
+import { WebSocketAuthMiddleware } from "authentication/middlewares/WebSocketAuthMiddleware";
 import { WebSocketEventClient } from "shared/EventClient/WebSocketEventClient";
-import { Roules } from "user/Roule";
+import { Role } from "user/Role";
 import { User } from "user/User";
 
 
@@ -20,7 +20,7 @@ export class LocationSharingController implements ControllerInterface {
 
   webSocketHandler(socket: WebSocket, request: FastifyRequest) {
     const { id } = request.query as { id: number };
-    const client = new WebSocketEventClient(socket, { id: Number(id), roule: Roules.ADMIN } as User)
+    const client = new WebSocketEventClient(socket, { id: Number(id), role: Role.ADMIN } as User)
     this.clients.set(client.profile.id, client)
 
     client.on('subscribe', (targetId: number) => {
@@ -41,7 +41,7 @@ export class LocationSharingController implements ControllerInterface {
   }
 
   routes: FastifyPluginAsyncZod = async (app) => {
-    app.addHook('onRequest', this.webSocketAuthMiddleware.build([Roules.ADMIN]))
+    app.addHook('onRequest', this.webSocketAuthMiddleware.build([Role.ADMIN]))
     app.route({
       schema: {
         tags: ['websocket'],

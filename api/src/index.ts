@@ -8,7 +8,7 @@ import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTrans
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { fastifyCookie } from "@fastify/cookie";
-import { properties, errorMiddleware, authController, usersController, serviceOrdersController, realtimeServiceOrderController, locationSharingController } from "factory";
+import { properties, errorMiddleware, authController, usersController, serviceOrdersController, realtimeServiceOrderController, locationSharingController, recoverPasswordController } from "factory";
 
 
 Dotenv.config()
@@ -61,6 +61,7 @@ app.setErrorHandler(errorMiddleware.build())
 
 //Local Plugins
 app.register(authController.routes, { prefix: 'auth' })
+app.register(recoverPasswordController.routes, { prefix: 'auth' })
 app.register(usersController.routes, { prefix: 'user' })
 app.register(serviceOrdersController.routes, { prefix: 'service-order' })
 app.register(realtimeServiceOrderController.routes, { prefix: 'service-order' })
@@ -79,3 +80,4 @@ app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
     `📖 Access docs in http://localhost:3000/docs`
   )
 })
+

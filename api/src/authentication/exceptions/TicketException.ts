@@ -11,4 +11,13 @@ export class TicketException extends Exception {
     }
   }
 
+  static ExpiredTicket = class extends TicketException {
+    constructor() {
+      super({
+        message: 'Expired ticket',
+        type: 'EXPIRED_TICKET'
+      })
+    }
+  }
+
 }

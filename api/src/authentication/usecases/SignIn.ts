@@ -18,7 +18,7 @@ export class SignIn {
 
 
   async execute({ username, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInException> {
-    const user = await this.userRepository.getByUsername(username)
+    const user = await this.userRepository.getByEmail(username)
 
     if (!user) {
       return Err(new SignInException.UserNotFound())
