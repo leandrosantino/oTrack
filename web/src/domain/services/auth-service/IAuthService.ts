@@ -9,4 +9,7 @@ export interface IAuthService {
   onExpiresToken(): void
   setOnExpiresToken(callback: VoidFunction): void
   generateWebSocketTicket(): Promise<string>
+  requestRecoiverPasswordEmail(email: string): Promise<void>
+  recoiverPasswordTicketIsValid(ticket: string): Promise<boolean>
+  updatePassword(ticket: string, newPassword: string): Promise<void>
 }

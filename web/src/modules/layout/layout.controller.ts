@@ -62,8 +62,8 @@ export class LayoutController {
     const user = this.auth.user
     const userData: UserMenuProps['user'] = {
       name: user?.displayName ?? '',
-      username: user?.username ?? '',
-      avatar: "https://github.com/leandrosantino.png",
+      username: user?.email ?? '',
+      avatar: user?.profilePictureUrl ?? '',
     }
     return userData
   }
@@ -96,7 +96,7 @@ export class LayoutController {
     const updatedPages: PagesData = []
     this.pagesState.value.forEach(page => {
       page.isActive = false
-      if (!page.requiredRoles.includes(this.auth.user?.roule ?? '')) return
+      if (!page.requiredRoles.includes(this.auth.user?.role ?? '')) return
       if (page.url === this.location.pathname) page.isActive = true
       updatedPages.push(page)
     })

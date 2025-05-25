@@ -13,7 +13,7 @@ export function AuthBase ({ requiredRoule }: { requiredRoule?: string }) {
     } } />
   }
   
-  if(requiredRoule && user?.roule != requiredRoule){
+  if(requiredRoule && user?.role != requiredRoule){
     return <Navigate { ...{
       to: '/unauthorized',
       state: { from: location },

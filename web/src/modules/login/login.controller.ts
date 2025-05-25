@@ -11,8 +11,8 @@ export class LoginController {
 
   isLoadingSession = useStateObject(false)
   showPassword = useStateObject(false)
-  username = useStateObject('')
   password = useStateObject('')
+  username = useStateObject('')
   usernameError = useStateObject('')
   passwordError = useStateObject('')
 

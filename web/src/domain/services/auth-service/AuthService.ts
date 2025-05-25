@@ -75,4 +75,27 @@ export class AuthService implements IAuthService {
     return webSocketTicketResult.value
   }
 
+  async requestRecoiverPasswordEmail(email: string): Promise<void> {
+    const result = await this.httpClient.post('/auth/recover-password', { email })
+    if (!result.ok) {
+      throw new Error(result.err.type)
+    }
+  }
+
+  async recoiverPasswordTicketIsValid(ticket: string): Promise<boolean> {
+    const result = await this.httpClient.post<{ isValid: boolean }>('/auth/recover-password/isValid', { ticket })
+    if (!result.ok) {
+      throw new Error(result.err.type)
+    }
+    return result.value.isValid
+  }
+
+  async updatePassword(ticket: string, newPassword: string): Promise<void> {
+    const result = await this.httpClient.post('/auth/update-password', { newPassword, ticket })
+    if (!result.ok) {
+      throw new Error(result.err.type)
+    }
+  }
+
+
 }
