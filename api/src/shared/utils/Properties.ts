@@ -12,7 +12,10 @@ export class Properties {
     ACCESS_TOKEN_EXPIRES: z.string(),
     REFRESH_TOKEN_EXPIRES: z.string(),
     COOKIE_SECRET: z.string(),
-    CORS_ORIGINS: z.string()
+    CORS_ORIGINS: z.string(),
+    MAIL_SERVICE_API_KEY: z.string(),
+    WEB_APP_ENDPOINT: z.string(),
+    WEB_APP_PASSWORD_RESET_ROUTE: z.string()
   })
 
   public env = {} as z.infer<typeof this.envSchema>

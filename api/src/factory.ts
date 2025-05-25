@@ -15,11 +15,15 @@ import 'authentication/factory'
 import 'service-order/factory'
 import 'user/factory'
 import { RecoverPasswordController } from "authentication/controllers/RecoverPasswordController";
+import { ResendMailService } from "shared/services/MailService/ResendMailService";
 
 (globalThis as any).Ok = Ok;
 (globalThis as any).Err = Err;
 
 container.registerSingleton('Logger', LocalLogger)
+
+//Services
+container.registerSingleton('ResendMailService', ResendMailService)
 
 export const properties = container.resolve(Properties)
 container.registerInstance('Properties', properties)
