@@ -64,6 +64,15 @@ export class UserRepository implements IUserRepository {
     }) as User
   }
 
+  async update({ id, ...entity }: Omit<User, "tokens">): Promise<Omit<User, "tokens">> {
+    return await prisma.users.update({
+      where: { id },
+      data: {
+        ...entity
+      }
+    }) as User
+  }
+
   exists(id: number): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
@@ -71,9 +80,6 @@ export class UserRepository implements IUserRepository {
     throw new Error("Method not implemented.");
   }
   findMany(): Promise<User[]> {
-    throw new Error("Method not implemented.");
-  }
-  update(entity: Omit<User, "tokens">): Promise<Omit<User, "tokens">> {
     throw new Error("Method not implemented.");
   }
 

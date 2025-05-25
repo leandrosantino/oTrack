@@ -1,11 +1,16 @@
-import { singleton } from "tsyringe";
+import { inject, singleton } from "tsyringe";
+import { GeneratePasswordRecoverTicket } from "./GeneratePasswordRecoverTicket";
 
 @singleton()
 export class SendPasswordRecoverMail {
 
-  constructor() { }
+  constructor(
+    @inject('GeneratePasswordRecoverTicket') private readonly generateTicket: GeneratePasswordRecoverTicket
+  ) { }
 
-  async execute(email: string, ticket: string): Promise<void> {
+  async execute(email: string): Promise<void> {
+    const ticket = (await this.generateTicket.execute(email)).orElseNull()
+    if (!ticket) return
     console.log(`Sending password recovery email to ${email} with ticket: ${ticket}`);
   }
 

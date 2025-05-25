@@ -25,7 +25,7 @@ export class SignIn {
     }
 
     if (!(await this.passwordHasher.verify(password, user.password))) {
-      return Err(new SignInException.UserNotFound())
+      return Err(new SignInException.InvalidPassword())
     }
 
     const createdToken = await this.userRepository.createToken(user.id)

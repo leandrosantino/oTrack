@@ -19,6 +19,12 @@ export class TicketProvider implements ITicketProvider {
     return ticket
   }
 
+  isValid(ticket: string): boolean {
+    const ticketData = this.tickets.get(ticket)
+    if (!ticketData) return false
+    return !isBefore(ticketData.expiresAt, new Date())
+  }
+
   async use<T>(ticket: string): AsyncResult<T, TicketException> {
     const ticketData = this.tickets.get(ticket)
     if (!ticketData) {

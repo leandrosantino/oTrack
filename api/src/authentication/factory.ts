@@ -6,10 +6,10 @@ import { SignIn } from "./usecases/SignIn"
 import { SignOut } from "./usecases/SignOut"
 import { VerifyToken } from "./usecases/VerifyToken"
 import { GeneratePasswordRecoverTicket } from "./usecases/GeneratePasswordRecoverTicket"
-import { RecoverPassword } from "./usecases/RecoverPassword"
 import { SendPasswordRecoverMail } from "./usecases/SendPasswordRecoverMail"
 import { TicketProvider } from "./services/TicketProvider/TicketProvider"
 import { GenerateWebSocketTicket } from "./usecases/GenerateWebSocketTicket"
+import { UpdatePassword } from "./usecases/UpdatePassword"
 
 //Services
 container.registerSingleton('PasswordHasher', PasswordHasher)
@@ -24,8 +24,7 @@ container.registerSingleton('SignOut', SignOut)
 container.registerSingleton('VerifyToken', VerifyToken)
 container.registerSingleton('GenerateWebSocketTicket', GenerateWebSocketTicket)
 container.registerSingleton('TicketsMap', Map)
-
-container.registerSingleton('RecoverPassword', RecoverPassword)
 container.registerSingleton('GeneratePasswordRecoverTicket', GeneratePasswordRecoverTicket)
 container.registerSingleton('SendPasswordRecoverMail', SendPasswordRecoverMail)
+container.registerSingleton('UpdatePassword', UpdatePassword)
 
