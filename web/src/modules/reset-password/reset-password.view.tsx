@@ -5,13 +5,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Frown } from "lucide-react"
-import { ResetPasswordController } from "./reset-password.controller"
+import { ResetPassword } from "./reset-password.controller"
 
-type props = {
-  controller: ResetPasswordController
-}
 
-export function ResetPasswordView({ controller }: props) {
+
+export function ResetPasswordView(controller: ResetPassword) {
 
   // if(false){
   if(!controller.ticketIsValid.value){

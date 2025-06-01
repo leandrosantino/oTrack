@@ -2,13 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { OrderCard } from "./components/order-card"
-import { ServiceOrdersController } from "./service-orders.controller"
+import { ServiceOrders } from "./service-orders.controller"
 
-type props = {
-  controller: ServiceOrdersController
-}
 
-export function ServiceOrdersView({controller}: props){
+export function ServiceOrdersView(controller: ServiceOrders){
 
   return (
     <div className="max-w-[1100px] w-full">

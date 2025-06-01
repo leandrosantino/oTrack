@@ -1,9 +1,12 @@
 import { ServiceOrder } from "@/domain/entities/ServiceOrder";
 import type { IServiceOrdersService } from "@/domain/services/service-orders-service/IServiceOrdersService";
-import { useStateObject } from "@/lib/useStateObject";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
 import { DropResult } from "@hello-pangea/dnd";
 import { useEffect } from "react";
-import { inject, injectable } from "tsyringe";
+import { inject } from "tsyringe";
+import { ServiceOrdersView } from "./service-orders.view";
 
 type Column = {
   id: string
@@ -11,8 +14,8 @@ type Column = {
   orders: ServiceOrder[]
 }
 
-@injectable()
-export class ServiceOrdersController {
+@component(ServiceOrdersView)
+export class ServiceOrders extends ComponentController {
 
   private readonly startColumns: Record<string, Column> = {
     pending: { id: "pending", title: "Pendente", orders: [] },
@@ -20,18 +23,19 @@ export class ServiceOrdersController {
     done: { id: "done", title: "Concluído", orders: [], },
   }
 
-  public columns = useStateObject<Record<string, Column>>({ ...this.startColumns })
+  public columns = this.useState<Record<string, Column>>({ ...this.startColumns })
 
   public typeColors: Record<ServiceOrder['type'], string> = {
     corrective: "bg-orange-100 text-orange-800",
     scheduled: "bg-blue-100 text-blue-800",
   }
 
-  public loading = useStateObject(false)
+  public loading = this.useState(false)
 
   constructor(
     @inject('ServiceOrdersService') private readonly serviceOrdersService: IServiceOrdersService,
   ) {
+    super()
     useEffect(() => { this.loadServiceOrders() }, [])
     useEffect(() => { this.startSocket() }, [])
   }
@@ -64,7 +68,7 @@ export class ServiceOrdersController {
     }
   }
 
-  private updatingOrder = useStateObject(false)
+  private updatingOrder = this.useState(false)
 
   private async handleSameColumnMove(columnId: string, startIndex: number, endIndex: number) {
     if (this.updatingOrder.value) return
@@ -165,3 +169,5 @@ export class ServiceOrdersController {
   };
 
 }
+
+export default ServiceOrders.View as ComponentView<ServiceOrders>;

@@ -1,17 +1,20 @@
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
-import { useStateObject } from "@/lib/useStateObject";
-import { inject, injectable } from "tsyringe";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
+import { inject } from "tsyringe";
+import { RequestRecoverPasswordView } from "./request-recover-password.view";
 
-@injectable()
-export class RequestRecoverPasswordController {
+@component(RequestRecoverPasswordView)
+export class RequestRecoverPassword extends ComponentController {
 
-  isLoadingSession = useStateObject(false)
-  email = useStateObject('')
-  makeRequest = useStateObject(false)
+  isLoadingSession = this.useState(false)
+  email = this.useState('')
+  makeRequest = this.useState(false)
 
   constructor(
     @inject('AuthService') private readonly authService: IAuthService
-  ) { }
+  ) { super() }
 
   async handleRqeust() {
     if (this.email.value == '') return
@@ -20,3 +23,5 @@ export class RequestRecoverPasswordController {
   }
 
 }
+
+export default RequestRecoverPassword.View as ComponentView<RequestRecoverPassword>

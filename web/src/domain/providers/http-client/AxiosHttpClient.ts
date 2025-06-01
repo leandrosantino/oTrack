@@ -1,9 +1,9 @@
+import { service } from '@/lib/@service';
 import axios, { AxiosError } from 'axios';
-import { singleton } from 'tsyringe';
 import { ApiErrorData, HttpClientConfig, HttpClientError, HttpClientErrorHandler, IHttpClient } from './IHttpClient';
 
 
-@singleton()
+@service('HttpClient')
 export class AxiosHttpClient implements IHttpClient {
 
   #token = ''

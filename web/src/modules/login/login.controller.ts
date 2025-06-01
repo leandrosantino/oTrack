@@ -1,24 +1,28 @@
 import { useAuth } from "@/contexts/authContext";
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
-import { useStateObject } from "@/lib/useStateObject";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
 import { useEffect } from "react";
-import { inject, injectable } from "tsyringe";
+import { inject } from "tsyringe";
+import { LoginView } from "./login.view";
 
-@injectable()
-export class LoginController {
+@component(LoginView)
+export class Login extends ComponentController {
 
   private auth = useAuth()
 
-  isLoadingSession = useStateObject(false)
-  showPassword = useStateObject(false)
-  password = useStateObject('')
-  username = useStateObject('')
-  usernameError = useStateObject('')
-  passwordError = useStateObject('')
+  isLoadingSession = this.useState(false)
+  showPassword = this.useState(false)
+  password = this.useState('')
+  username = this.useState('')
+  usernameError = this.useState('')
+  passwordError = this.useState('')
 
   constructor(
     @inject('AuthService') private readonly authService: IAuthService
   ) {
+    super()
     useEffect(() => { this.restoreSession() }, [])
 
     useEffect(() => {
@@ -62,3 +66,5 @@ export class LoginController {
   }
 
 }
+
+export default Login.View as ComponentView<Login>;

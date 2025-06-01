@@ -4,13 +4,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { MailCheck } from "lucide-react"
-import { RequestRecoverPasswordController } from "./request-recover-password.controller"
+import { RequestRecoverPassword } from "./request-recover-password.controller"
 
-type props = {
-  controller: RequestRecoverPasswordController
-}
 
-export function RequestRecoverPasswordView({ controller }: props) {
+export function RequestRecoverPasswordView(controller: RequestRecoverPassword) {
 
   if(controller.makeRequest.value) {
     return (

@@ -1,12 +1,15 @@
 import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/authContext";
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
-import { useStateObject } from "@/lib/useStateObject";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
 import { Cable, ChartColumnBig, ListChecks, LucideIcon, MapPin, PackageCheck, ScanBarcode, Settings2, UserRoundCog } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { inject, injectable } from "tsyringe";
+import { inject } from "tsyringe";
 import { UserMenuProps } from "./components/user-menu.view";
+import { LayoutView } from "./layout.view";
 
 type PagesData = Array<{
   title: string
@@ -16,8 +19,8 @@ type PagesData = Array<{
   isActive?: boolean
 }>
 
-@injectable()
-export class LayoutController {
+@component(LayoutView)
+export class Layout extends ComponentController {
 
   pages: PagesData = [
     { title: "Dashboard", url: "/dash", icon: ChartColumnBig, requiredRoles: ['ADMIN'] },
@@ -30,9 +33,9 @@ export class LayoutController {
     { title: "Configurações", url: "#", icon: Settings2, requiredRoles: ['ADMIN'] },
   ]
 
-  pagesState = useStateObject<PagesData>(this.pages)
-  logoIsMinimize = useStateObject(false)
-  pageTitle = useStateObject('')
+  pagesState = this.useState<PagesData>(this.pages)
+  logoIsMinimize = this.useState(false)
+  pageTitle = this.useState('')
 
   private location = useLocation()
   private auth = useAuth()
@@ -43,6 +46,7 @@ export class LayoutController {
   constructor(
     @inject('AuthService') private readonly authService: IAuthService
   ) {
+    super()
     useEffect(() => { this.changePageButtonFocus() }, [this.location.pathname])
     useEffect(() => { this.switchLogoSize() }, [this.sideBar.open])
     useEffect(() => { this.changePageTitle() }, [this.location.pathname])
@@ -105,3 +109,5 @@ export class LayoutController {
 
 
 }
+
+export default Layout.View as ComponentView<Layout>

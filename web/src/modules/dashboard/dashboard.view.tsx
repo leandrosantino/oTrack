@@ -1,10 +1,7 @@
 import { DashboardController } from "./dashboard.controller"
 
-type props = {
-  controller: DashboardController
-}
 
-export function DashboardView({ controller }: props) {
+export function DashboardView(controller: DashboardController) {
 
   controller.use()
 

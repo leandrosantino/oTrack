@@ -3,13 +3,9 @@ import { Separator } from "@/components/ui/separator"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarTrigger } from "@/components/ui/sidebar"
 import { Outlet } from "react-router"
 import { NavUser } from "./components/user-menu.view"
-import { LayoutController } from "./layout.controller"
+import { Layout } from "./layout.controller"
 
-type props = {
-  controller: LayoutController
-}
-
-export function LayoutView({controller }: props) {
+export function LayoutView(controller: Layout) {
 
   const user = controller.useUser()
   const isMobile = controller.useIsMobile()

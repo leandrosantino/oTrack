@@ -1,15 +1,9 @@
-import { HomeController } from "./home.controller"
+import { Home } from "./home.controller"
 
-type props = {
-  controller: HomeController
-}
-
-export function HomeView({controller}: props){
-
-  controller.use()
+export function HomeView(controller: Home){
 
   return (
-    <div>Hello, word!</div>
+    <div>Hello, word! {controller.name}</div>
   )
 
 }

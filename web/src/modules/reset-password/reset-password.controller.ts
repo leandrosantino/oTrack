@@ -1,23 +1,27 @@
 import type { IAuthService } from "@/domain/services/auth-service/IAuthService";
-import { useStateObject } from "@/lib/useStateObject";
+import { component } from "@/lib/@component";
+import { ComponentController } from "@/lib/ComponentController";
+import { ComponentView } from "@/lib/ComponentView";
 import { useEffect } from "react";
 import { useParams } from "react-router";
-import { inject, injectable } from "tsyringe";
+import { inject } from "tsyringe";
+import { ResetPasswordView } from "./reset-password.view";
 
-@injectable()
-export class ResetPasswordController {
+@component(ResetPasswordView)
+export class ResetPassword extends ComponentController {
 
-  isLoadingSession = useStateObject(false)
-  ticketIsValid = useStateObject(false)
-  showPassword = useStateObject(false)
-  password = useStateObject('')
-  passwordError = useStateObject('')
+  isLoadingSession = this.useState(false)
+  ticketIsValid = this.useState(false)
+  showPassword = this.useState(false)
+  password = this.useState('')
+  passwordError = this.useState('')
 
   ticket!: string
 
   constructor(
     @inject('AuthService') private readonly authService: IAuthService
   ) {
+    super()
     const { ticket } = useParams()
     this.ticket = ticket || ''
     useEffect(() => {
@@ -35,3 +39,5 @@ export class ResetPasswordController {
   }
 
 }
+
+export default ResetPassword.View as ComponentView<ResetPassword>

@@ -1,9 +1,10 @@
 import { User } from '@/domain/entities/User';
 import { type IHttpClient } from '@/domain/providers/http-client/IHttpClient';
-import { inject, singleton } from 'tsyringe';
+import { service } from '@/lib/@service';
+import { inject } from 'tsyringe';
 import { IAuthService } from "./IAuthService";
 
-@singleton()
+@service()
 export class AuthService implements IAuthService {
 
   constructor(

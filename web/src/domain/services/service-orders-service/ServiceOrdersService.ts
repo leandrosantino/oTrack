@@ -1,11 +1,12 @@
 import { ServiceOrder } from "@/domain/entities/ServiceOrder";
 import type { IHttpClient } from "@/domain/providers/http-client/IHttpClient";
+import { service } from "@/lib/@service";
 import { WsClient } from "@/lib/web-socket-client";
-import { inject, singleton } from "tsyringe";
+import { inject } from "tsyringe";
 import type { IAuthService } from "../auth-service/IAuthService";
 import { IServiceOrdersService, UpdateServiceOrderKanbanPositionRequestDTO } from "./IServiceOrdersService";
 
-@singleton()
+@service()
 export class ServiceOrdersService implements IServiceOrdersService {
 
   constructor(
