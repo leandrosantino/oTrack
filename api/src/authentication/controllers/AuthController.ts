@@ -49,7 +49,7 @@ export class AuthController implements ControllerInterface {
         tags: this.tags,
         body: this.LOGIN_RESQUEST_BODY_SCHEMA,
         response: {
-          200: z.string().describe('Access Token'),
+          200: z.object({ accessToken: z.string() }).describe('Access Token'),
           404: ErrorSchema.build(SignInException.UserNotFound),
           401: ErrorSchema.build(SignInException.InvalidPassword),
         }
@@ -62,7 +62,7 @@ export class AuthController implements ControllerInterface {
         const { accessToken, refreshToken } = result.value
         return reply
           .setCookie(this.refreshTokenCookiesName, refreshToken, this.refreshTokenCookiesOption)
-          .status(200).send(accessToken)
+          .status(200).send({ accessToken })
       }
 
       if (result.err instanceof SignInException.UserNotFound) reply.status(404)
@@ -75,7 +75,7 @@ export class AuthController implements ControllerInterface {
       schema: {
         tags: this.tags,
         response: {
-          200: z.string().describe('Access Token'),
+          200: z.object({ accessToken: z.string() }).describe('Access Token'),
           401: ErrorSchema.build(TokenException.ExpiredToken)
             .or(ErrorSchema.build(TokenException.InvalidToken))
         }
@@ -88,7 +88,7 @@ export class AuthController implements ControllerInterface {
         const { accessToken, refreshToken: newRefreshToken } = result.value
         return reply
           .setCookie(this.refreshTokenCookiesName, newRefreshToken, this.refreshTokenCookiesOption)
-          .status(200).send(accessToken)
+          .status(200).send({ accessToken })
       }
 
       if (result.err instanceof TokenException) reply.status(401)
@@ -115,14 +115,14 @@ export class AuthController implements ControllerInterface {
         tags: this.tags,
         description: 'Get a websocket ticket',
         response: {
-          200: z.string()
+          200: z.object({ ticket: z.string() })
         },
         security: [{ BearerAuth: [] }],
       },
     }, async (request, reply) => {
       const user = request.user as User
       const ticket = await this.generateWebSocketTicket.execute(user)
-      reply.send(ticket)
+      reply.send({ ticket })
     })
 
   }

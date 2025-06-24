@@ -52,28 +52,28 @@ export class AuthService implements IAuthService {
   }
 
   async login(username: string, password: string): Promise<void> {
-    const accessTokenResult = await this.httpClient.post<string>('/auth/login', { username, password })
+    const accessTokenResult = await this.httpClient.post<{ accessToken: string }>('/auth/login', { username, password })
     if (!accessTokenResult.ok) {
       throw new Error(accessTokenResult.err.type)
     }
-    this.httpClient.setToken(accessTokenResult.value)
+    this.httpClient.setToken(accessTokenResult.value.accessToken)
   }
 
   async refreshToken(): Promise<void> {
-    const refreshTokenResult = await this.httpClient.get<string>('/auth/refresh')
+    const refreshTokenResult = await this.httpClient.get<{ accessToken: string }>('/auth/refresh')
     if (!refreshTokenResult.ok) {
       this.httpClient.setToken('')
       throw new Error(refreshTokenResult.err.message)
     }
-    this.httpClient.setToken(refreshTokenResult.value)
+    this.httpClient.setToken(refreshTokenResult.value.accessToken)
   }
 
   async generateWebSocketTicket() {
-    const webSocketTicketResult = await this.httpClient.get<string>('/auth/websocket-ticket')
+    const webSocketTicketResult = await this.httpClient.get<{ ticket: string }>('/auth/websocket-ticket')
     if (!webSocketTicketResult.ok) {
       throw new Error(webSocketTicketResult.err.message)
     }
-    return webSocketTicketResult.value
+    return webSocketTicketResult.value.ticket
   }
 
   async requestRecoiverPasswordEmail(email: string): Promise<void> {
