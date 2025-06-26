@@ -11,6 +11,7 @@ import { WebSocketAuthMiddleware } from "authentication/middlewares/WebSocketAut
 import { Observer } from "shared/utils/Observer";
 import { WebSocketEventClient } from "shared/EventClient/WebSocketEventClient";
 import { Role } from "user/Role";
+import { ListServiceOrders } from "service-order/usecases/ListServiceOrders";
 
 
 
@@ -20,6 +21,7 @@ export class RealtimeServiceOrderController implements ControllerInterface {
   constructor(
     @inject('WebSocketAuthMiddleware') private readonly webSocketAuthMiddleware: WebSocketAuthMiddleware,
     @inject('CreateServiceOrderObserver') private readonly createServiceOrderObserver: Observer<ServiceOrder>,
+    @inject('ListServiceOrders') private readonly listServiceOrders: ListServiceOrders,
     @inject('UpdateServiceOrderKanbanPosition') private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
     @inject('UpdateKanbanPositionValidator') private readonly updateKanbanPositionValidator: Validator<UpdateServiceOrderKanbanPositionRequestDTO>
   ) { }
@@ -29,6 +31,10 @@ export class RealtimeServiceOrderController implements ControllerInterface {
   webSocketHandler(socket: WebSocket, request: FastifyRequest) {
     const client = new WebSocketEventClient(socket, request.user!)
     this.clients.push(client)
+
+    this.listServiceOrders.execute().then(orders => {
+      client.emit('connected', orders)
+    })
 
     const unsubstribeCreateServiceOrder = this.createServiceOrderObserver.subscribe(createdServiceOrder => {
       client.emit('created', createdServiceOrder)
