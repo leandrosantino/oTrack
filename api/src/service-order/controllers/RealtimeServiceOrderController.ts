@@ -43,11 +43,11 @@ export class RealtimeServiceOrderController implements ControllerInterface {
     client.on('updateKanbanPosition', async (data) => {
       const parsedData = this.updateKanbanPositionValidator.parse(data).orElseNull()
       if (!parsedData) {
-        client.emit('updateKanbanPositionReturn', null)
+        client.emit('updateKanbanPosition', null)
         return
       }
       const updatedServiceOrder = await this.updateServiceOrderKanbanPosition.execute(parsedData)
-      client.emit('updateKanbanPositionReturn', updatedServiceOrder)
+      client.emit('updateKanbanPosition', updatedServiceOrder)
       this.clients
         .filter(savedClient => savedClient !== client)
         .forEach(client => {
@@ -58,6 +58,7 @@ export class RealtimeServiceOrderController implements ControllerInterface {
 
     client.onClose(() => {
       unsubstribeCreateServiceOrder()
+      this.clients = this.clients.filter(savedClient => savedClient !== client)
     })
   }
 

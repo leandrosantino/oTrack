@@ -6,7 +6,7 @@ import { EventEmitter } from 'node:events';
 
 export class WebSocketEventClient implements EventClient {
 
-  private listener: EventEmitter
+  private eventEmitter: EventEmitter
   profile: UserProfile
 
   WS_EVENT_DATA_SCHEMA = z.object({
@@ -19,21 +19,22 @@ export class WebSocketEventClient implements EventClient {
     profile: UserProfile,
   ) {
     this.profile = profile
-    this.listener = new EventEmitter()
+    this.eventEmitter = new EventEmitter()
 
     this.socket.on("message", this.onMessange.bind(this))
+
   }
 
   private onMessange(chunk: RawData) {
     try {
       const data = JSON.parse(chunk.toString())
       const { event, payload } = this.WS_EVENT_DATA_SCHEMA.parse(data)
-      this.listener.emit(event, payload)
+      this.eventEmitter.emit(event, payload)
     } catch { }
   }
 
   on(event: string, callback: (payload: any) => void) {
-    this.listener.on(event, callback)
+    this.eventEmitter.on(event, callback)
   }
 
   emit(event: string, payload: any) {
