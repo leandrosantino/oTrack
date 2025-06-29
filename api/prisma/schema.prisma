@@ -14,6 +14,7 @@ model Users {
   password          String
   displayName       String
   role              String
+  emailIsVerified   Boolean         @default(false)
   tokens            Tokens[]
   ServiceOrders     ServiceOrders[]
 }

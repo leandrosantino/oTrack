@@ -6,8 +6,9 @@ export class UserProfile {
   id: number;
   email: string;
   displayName: string;
-  profilePictureUrl?: string;
+  profilePictureUrl?: string | null;
   role: Role;
+  emailIsVerified: boolean;
 
   constructor(user: User) {
     this.id = user.id
@@ -15,6 +16,7 @@ export class UserProfile {
     this.displayName = user.displayName
     this.role = user.role
     this.profilePictureUrl = user.profilePictureUrl
+    this.emailIsVerified = user.emailIsVerified
 
   }
 

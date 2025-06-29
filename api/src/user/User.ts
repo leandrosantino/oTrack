@@ -6,5 +6,6 @@ export interface User {
   password: string
   displayName: string
   profilePictureUrl?: string
+  emailIsVerified: boolean
   role: Role
 }

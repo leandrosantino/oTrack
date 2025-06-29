@@ -13,7 +13,8 @@ export class UserProfileValidator implements Validator<UserProfile> {
     email: z.string().email(),
     displayName: z.string(),
     role: z.nativeEnum(Role),
-    profilePictureUrl: z.string().url().optional(),
+    emailIsVerified: z.boolean(),
+    profilePictureUrl: z.string().url().optional().nullable(),
   })
 
   parse(data: UserProfile): Result<UserProfile, ValidationException> {

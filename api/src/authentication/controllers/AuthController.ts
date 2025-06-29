@@ -14,6 +14,8 @@ import { GenerateWebSocketTicket } from "authentication/usecases/GenerateWebSock
 import { RefreshTokens } from "authentication/usecases/RefreshTokens";
 import { SignIn } from "authentication/usecases/SignIn";
 import { SignOut } from "authentication/usecases/SignOut";
+import { SignUp } from "authentication/usecases/SignUp";
+import { CreateUserException } from "user/exceptions/CreateUserException";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -24,6 +26,7 @@ export class AuthController implements ControllerInterface {
     @inject('RefreshTokens') private readonly refreshTokens: RefreshTokens,
     @inject('SignIn') private readonly signIn: SignIn,
     @inject('SignOut') private readonly signOut: SignOut,
+    @inject('SignUp') private readonly signUp: SignUp,
     @inject('Logger') private readonly logger: Logger
   ) { }
 
@@ -107,6 +110,31 @@ export class AuthController implements ControllerInterface {
       const refreshToken = request.cookies.refreshToken ?? '';
       await this.signOut.execute(refreshToken)
       reply.setCookie(this.refreshTokenCookiesName, '', this.refreshTokenCookiesOption).status(200)
+    })
+
+    app.post('/signup', {
+      schema: {
+        tags: this.tags,
+        description: 'User registration',
+        body: z.object({
+          email: z.string().email(),
+          displayName: z.string(),
+          password: z.string(),
+        }),
+      }
+    }, async (request, reply) => {
+      const result = await this.signUp.execute(request.body)
+
+      if (result.ok) {
+        reply.status(201).send()
+        return
+      }
+
+      if (result.err instanceof CreateUserException.UserAlreadyExists) {
+        reply.status(409)
+      }
+
+      reply.send(result.err.details())
     })
 
     app.get('/websocket-ticket', {

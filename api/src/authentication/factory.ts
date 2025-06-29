@@ -10,6 +10,7 @@ import { SendPasswordRecoverMail } from "./usecases/SendPasswordRecoverMail"
 import { TicketProvider } from "./services/TicketProvider/TicketProvider"
 import { GenerateWebSocketTicket } from "./usecases/GenerateWebSocketTicket"
 import { UpdatePassword } from "./usecases/UpdatePassword"
+import { SignUp } from "./usecases/SignUp"
 
 //Services
 container.registerSingleton('PasswordHasher', PasswordHasher)
@@ -21,6 +22,7 @@ container.registerSingleton('TicketProvider', TicketProvider)
 container.registerSingleton('RefreshTokens', RefreshTokens)
 container.registerSingleton('SignIn', SignIn)
 container.registerSingleton('SignOut', SignOut)
+container.registerSingleton('SignUp', SignUp)
 container.registerSingleton('VerifyToken', VerifyToken)
 container.registerSingleton('GenerateWebSocketTicket', GenerateWebSocketTicket)
 container.registerSingleton('TicketsMap', Map)

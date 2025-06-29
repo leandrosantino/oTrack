@@ -15,3 +15,9 @@ export type RefreshTokenData = {
   id: UserToken['id']
   userId: User['id']
 }
+
+export type SignUpRequestDTO = {
+  email: string
+  displayName: string
+  password: string
+}
