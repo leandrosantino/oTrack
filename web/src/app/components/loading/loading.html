@@ -1,0 +1,13 @@
+@if(isLoading()){
+  <main class="w-screen h-screen flex flex-col gap-4 justify-center items-center" >
+    <app-logo />
+    <div 
+      class="
+        w-12 h-12 border-4 border-muted-foreground/20 border-t-blue-400 
+        rounded-full flex justify-center items-center pb-1 animate-spin
+      " >
+    </div>
+  </main>
+} @else { 
+  <ng-content />
+}

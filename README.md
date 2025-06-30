@@ -1,7 +1,7 @@
 
 <div align="center">
   <h1> <img src=".github/logo.svg" width="30" > oTrack</h1>
-  <img src="https://skillicons.dev/icons?i=nodejs,typescript,react,postgresql,docker,nginx">
+  <img src="https://skillicons.dev/icons?i=nodejs,typescript,angular,postgresql,docker,nginx">
 </div>
 <br>
 
@@ -10,7 +10,7 @@
 
   <p>
     <i>
-      "O oTrack é um sistema, destinado facilitar a gestão de atendimentos de chamados de suporte técnico de equipamentos de limpeza profissional, semelhante a um sistema de gestão de ordens de serviço."
+      "O oTrack é um sistema, destinado facilitar a gestão de atendimentos de chamados de suporte e manutenção com um mecanismo de localização dos técnicos em tempo real."
     </i>
   </p>
 

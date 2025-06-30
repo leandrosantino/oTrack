@@ -1,0 +1,70 @@
+<div class="w-full h-full flex flex-col justify-center items-center" >
+  <form class="flex flex-col gap-6 w-full max-w-xs" [formGroup]="formGroup" (submit)="submitLogin($event)"  >
+
+    <div class="flex flex-col items-center gap-2 text-center">
+      <h1 class="text-2xl font-bold">Bem Vindo!</h1>
+      <p class="text-balance text-sm text-muted-foreground">
+        Insira seu usuário e senha para acessar sua conta.
+      </p>
+    </div>
+
+    <div class="grid">
+
+      <div class="grid gap-1 mb-2">
+        <label htmlFor="username">Email</label>
+        <input
+          required hlmInput [error]="false" formControlName="email"
+          id="username" type="email" placeholder="Digite seu email"
+        />
+        <span class="text-destructive text-xs h-5 text-end" >
+          @if ( email?.invalid && (email?.dirty || email?.touched) ) {
+            @if (email?.hasError('required')) {Informe seu email!}
+            @if (email?.hasError('email')) {Insira um email válido!}
+            @if (email?.hasError('USER_NOT_FOUND')) {Email não cadastrado}
+          }
+        </span>
+      </div>
+
+      <div class="grid gap-1 mb-5">
+
+        <div class="flex items-center">
+          <label htmlFor="password">Senha</label>
+          <a
+            [routerLink]="['/auth/forgot-password']"
+            class="ml-auto text-sm underline-offset-4 hover:underline"
+          > Esqueceu a senha? </a>
+        </div>
+
+        <input
+          required hlmInput [error]="false" formControlName="password"
+          id="password" placeholder="Digite sua senha"
+          [type]="showPassword?'text':'password'"
+        />
+
+        <div class="flex justify-between items-center">
+          <label hlmLabel htmlFor="show-password" class="flex items-center gap-2 pl-1 my-1 text-sm font-normal">
+            <hlm-checkbox (changed)="showPassword = !showPassword" />
+            Exibir senha
+          </label>
+          <span class="text-destructive text-xs h-5 w-fit" >
+            @if ( password?.invalid && (password?.dirty || password?.touched) ) {
+              @if (password?.hasError('required')) {Insira a senha!}
+              @if (password?.hasError('INVALID_PASSWORD')) {Senha incorreta!}
+            }
+          </span>
+        </div>
+
+      </div>
+
+      <button hlmBtn type="submit" class="w-full mb-6" [disabled]="formGroup.invalid" >Entrar</button>
+
+      <div class="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+        <span class="relative z-10 bg-background px-2 text-muted-foreground">
+          &copy; oTrack inc.
+        </span>
+      </div>
+
+    </div>
+    
+  </form>
+</div>
