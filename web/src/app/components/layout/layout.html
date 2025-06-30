@@ -1,0 +1,56 @@
+<hlm-sheet side="left" >
+<main class="main" [attr.data-open]="open()" [attr.data-isMobile]="isMobile()">
+  <ng-template #sidebase>
+    <aside>
+      <header>
+        <app-logo />
+      </header>
+      <section>
+        <span>Resources</span>
+        <ul>
+          @for(item of menuButtons; track item.title){
+            <li>
+              <button hlmToggle [attr.data-state]="item.isActive?'on':'off'" (click)="navigate(item.url)" >
+                <ng-icon [size]="'16px'" [name]="item.icon" />
+                <span>{{item.title}}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+      <footer>
+        <app-profile-menu />
+      </footer>
+      <button toggleSidebar></button>
+    </aside>
+  </ng-template>
+
+  @if(isMobile()){
+    <hlm-sheet-content state="open" *brnSheetContent="let ctx"  class="w-fit p-0" >
+      <ng-container *ngTemplateOutlet="sidebase"></ng-container>
+      <button #closeSheet brnSheetClose class="hidden" ></button>
+    </hlm-sheet-content>
+  } @else {
+    <ng-container *ngTemplateOutlet="sidebase"></ng-container>
+  }
+  
+  <section>
+    <header>
+    
+      <button *ngIf="!isMobile()" hlmBtn toggleSidebar  [variant]="'ghost'" [size]="'icon'" >
+        <ng-icon [size]="'16px'" hlm name="lucidePanelLeft" />
+      </button>
+
+      <button *ngIf="isMobile()" hlmBtn brnSheetTrigger [variant]="'ghost'" [size]="'icon'" >
+        <ng-icon [size]="'16px'" hlm name="lucidePanelLeft" />
+      </button>
+
+      <div data-orientation="vertical" role="none" class="shrink-0 bg-border w-[1px] mr-2 h-4"></div>
+      <h1>{{getPageTitle()}}</h1>
+    </header>
+    <main>
+      <router-outlet />
+    </main>
+  </section>
+</main>
+</hlm-sheet>

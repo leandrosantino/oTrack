@@ -1,0 +1,17 @@
+:host { display: contents }
+
+.cdk-drag-preview {
+  transition-property: none !important;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.frame[data-empty="true"] .cdk-drag-placeholder{
+  display: none !important;
+}
+
+:host:has(.cdk-drag-placeholder) {
+  cursor: grabbing !important;
+}

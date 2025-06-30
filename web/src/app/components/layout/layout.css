@@ -1,0 +1,184 @@
+@layer base {
+	.main {
+		width: 100vw;
+		height: 100vh;
+		display: grid;
+		grid-template-columns: 16rem 1fr;
+		grid-template-rows: 1fr;
+		justify-content: center;
+		align-items: center;
+	}
+
+	hlm-sheet-content aside {
+		width: 18rem;
+	}
+	
+	.main aside, hlm-sheet-content aside {
+		height: 100%;
+		background-color: var(--color-sidebar-background);
+		color: var(--color-sidebar-foreground);
+		border-right: 1px solid var(--color-sidebar-border);
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		&>button{
+			cursor: e-resize;
+			position: absolute;
+			height: 100%;
+			right: 0;
+			width: 1rem;
+			&:hover{
+				border-right: 1.5px solid var(--color-zinc-200);
+			}
+		}
+
+		header{
+			display: flex;
+			padding: .5rem;
+		}
+		section{
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			padding: .5rem;
+			span{
+				height: 2rem;
+				padding: 0 .5rem 0 .5rem;
+				font-size: var(--text-xs);
+				display: flex;
+				align-items: center;
+				font-weight: var(--font-weight-medium);
+				color: var(--color-muted-foreground);
+			}
+			ul{
+				display: flex;
+				flex-direction: column;
+				gap: .25rem;
+				li>button{
+					width: 100%;
+					display: flex;
+					justify-content: flex-start !important;
+					gap: .5rem;
+					padding: .5rem !important;
+					font-size: var(--text-sm);
+					font-weight: var(--font-weight-normal) !important;
+					max-height: 2rem;
+					color: var(--color-muted-foreground) !important;
+					&[data-state='on']{
+						color: var(--color-foreground) !important;
+						font-weight: var(--font-weight-medium) !important;
+            span{
+              color: var(--color-foreground) !important;
+							font-weight: var(--font-weight-medium) !important;
+            }
+					}
+					&:hover{
+						color: var(--color-foreground) !important;
+            span{
+              color: var(--color-foreground) !important;
+            }
+					}
+          ng-icon{
+            min-width: 1rem;
+          }
+          span{
+            font-size: var(--text-sm);
+            padding: 0;
+						font-weight: var(--font-weight-normal) !important;
+            color: var(--color-muted-foreground) !important;
+          }
+				}
+			}
+		}
+		footer{
+			width: 100%;
+			height: 4rem;
+      padding: .5rem;
+		}
+
+	}
+
+	.main>section {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		align-items: center;
+
+		header {
+			display: flex;
+			width: 100%;
+			height: 4rem;
+			gap: .5rem;
+			padding: 0 1rem 0 1rem; 
+			align-items: center;
+		}
+		
+		main {
+			width: 100%;
+			flex: 1;
+      display: flex;
+      justify-content: center;
+			padding: 1.5rem;
+			overflow-y: auto;
+		}
+	}
+	
+	.main[data-open="false"]{
+		grid-template-columns: 3rem 1fr;
+		section {
+			header{
+				height: 3rem;
+			}
+		}
+		aside>section>ul>li>button>span{
+      opacity: 0;
+		}
+    aside>section>span{
+      opacity: 0;
+      height: 0;
+    }
+		aside>footer{
+			height: fit-content;
+		}
+	}
+
+  .main{
+    transition-property: grid-template-columns;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    --tw-ease: linear;
+    transition-timing-function: linear;
+    
+    aside>section>span{
+      transition-property: height, opacity;
+      transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+      transition-duration: var(--tw-duration, var(--default-transition-duration));
+      --tw-ease: linear;
+      transition-timing-function: linear;
+    }
+    
+    aside>section>ul>li>button>span{
+      transition-property: opacity;
+      transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+      transition-duration: var(--tw-duration, var(--default-transition-duration));
+      --tw-ease: linear;
+      transition-timing-function: linear;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+		}
+  }
+	
+	.main[data-isMobile='true']{
+		grid-template-columns: none !important;
+		display: flex !important;
+		width: 100vw !important;
+		section {
+			width: 100vw !important;
+			header{
+				height: 4rem !important;
+			}
+		}
+	}
+
+}
