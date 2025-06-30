@@ -1,0 +1,64 @@
+<button hlmBtn variant="ghost" [brnMenuTriggerFor]="userMenu"
+  class="w-full h-full flex justify-start gap-2 p-2 !text-zinc-700 hover:!text-foreground"
+  [class]="!open()?'!p-0':''"
+>
+  <hlm-avatar variant="medium" class="!w-8 !h-8 rounded-md">
+    <img [src]="userProfile?.profilePictureUrl" alt="spartan logo. Resembling a spartanic shield" hlmAvatarImage />
+    <span class="bg-zinc-300 text-zinc-900" hlmAvatarFallback>
+      {{userProfile?.displayName?.slice(0, 2)?.toUpperCase()}}
+    </span>
+  </hlm-avatar>
+  <div
+    class="flex flex-1 flex-col items-start truncate" 
+  >
+    <span class="font-semibold" >{{userProfile?.displayName}}</span>
+    <span class="w-full text-xs text-start truncate" >{{userProfile?.email}}</span>
+  </div>
+  <div 
+    [attr.data-open]="open()" 
+    class="data-[open=false]:hidden flex justify-center items-center"
+  >
+    <ng-icon size="16px" name="lucideChevronsUpDown" />
+  </div>
+  
+</button>
+<ng-template #userMenu>
+  <hlm-menu class="w-56" >
+    <hlm-menu-label>My Account</hlm-menu-label>
+    <hlm-menu-separator />
+    <hlm-menu-group>
+      <button hlmMenuItem>
+        <ng-icon hlm name="lucideUser" hlmMenuIcon />
+        <span>Profile</span>
+        <hlm-menu-shortcut>⇧⌘P</hlm-menu-shortcut>
+      </button>
+
+      <button hlmMenuItem>
+        <ng-icon hlm name="lucideLayers" hlmMenuIcon />
+        <span>Billing</span>
+        <hlm-menu-shortcut>⌘B</hlm-menu-shortcut>
+      </button>
+
+      <button hlmMenuItem>
+        <ng-icon hlm name="lucideCog" hlmMenuIcon />
+        <span>Settings</span>
+        <hlm-menu-shortcut>⌘S</hlm-menu-shortcut>
+      </button>
+
+      <button hlmMenuItem>
+        <ng-icon hlm name="lucideKeyboard" hlmMenuIcon />
+        <span>Keyboard Shortcuts</span>
+        <hlm-menu-shortcut>⌘K</hlm-menu-shortcut>
+      </button>
+    </hlm-menu-group>
+
+    <hlm-menu-separator />
+
+    <button hlmMenuItem (click)="logout()" class="text-red-600" >
+      <ng-icon hlm name="lucideLogOut" hlmMenuIcon />
+      <span>Logout</span>
+      <hlm-menu-shortcut>⇧⌘Q</hlm-menu-shortcut>
+    </button>
+  </hlm-menu>
+
+</ng-template>

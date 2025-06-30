@@ -1,15 +1,65 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "compileOnSave": false,
   "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@spartan-ng/helm/spinner": [
+        ".\\src/app/components/ui/ui-spinner-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/toggle": [
+        ".\\src/app/components/ui/ui-toggle-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/icon": [
+        ".\\src/app/components/ui/ui-icon-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/menu": [
+        ".\\src/app/components/ui/ui-menu-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/sheet": [
+        ".\\src/app/components/ui/ui-sheet-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/label": [
+        ".\\src/app/components/ui/ui-label-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/checkbox": [
+        ".\\src/app/components/ui/ui-checkbox-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/badge": [
+        ".\\src/app/components/ui/ui-badge-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/dialog": [
+        ".\\src/app/components/ui/ui-dialog-helm/src/index.ts"
+      ]
     }
   },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "typeCheckHostBindings": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

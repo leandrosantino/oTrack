@@ -1,8 +1,9 @@
 import z from "zod";
+import { EventEmitter } from "./event-emitter";
 
 export class WsClient {
 
-  private listener: EventTarget
+  private listener: EventEmitter
 
   WS_EVENT_DATA_SCHEMA = z.object({
     event: z.string(),
@@ -11,7 +12,7 @@ export class WsClient {
   private socket: WebSocket
 
   constructor(url: string) {
-    this.listener = new EventTarget()
+    this.listener = new EventEmitter()
     this.socket = new WebSocket(url)
     this.socket.onmessage = event => { this.onMessange(event.data) }
   }
@@ -20,16 +21,21 @@ export class WsClient {
     try {
       const data = JSON.parse(chunk.toString())
       const { event, payload } = this.WS_EVENT_DATA_SCHEMA.parse(data)
-      this.listener.dispatchEvent(new CustomEvent(event, { detail: payload }))
+      this.listener.emit(event, payload)
     } catch { }
   }
 
   on(event: string, callback: (payload: any) => void) {
-    this.listener.addEventListener(event, (a) => { callback((a as CustomEvent).detail) })
+    return this.listener.on(event, (a: any) => { callback(a) })
   }
 
   emit(event: string, payload: any) {
     this.socket.send(JSON.stringify({ event, payload }))
+  }
+
+  close() {
+    this.listener.clear()
+    this.socket.close()
   }
 
   onClose(call: VoidFunction) {
