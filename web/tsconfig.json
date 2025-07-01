@@ -43,6 +43,9 @@
       ],
       "@spartan-ng/helm/dialog": [
         ".\\src/app/components/ui/ui-dialog-helm/src/index.ts"
+      ],
+      "@spartan-ng/helm/skeleton": [
+        ".\\src/app/components/ui/ui-skeleton-helm/src/index.ts"
       ]
     }
   },
