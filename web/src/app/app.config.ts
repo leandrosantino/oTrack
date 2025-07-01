@@ -1,3 +1,7 @@
+import {
+  GoogleLoginProvider,
+  SocialAuthServiceConfig
+} from '@abacritt/angularx-social-login';
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import localePt from '@angular/common/locales/pt';
@@ -17,6 +21,18 @@ export const appConfig: ApplicationConfig = {
     ),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes)
+    provideRouter(routes),
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider('897240533454-7ncfk677pjqikvaiig7pcvuj8pue8ia1.apps.googleusercontent.com'),
+          },
+        ],
+      } as SocialAuthServiceConfig,
+    },
   ]
 };
