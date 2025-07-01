@@ -56,10 +56,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "my-app:build:production"
+              "buildTarget": "otrack-web:build:production"
             },
             "development": {
-              "buildTarget": "my-app:build:development"
+              "buildTarget": "otrack-web:build:development"
             }
           },
           "defaultConfiguration": "development"

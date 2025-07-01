@@ -23,7 +23,6 @@
             bg-transparent
           "
         >
-<<<<<<< HEAD
           @if(loading) {
             <div class="flex flex-col space-y-3">
               @for (i of [1, 2, 3]; track i) {
@@ -32,9 +31,6 @@
             </div>
           }
           @if(entry[1].orders.length == 0 && !loading) {
-=======
-          @if(entry[1].orders.length == 0){
->>>>>>> master
             <div 
               class="
                 overflow-hidden bg-transparent  rounded-md
@@ -45,19 +41,12 @@
               <ng-icon [size]="'30px'" name="lucideSquareDashedMousePointer" />
             </div>
           }
-<<<<<<< HEAD
           @if(!loading) {
             @for (data of entry[1].orders; track data.id) {
               <div cdkDrag class="overflow-hidden bg-transparent shadow-md rounded-md transition-transform ease-linear cursor-grab active:cursor-grabbing"  >
                 <app-order-card [data]="data" />
               </div>
             }
-=======
-          @for (data of entry[1].orders; track data.id) {
-            <div cdkDrag class="overflow-hidden bg-transparent shadow-md rounded-md transition-transform ease-linear cursor-grab active:cursor-grabbing"  >
-              <app-order-card [data]="data" />
-            </div>
->>>>>>> master
           }
         </section>
       </div>
