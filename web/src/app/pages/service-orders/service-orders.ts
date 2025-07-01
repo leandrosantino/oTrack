@@ -1,4 +1,5 @@
 import { OrderCard } from '@/app/components/order-card/order-card';
+import { HlmSkeletonComponent } from '@/app/components/ui/ui-skeleton-helm/src';
 import { OrdersService, ServiceOrder } from '@/app/services/orders';
 import {
   CdkDrag,
@@ -23,6 +24,7 @@ type Frame = {
   imports: [
     OrderCard, CdkDropList, CdkDropListGroup, CdkDrag,
     LucideAngularModule,
+    HlmSkeletonComponent,
     NgIcon,
   ],
   providers: [
@@ -41,6 +43,8 @@ export class ServiceOrders implements OnInit, OnDestroy {
     ['done', { title: 'Concluído', orders: [] }]
   ])
 
+  loading = true
+
   constructor(
     private readonly ordersService: OrdersService
   ) { }
@@ -51,9 +55,11 @@ export class ServiceOrders implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.ordersService.startRealtime().subscribe((data) => {
+      this.loading = true
       this.loadServiceOrders(data)
       this.ordersService.onCreated(this.onCreated.bind(this))
       this.ordersService.onUpdated(this.update.bind(this))
+      this.loading = false
     })
   }
 
