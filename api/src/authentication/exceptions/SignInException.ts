@@ -20,4 +20,13 @@ export class SignInException extends Exception {
     }
   };
 
+  static InvalidGoogleToken = class extends SignInException {
+    constructor() {
+      super({
+        message: "Invalid google token",
+        type: "INVALID_GOOGLE_TOKEN",
+      });
+    }
+  };
+
 }

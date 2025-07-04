@@ -11,16 +11,20 @@ import { TicketProvider } from "./services/TicketProvider/TicketProvider"
 import { GenerateWebSocketTicket } from "./usecases/GenerateWebSocketTicket"
 import { UpdatePassword } from "./usecases/UpdatePassword"
 import { SignUp } from "./usecases/SignUp"
+import { AxiosHttpClient } from "./services/HttpClient/AxiosHttpClient"
+import { SignInWithGoogle } from "./usecases/SignInWithGoogle"
 
 //Services
 container.registerSingleton('PasswordHasher', PasswordHasher)
 container.registerSingleton('TokenProvider', JsonWebTokenProvider)
 container.registerSingleton('TicketProvider', TicketProvider)
+container.registerSingleton('HttpClient', AxiosHttpClient)
 
 
 //Use cases
 container.registerSingleton('RefreshTokens', RefreshTokens)
 container.registerSingleton('SignIn', SignIn)
+container.registerSingleton('SignInWithGoogle', SignInWithGoogle)
 container.registerSingleton('SignOut', SignOut)
 container.registerSingleton('SignUp', SignUp)
 container.registerSingleton('VerifyToken', VerifyToken)

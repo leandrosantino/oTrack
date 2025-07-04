@@ -2,8 +2,20 @@ import { User } from "user/User"
 import { UserToken } from "user/UserToken"
 
 export type AuthRequestDTO = {
-  username: string
+  email: string
   password: string
+}
+
+export type SignInWithGoogleRequestDTO = {
+  idToken: string
+}
+
+export type GoogleTokenInfo = {
+  email: string
+  email_verified: string
+  name: string
+  picture: string
+  sub: string
 }
 
 export type AuthResponseDTO = {

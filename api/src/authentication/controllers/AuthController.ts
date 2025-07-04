@@ -16,6 +16,7 @@ import { SignIn } from "authentication/usecases/SignIn";
 import { SignOut } from "authentication/usecases/SignOut";
 import { SignUp } from "authentication/usecases/SignUp";
 import { CreateUserException } from "user/exceptions/CreateUserException";
+import { SignInWithGoogle } from "authentication/usecases/SignInWithGoogle";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -25,6 +26,7 @@ export class AuthController implements ControllerInterface {
     @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
     @inject('RefreshTokens') private readonly refreshTokens: RefreshTokens,
     @inject('SignIn') private readonly signIn: SignIn,
+    @inject('SignInWithGoogle') private readonly signInWithGoogle: SignInWithGoogle,
     @inject('SignOut') private readonly signOut: SignOut,
     @inject('SignUp') private readonly signUp: SignUp,
     @inject('Logger') private readonly logger: Logger
@@ -33,8 +35,11 @@ export class AuthController implements ControllerInterface {
   private readonly tags = ['Authentication']
 
   private LOGIN_RESQUEST_BODY_SCHEMA = z.object({
-    username: z.string(),
+    email: z.string(),
     password: z.string()
+  })
+  private LOGIN_GOOGLE_RESQUEST_BODY_SCHEMA = z.object({
+    idToken: z.string()
   })
 
   private readonly refreshTokenCookiesName = 'refreshToken'
@@ -58,8 +63,8 @@ export class AuthController implements ControllerInterface {
         }
       }
     }, async (request, reply) => {
-      const { password, username } = request.body
-      const result = await this.signIn.execute({ password, username })
+      const { password, email } = request.body
+      const result = await this.signIn.execute({ password, email })
 
       if (result.ok) {
         const { accessToken, refreshToken } = result.value
@@ -70,6 +75,33 @@ export class AuthController implements ControllerInterface {
 
       if (result.err instanceof SignInException.UserNotFound) reply.status(404)
       if (result.err instanceof SignInException.InvalidPassword) reply.status(400)
+
+      return reply.send(result.err.details())
+    })
+
+    app.post('/login/google', {
+      schema: {
+        tags: this.tags,
+        body: this.LOGIN_GOOGLE_RESQUEST_BODY_SCHEMA,
+        response: {
+          200: z.object({ accessToken: z.string() }).describe('Access Token'),
+          404: ErrorSchema.build(SignInException.UserNotFound),
+          401: ErrorSchema.build(SignInException.InvalidGoogleToken),
+        }
+      }
+    }, async (request, reply) => {
+      const result = await this.signInWithGoogle.execute(request.body)
+
+      if (result.ok) {
+        const { accessToken, refreshToken } = result.value
+        return reply
+          .setCookie(this.refreshTokenCookiesName, refreshToken, this.refreshTokenCookiesOption)
+          .status(200).send({ accessToken })
+      }
+
+      if (result.err instanceof SignInException.UserNotFound) reply.status(404)
+      if (result.err instanceof SignInException.InvalidGoogleToken) reply.status(401)
+
 
       return reply.send(result.err.details())
     })
