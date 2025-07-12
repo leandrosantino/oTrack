@@ -1,29 +1,27 @@
 import { inject, singleton } from "tsyringe";
-import { SignIn } from "./SignIn";
-import { HttpClient } from "authentication/services/HttpClient/HttpCLient";
 import { AuthResponseDTO, GoogleTokenInfo, SignInWithGoogleRequestDTO } from "authentication/DTOs";
 import { SignInException } from "authentication/exceptions/SignInException";
 import { IUserRepository } from "user/IUserRepository";
 import { ITokenProvider } from "authentication/services/TokenProvider/ITokenProvider";
 import { UserProfile } from "user/UserProfile";
+import { IGoogleAuth } from "authentication/services/GoogleAuth/IGoogleAuth";
+import { GoogleAuthException } from "authentication/services/GoogleAuth/GoogleAuthExceptions";
 
 @singleton()
 export class SignInWithGoogle {
 
-  GOOGLE_AUTH_URL = 'https://oauth2.googleapis.com/tokeninfo'
-
   constructor(
     @inject('UserRepository') private readonly userRepository: IUserRepository,
     @inject('TokenProvider') private readonly tokenProvider: ITokenProvider,
-    @inject('HttpClient') private readonly httpClient: HttpClient
+    @inject('GoogleAuth') private readonly googleAuth: IGoogleAuth,
   ) { }
 
-  async execute({ idToken }: SignInWithGoogleRequestDTO): AsyncResult<AuthResponseDTO, SignInException> {
+  async execute({ idToken }: SignInWithGoogleRequestDTO): AsyncResult<AuthResponseDTO, SignInException | GoogleAuthException> {
 
-    const apiResult = await this.httpClient.get<GoogleTokenInfo, { error: string }>(`${this.GOOGLE_AUTH_URL}?id_token=${idToken}`)
+    const apiResult = await this.googleAuth.getUserInfo(idToken)
 
     if (!apiResult.ok) {
-      return Err(new SignInException.InvalidGoogleToken())
+      return Err(apiResult.err)
     }
     const { email } = apiResult.value
 

@@ -13,7 +13,7 @@ export class AxiosHttpClient implements HttpClient {
       return Ok(response.data);
     } catch (err) {
       let error
-      if (err instanceof AxiosError) err.response?.data
+      if (err instanceof AxiosError) error = err.response?.data
       return Err(new HttpClientException(error))
     }
   }

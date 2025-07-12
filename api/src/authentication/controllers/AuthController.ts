@@ -17,6 +17,7 @@ import { SignOut } from "authentication/usecases/SignOut";
 import { SignUp } from "authentication/usecases/SignUp";
 import { CreateUserException } from "user/exceptions/CreateUserException";
 import { SignInWithGoogle } from "authentication/usecases/SignInWithGoogle";
+import { GoogleAuthException } from "authentication/services/GoogleAuth/GoogleAuthExceptions";
 
 @injectable()
 export class AuthController implements ControllerInterface {
@@ -86,7 +87,7 @@ export class AuthController implements ControllerInterface {
         response: {
           200: z.object({ accessToken: z.string() }).describe('Access Token'),
           404: ErrorSchema.build(SignInException.UserNotFound),
-          401: ErrorSchema.build(SignInException.InvalidGoogleToken),
+          401: ErrorSchema.build(GoogleAuthException.InvalidGoogleToken),
         }
       }
     }, async (request, reply) => {
@@ -100,7 +101,8 @@ export class AuthController implements ControllerInterface {
       }
 
       if (result.err instanceof SignInException.UserNotFound) reply.status(404)
-      if (result.err instanceof SignInException.InvalidGoogleToken) reply.status(401)
+      if (result.err instanceof GoogleAuthException.InvalidGoogleToken) reply.status(401)
+      if (result.err instanceof GoogleAuthException.GoogleAuthError) reply.status(500)
 
 
       return reply.send(result.err.details())

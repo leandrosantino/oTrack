@@ -13,12 +13,14 @@ import { UpdatePassword } from "./usecases/UpdatePassword"
 import { SignUp } from "./usecases/SignUp"
 import { AxiosHttpClient } from "./services/HttpClient/AxiosHttpClient"
 import { SignInWithGoogle } from "./usecases/SignInWithGoogle"
+import { GoogleAuth } from "./services/GoogleAuth/GoogleAuth"
 
 //Services
 container.registerSingleton('PasswordHasher', PasswordHasher)
 container.registerSingleton('TokenProvider', JsonWebTokenProvider)
 container.registerSingleton('TicketProvider', TicketProvider)
 container.registerSingleton('HttpClient', AxiosHttpClient)
+container.registerSingleton('GoogleAuth', GoogleAuth)
 
 
 //Use cases
