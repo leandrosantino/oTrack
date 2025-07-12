@@ -26,10 +26,7 @@ export class AuthService {
   private userProfile?: UserProfile
 
   login(email: string, password: string) {
-    return this.httpClient.post<{ accessToken: string }>('/auth/login', {
-      username: email,
-      password
-    }).pipe(
+    return this.httpClient.post<{ accessToken: string }>('/auth/login', { email, password }).pipe(
       tap(({ accessToken }) => this.$token = accessToken),
       switchMap(() => this.httpClient.get<typeof this.userProfile>("/user/profile")),
       tap(userProfile => { this.userProfile = userProfile })
