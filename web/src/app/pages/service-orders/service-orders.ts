@@ -30,7 +30,7 @@ type Frame = {
   providers: [
     provideIcons({
       lucideSquareDashedMousePointer
-    }),
+    })
   ],
   templateUrl: './service-orders.html',
   styleUrl: './service-orders.css'
@@ -50,7 +50,7 @@ export class ServiceOrders implements OnInit, OnDestroy {
   ) { }
 
   ngOnDestroy(): void {
-    this.ordersService.closeSocketConnection()
+    this.ordersService.closeRealtime()
   }
 
   async ngOnInit() {
