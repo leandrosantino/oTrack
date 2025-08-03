@@ -2,8 +2,8 @@ import { ServiceOrderStatus } from "service-order/ServiceOrderStatus";
 import { singleton } from "tsyringe";
 import { UpdateServiceOrderKanbanPositionRequestDTO } from "service-order/DTOs";
 import z from "zod";
-import { Validator } from "shared/Validator/Validator";
-import { ValidationException } from "shared/Validator/ValidatorException";
+import { Validator } from "lib/Validator/Validator";
+import { ValidationException } from "lib/Validator/ValidatorException";
 
 @singleton()
 export class UpdateKanbanPositionValidator implements Validator<UpdateServiceOrderKanbanPositionRequestDTO> {

@@ -1,5 +1,5 @@
 import { container } from "tsyringe"
-import { Observer } from "shared/utils/Observer"
+import { Observer } from "lib/utils/Observer"
 import { ServiceOrderRepository } from "./repository/ServiceOrderRepository"
 import { CreateServiceOrder } from "./usecases/CreateServiceOrder"
 import { ListServiceOrders } from "./usecases/ListServiceOrders"

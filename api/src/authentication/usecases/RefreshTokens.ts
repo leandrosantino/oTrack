@@ -1,29 +1,29 @@
-import { singleton, inject } from "tsyringe"
-import { AuthResponseDTO, RefreshTokenData } from "../DTOs"
 import { SignOut } from "./SignOut"
-import { TokenException } from "authentication/exceptions/TokenException"
-import { ITokenProvider } from "authentication/services/TokenProvider/ITokenProvider"
-import { IUserRepository } from "user/IUserRepository"
-import { UserProfile } from "user/UserProfile"
+import { AlreadyUsedToken, ExpiredTokenException, InvalidTokenException, TokenProvider } from "authentication/services/TokenProvider/TokenProvider"
+import { UserRepository } from "user/repository/UserRepository"
+import { UserProfile } from "user/dto/UserProfile"
+import { TokenPair } from "authentication/dto/TokenPair"
+import { RefreshTokenData } from "authentication/dto/RefreshTokenData"
+import { Inject, Injectable } from "@nestjs/common"
 
-@singleton()
+@Injectable()
 export class RefreshTokens {
 
   constructor(
-    @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider,
-    @inject('SignOut') private readonly signOut: SignOut
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('TokenProvider') private readonly tokenProvider: TokenProvider,
+    private readonly signOut: SignOut
   ) { }
 
 
-  async execute(refreshToken: string): AsyncResult<AuthResponseDTO, TokenException> {
+  async execute(refreshToken: string): Promise<TokenPair> {
     const jwtVerifyResult = await this.tokenProvider.verify<RefreshTokenData>(refreshToken)
 
-    if (!jwtVerifyResult.ok) {
-      if (jwtVerifyResult.err instanceof TokenException.ExpiredToken) {
+    if (jwtVerifyResult.failure) {
+      if (jwtVerifyResult.error instanceof ExpiredTokenException) {
         await this.signOut.execute(refreshToken)
       }
-      return Err(jwtVerifyResult.err)
+      throw jwtVerifyResult.error
     }
 
     const refreshTokenData = jwtVerifyResult.value
@@ -31,7 +31,7 @@ export class RefreshTokens {
 
     if (savedTokenData === null) {
       await this.userRepository.deleteTokensByUserId(refreshTokenData.userId)
-      return Err(new TokenException.AlreadyUsedToken())
+      throw new AlreadyUsedToken()
     }
 
     const { user } = savedTokenData
@@ -42,7 +42,7 @@ export class RefreshTokens {
     const newRefreshToken = this.tokenProvider.generateRefreshToken(createdToken)
     const newAccessToken = this.tokenProvider.generateAccessToken(new UserProfile(user))
 
-    return Ok({ accessToken: newAccessToken, refreshToken: newRefreshToken })
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken }
 
   }
 }

@@ -7,7 +7,7 @@ import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTrans
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 import { fastifyCookie } from "@fastify/cookie";
-import { properties, errorMiddleware, authController, usersController, serviceOrdersController, realtimeServiceOrderController, locationSharingController, recoverPasswordController } from "factory";
+import { serviceOrdersController, realtimeServiceOrderController, locationSharingController } from "factory";
 
 const app = Fastify().withTypeProvider<ZodTypeProvider>()
 app.setValidatorCompiler(validatorCompiler)
@@ -17,11 +17,11 @@ app.setSerializerCompiler(serializerCompiler)
 //Externals Plugins
 app.register(fastifyWebsocket)
 app.register(fastifyCors, {
-  origin: properties.env.CORS_ORIGINS.split(','),
+  origin: properties.CORS_ORIGINS.split(','),
   credentials: true
 })
 app.register(fastifyCookie, {
-  secret: properties.env.COOKIE_SECRET,
+  secret: properties.COOKIE_SECRET,
 });
 app.register(fastifySwagger, {
   openapi: {
@@ -53,12 +53,9 @@ app.register(fastifySwaggerUi, {
   transformStaticCSP: (header) => header
 })
 
-app.setErrorHandler(errorMiddleware.build())
+// app.setErrorHandler(errorMiddleware.build())
 
 //Local Plugins
-app.register(authController.routes, { prefix: 'auth' })
-app.register(recoverPasswordController.routes, { prefix: 'auth' })
-app.register(usersController.routes, { prefix: 'user' })
 app.register(serviceOrdersController.routes, { prefix: 'service-order' })
 app.register(realtimeServiceOrderController.routes, { prefix: 'service-order' })
 app.register(locationSharingController.routes)

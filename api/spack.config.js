@@ -3,7 +3,7 @@ const {dependencies} = require('./package.json');
 
 module.exports = config({
   entry: {
-    index: __dirname + "/src/index.ts",
+    index: __dirname + "/src/main.ts",
   },
   output: {
     path: __dirname + "/build",

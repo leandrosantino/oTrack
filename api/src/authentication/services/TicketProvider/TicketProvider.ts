@@ -1,43 +1,27 @@
-import { singleton } from "tsyringe";
-import { ITicketProvider } from "./ITicketProvider";
-import { TicketData } from "./TicketData";
-import { createId } from "@paralleldrive/cuid2";
-import { addMinutes, isBefore } from 'date-fns';
-import { TicketException } from "authentication/exceptions/TicketException";
+import { Exception } from "lib/utils/Exception";
 
-@singleton()
-export class TicketProvider implements ITicketProvider {
+export interface TicketProvider {
+  generate(payload: object, validityInMinutes: number): string;
+  use<T>(ticket: string): AsyncResult<T, InvalidTicket | ExpiredTicket>
+  isValid(ticket: string): boolean
+}
 
-  tickets: Map<string, TicketData> = new Map();
+export type TicketData<T = any> = { payload: T; expiresAt: Date }
 
-  generate(payload: object, validityInMinutes: number): string {
-    const ticket = createId()
-    this.tickets.set(ticket, {
-      payload,
-      expiresAt: addMinutes(new Date(), validityInMinutes)
+export class InvalidTicket extends Exception {
+  constructor() {
+    super({
+      message: 'Invalid ticket',
+      type: 'INVALID_TICKET'
     })
-    return ticket
   }
+}
 
-  isValid(ticket: string): boolean {
-    const ticketData = this.tickets.get(ticket)
-    if (!ticketData) return false
-    return !isBefore(ticketData.expiresAt, new Date())
+export class ExpiredTicket extends Exception {
+  constructor() {
+    super({
+      message: 'Expired ticket',
+      type: 'EXPIRED_TICKET'
+    })
   }
-
-  async use<T>(ticket: string): AsyncResult<T, TicketException> {
-    const ticketData = this.tickets.get(ticket)
-    if (!ticketData) {
-      return Err(new TicketException.InvalidTicket())
-    }
-    this.tickets.delete(ticket)
-
-    const isExpired = isBefore(ticketData.expiresAt, new Date())
-    if (isExpired) {
-      return Err(new TicketException.ExpiredTicket())
-    }
-
-    return Ok(ticketData.payload)
-  }
-
 }

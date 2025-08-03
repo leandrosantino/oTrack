@@ -1,20 +1,16 @@
-import { inject, singleton } from "tsyringe";
 import { IMailService } from "./IMailService";
 import { Resend } from "resend";
-import { Properties } from "shared/utils/Properties";
 import { passwordResetEmail } from "./emails/passwordResetEmail";
+import { Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class ResendMailService implements IMailService {
 
   resend: Resend;
 
-  constructor(
-    @inject('Properties') private readonly properties: Properties
-  ) {
-    this.resend = new Resend(this.properties.env.MAIL_SERVICE_API_KEY);
+  constructor() {
+    this.resend = new Resend(properties.MAIL_SERVICE_API_KEY);
   }
-
 
   async sendPasswordResetEmail(email: string, resetLink: string): Promise<void> {
     try {

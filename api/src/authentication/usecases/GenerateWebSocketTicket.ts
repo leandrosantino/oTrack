@@ -1,12 +1,12 @@
-import { ITicketProvider } from "authentication/services/TicketProvider/ITicketProvider";
-import { inject, singleton } from "tsyringe";
-import { UserProfile } from "user/UserProfile";
+import { Inject, Injectable } from "@nestjs/common";
+import { TicketProvider } from "authentication/services/TicketProvider/TicketProvider";
+import { UserProfile } from "user/dto/UserProfile";
 
-@singleton()
+@Injectable()
 export class GenerateWebSocketTicket {
 
   constructor(
-    @inject('TicketProvider') private readonly ticketProvider: ITicketProvider
+    @Inject('TicketProvider') private readonly ticketProvider: TicketProvider
   ) { }
 
   TICKET_VALIDITY_IN_MINUTES = 1

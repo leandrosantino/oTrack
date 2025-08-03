@@ -1,25 +1,25 @@
-import { IPasswordHasher } from "authentication/services/PasswordHasher/IPasswordHasher"
-import { inject, singleton } from "tsyringe"
-import { CreateUserException } from "user/exceptions/CreateUserException"
-import { IUserRepository } from "user/IUserRepository"
-import { User } from "user/User"
+import { Inject, Injectable } from "@nestjs/common"
+import { PasswordHasher } from "shared/services/PasswordHasher/PasswordHasher"
+import { UserRepository } from "user/repository/UserRepository"
+import { User } from "user/entities/User"
+import { UserAlreadyExists } from "user/exceptions/UserAlreadyExists"
 
-@singleton()
+@Injectable()
 export class CreateUser {
   constructor(
-    @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('PasswordHasher') private readonly passwordHasher: PasswordHasher
   ) { }
 
-  async execute(user: Omit<User, "id" | "tokens">): AsyncResult<Omit<User, "tokens">, CreateUserException> {
+  async execute(user: Omit<User, "id" | "tokens">): Promise<Omit<User, "tokens">> {
     const alreadyExists = await this.userRepository.existsByEmail(user.email)
 
     if (alreadyExists) {
-      return Err(new CreateUserException.UserAlreadyExists())
+      throw new UserAlreadyExists()
     }
     user.password = await this.passwordHasher.hash(user.password)
 
     const createUser = await this.userRepository.create(user)
-    return Ok(createUser)
+    return createUser
   }
 }

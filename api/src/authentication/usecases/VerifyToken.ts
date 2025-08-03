@@ -1,31 +1,16 @@
-import { TokenException } from "authentication/exceptions/TokenException"
-import { ITokenProvider } from "authentication/services/TokenProvider/ITokenProvider"
-import { Validator } from "shared/Validator/Validator"
-import { singleton, inject } from "tsyringe"
-import { UserProfile } from "user/UserProfile"
+import { Inject, Injectable } from "@nestjs/common"
+import { TokenProvider } from "authentication/services/TokenProvider/TokenProvider"
+import { UserProfile } from "user/dto/UserProfile"
 
-@singleton()
+@Injectable()
 export class VerifyToken {
 
   constructor(
-    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider,
-    @inject('UserProfileValidator') private readonly userProfileValidator: Validator<UserProfile>
+    @Inject('TokenProvider') private readonly tokenProvider: TokenProvider
   ) { }
 
-
-  async execute(token: string): AsyncResult<UserProfile, TokenException> {
-
+  async execute(token: string): Promise<UserProfile> {
     const jwtVerifyResult = await this.tokenProvider.verify<UserProfile>(token)
-
-    if (!jwtVerifyResult.ok) {
-      return Err(jwtVerifyResult.err)
-    }
-
-    const tokenDataParsResult = this.userProfileValidator.parse(jwtVerifyResult.value)
-    if (!tokenDataParsResult.ok) {
-      return Err(new TokenException.InvalidToken())
-    }
-
-    return Ok(tokenDataParsResult.value)
+    return jwtVerifyResult.orElseThrow()
   }
 }

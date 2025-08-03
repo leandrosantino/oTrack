@@ -6,10 +6,20 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": "./src",
+    "outDir": "./dist",
     "esModuleInterop": true,
-    "strict": true,
     "typeRoots": ["./node_modules/@types", "src/@types"],
-    "sourceMap": false
+    "sourceMap": false,
+    "declaration": true,
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false
   },
   "include": [
     "./src/**/*",

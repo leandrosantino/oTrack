@@ -6,11 +6,10 @@ import { UpdateServiceOrderKanbanPositionRequestDTO } from "service-order/DTOs";
 import { ServiceOrder } from "service-order/ServiceOrder";
 import { UpdateServiceOrderKanbanPosition } from "service-order/usecases/UpdateServiceOrderKanbanPosition";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
-import { Validator } from "shared/Validator/Validator";
-import { WebSocketAuthMiddleware } from "authentication/middlewares/WebSocketAuthMiddleware";
-import { Observer } from "shared/utils/Observer";
-import { WebSocketEventClient } from "shared/EventClient/WebSocketEventClient";
-import { Role } from "user/Role";
+import { Validator } from "lib/Validator/Validator";
+import { Observer } from "lib/utils/Observer";
+import { WebSocketEventClient } from "lib/EventClient/WebSocketEventClient";
+import { Role } from "user/entities/Role";
 import { ListServiceOrders } from "service-order/usecases/ListServiceOrders";
 
 
@@ -19,7 +18,6 @@ import { ListServiceOrders } from "service-order/usecases/ListServiceOrders";
 export class RealtimeServiceOrderController implements ControllerInterface {
 
   constructor(
-    @inject('WebSocketAuthMiddleware') private readonly webSocketAuthMiddleware: WebSocketAuthMiddleware,
     @inject('CreateServiceOrderObserver') private readonly createServiceOrderObserver: Observer<ServiceOrder>,
     @inject('ListServiceOrders') private readonly listServiceOrders: ListServiceOrders,
     @inject('UpdateServiceOrderKanbanPosition') private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
@@ -64,7 +62,6 @@ export class RealtimeServiceOrderController implements ControllerInterface {
 
   routes: FastifyPluginAsyncZod = async (app) => {
     app.route({
-      onRequest: this.webSocketAuthMiddleware.build([Role.ADMIN]),
       schema: {
         tags: ['websocket'],
         security: [{ BearerAuth: [] }],

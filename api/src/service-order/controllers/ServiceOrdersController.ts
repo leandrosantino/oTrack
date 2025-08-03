@@ -6,8 +6,7 @@ import { ListServiceOrders } from "service-order/usecases/ListServiceOrders";
 import { UpdateServiceOrderKanbanPosition } from "service-order/usecases/UpdateServiceOrderKanbanPosition";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
-import { AuthMiddleware } from "authentication/middlewares/AuthMiddleware";
-import { Role } from "user/Role";
+import { Role } from "user/entities/Role";
 import z from "zod";
 
 @singleton()
@@ -17,7 +16,6 @@ export class ServiceOrdersController implements ControllerInterface {
     @inject('CreateServiceOrderObservable') private readonly createServiceOrder: ICreateServiceOrder,
     @inject('UpdateServiceOrderKanbanPosition') private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
     @inject('ListServiceOrders') private readonly listServiceOrders: ListServiceOrders,
-    @inject('AuthMiddleware') private readonly authMiddleware: AuthMiddleware,
   ) { }
 
   private CREATE_SERVICE_ORDER_SCHEMA = z.object({
@@ -30,7 +28,6 @@ export class ServiceOrdersController implements ControllerInterface {
   })
 
   routes: FastifyPluginAsyncZod = async (app) => {
-    app.addHook('onRequest', this.authMiddleware.build([Role.ADMIN]))
     app.post('/', {
       schema: {
         tags: ['Service Orders'],

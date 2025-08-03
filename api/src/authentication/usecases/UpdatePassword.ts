@@ -1,16 +1,17 @@
-import { IPasswordHasher } from "authentication/services/PasswordHasher/IPasswordHasher";
-import { ITicketProvider } from "authentication/services/TicketProvider/ITicketProvider";
+import { Inject, Injectable } from "@nestjs/common";
+import { PasswordHasher } from "shared/services/PasswordHasher/PasswordHasher";
+import { TicketProvider } from "authentication/services/TicketProvider/TicketProvider";
 import { inject, singleton } from "tsyringe";
-import { IUserRepository } from "user/IUserRepository";
-import { UserProfile } from "user/UserProfile";
+import { UserRepository } from "user/repository/UserRepository";
+import { UserProfile } from "user/dto/UserProfile";
 
-@singleton()
+@Injectable()
 export class UpdatePassword {
 
   constructor(
-    @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('PasswordHasher') private readonly passwordHashProvider: IPasswordHasher,
-    @inject('TicketProvider') private readonly ticketProvider: ITicketProvider
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('PasswordHasher') private readonly passwordHashProvider: PasswordHasher,
+    @Inject('TicketProvider') private readonly ticketProvider: TicketProvider
   ) { }
 
   async execute(newPassword: string, ticket: string): Promise<void> {

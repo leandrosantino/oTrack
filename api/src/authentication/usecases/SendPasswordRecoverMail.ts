@@ -1,21 +1,19 @@
-import { inject, singleton } from "tsyringe";
 import { GeneratePasswordRecoverTicket } from "./GeneratePasswordRecoverTicket";
 import { IMailService } from "shared/services/MailService/IMailService";
-import { Properties } from "shared/utils/Properties";
+import { Inject, Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class SendPasswordRecoverMail {
 
   constructor(
-    @inject('Properties') private readonly properties: Properties,
-    @inject('GeneratePasswordRecoverTicket') private readonly generateTicket: GeneratePasswordRecoverTicket,
-    @inject('ResendMailService') private readonly mailService: IMailService
+    private readonly generateTicket: GeneratePasswordRecoverTicket,
+    @Inject('MailService') private readonly mailService: IMailService
   ) { }
 
   async execute(email: string): Promise<void> {
-    const ticket = (await this.generateTicket.execute(email)).orElseNull()
+    const ticket = await this.generateTicket.execute(email)
     if (!ticket) return
-    const resetLink = `${this.properties.env.WEB_APP_ENDPOINT}${this.properties.env.WEB_APP_PASSWORD_RESET_ROUTE}/${ticket}`
+    const resetLink = `${properties.WEB_APP_ENDPOINT}${properties.WEB_APP_PASSWORD_RESET_ROUTE}/${ticket}`
     this.mailService.sendPasswordResetEmail(email, resetLink)
   }
 

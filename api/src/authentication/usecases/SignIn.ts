@@ -1,31 +1,33 @@
-import { inject, singleton } from "tsyringe";
-import { AuthRequestDTO, AuthResponseDTO } from "../DTOs";
-import { SignInException } from "authentication/exceptions/SignInException";
-import { IPasswordHasher } from "authentication/services/PasswordHasher/IPasswordHasher";
-import { ITokenProvider } from "authentication/services/TokenProvider/ITokenProvider";
-import { IUserRepository } from "user/IUserRepository";
-import { UserProfile } from "user/UserProfile";
+import { PasswordHasher } from "shared/services/PasswordHasher/PasswordHasher";
+import { TokenProvider } from "authentication/services/TokenProvider/TokenProvider";
+import { UserRepository } from "user/repository/UserRepository";
+import { UserProfile } from "user/dto/UserProfile";
+import { Inject, Injectable } from "@nestjs/common";
+import { SignInResquestDto } from "authentication/dto/SignInResquestDto";
+import { TokenPair } from "authentication/dto/TokenPair";
+import { InvalidPasswordException } from "authentication/exceptions/InvalidPasswordException";
+import { UserNotFoundException } from "authentication/exceptions/UserNotFoundException";
 
 
-@singleton()
+@Injectable()
 export class SignIn {
 
   constructor(
-    @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('PasswordHasher') private readonly passwordHasher: IPasswordHasher,
-    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('PasswordHasher') private readonly passwordHasher: PasswordHasher,
+    @Inject('TokenProvider') private readonly tokenProvider: TokenProvider
   ) { }
 
 
-  async execute({ email, password }: AuthRequestDTO): AsyncResult<AuthResponseDTO, SignInException> {
+  async execute({ email, password }: SignInResquestDto): Promise<TokenPair> {
     const user = await this.userRepository.getByEmail(email)
 
     if (!user) {
-      return Err(new SignInException.UserNotFound())
+      throw new UserNotFoundException()
     }
 
     if (!(await this.passwordHasher.verify(password, user.password))) {
-      return Err(new SignInException.InvalidPassword())
+      throw new InvalidPasswordException()
     }
 
     const createdToken = await this.userRepository.createToken(user.id)
@@ -33,6 +35,6 @@ export class SignIn {
     const accessToken = this.tokenProvider.generateAccessToken(new UserProfile(user))
     const refreshToken = this.tokenProvider.generateRefreshToken(createdToken)
 
-    return Ok({ accessToken, refreshToken })
+    return { accessToken, refreshToken }
   }
 }

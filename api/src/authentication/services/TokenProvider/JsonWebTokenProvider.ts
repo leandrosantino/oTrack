@@ -1,43 +1,39 @@
-import { inject, singleton } from "tsyringe";
 import jwt from 'jsonwebtoken'
-import { TokenException } from "authentication/exceptions/TokenException";
-import { Properties } from "shared/utils/Properties";
-import { ITokenProvider } from "./ITokenProvider";
+import { ExpiredTokenException, InvalidTokenException, TokenProvider } from "./TokenProvider";
+import { Injectable } from "@nestjs/common";
 
-@singleton()
-export class JsonWebTokenProvider implements ITokenProvider {
+@Injectable()
+export class JsonWebTokenProvider implements TokenProvider {
 
-  constructor(
-    @inject('Properties') private readonly properties: Properties,
-  ) { }
+  constructor() { }
 
   generateAccessToken(payload: object): string {
-    return jwt.sign(Object.assign({}, payload), this.properties.env.JWT_SECRET, {
-      expiresIn: this.properties.env.ACCESS_TOKEN_EXPIRES
+    return jwt.sign(Object.assign({}, payload), properties.JWT_SECRET, {
+      expiresIn: properties.ACCESS_TOKEN_EXPIRES
     })
   }
 
   generateRefreshToken(payload: object): string {
-    return jwt.sign(Object.assign({}, payload), this.properties.env.JWT_SECRET, {
-      expiresIn: this.properties.env.REFRESH_TOKEN_EXPIRES
+    return jwt.sign(Object.assign({}, payload), properties.JWT_SECRET, {
+      expiresIn: properties.REFRESH_TOKEN_EXPIRES
     })
   }
 
-  async verify<T>(token: string): AsyncResult<T, TokenException> {
+  async verify<T>(token: string): AsyncResult<T, InvalidTokenException | ExpiredTokenException> {
     const { err, data } = await new Promise<{ err: any, data: any }>(resolve => {
-      jwt.verify(token, this.properties.env.JWT_SECRET, (err, data) => resolve({ err, data }))
+      jwt.verify(token, properties.JWT_SECRET, (err, data) => resolve({ err, data }))
     })
 
-    if (err instanceof jwt.TokenExpiredError) return Err(new TokenException.ExpiredToken())
-    if (err instanceof jwt.JsonWebTokenError) return Err(new TokenException.InvalidToken())
+    if (err instanceof jwt.TokenExpiredError) return Err(new ExpiredTokenException())
+    if (err instanceof jwt.JsonWebTokenError) return Err(new InvalidTokenException())
 
     return Ok(data)
   }
 
-  async decode<T>(token: string): AsyncResult<T, TokenException> {
+  async decode<T>(token: string): AsyncResult<T, InvalidTokenException> {
     const decoded = jwt.decode(token)
     if (!decoded) {
-      return Err(new TokenException.InvalidToken())
+      return Err(new InvalidTokenException())
     }
     return Ok(decoded as T)
   }

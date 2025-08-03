@@ -1,31 +1,29 @@
-import { GoogleTokenInfo } from "authentication/DTOs";
-import { SignInException } from "authentication/exceptions/SignInException";
-import { IGoogleAuth } from "./IGoogleAuth";
-import { inject, singleton } from "tsyringe";
-import { HttpClient } from "../HttpClient/HttpCLient";
-import { GoogleAuthException } from "./GoogleAuthExceptions";
+import { GoogleAuthError, IGoogleAuth, InvalidGoogleToken } from "./IGoogleAuth";
+import { HttpClient } from "../../../shared/services/HttpClient/HttpCLient";
+import { GoogleTokenInfo } from "authentication/dto/GoogleTokenInfo";
+import { Inject, Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class GoogleAuth implements IGoogleAuth {
 
   GOOGLE_AUTH_URL = 'https://oauth2.googleapis.com/tokeninfo'
 
   constructor(
-    @inject('HttpClient') private readonly httpClient: HttpClient
+    @Inject('HttpClient') private readonly httpClient: HttpClient
   ) { }
 
-  async getUserInfo(idToken: string): AsyncResult<GoogleTokenInfo, GoogleAuthException> {
+  async getUserInfo(idToken: string): Promise<GoogleTokenInfo> {
 
     const apiResult = await this.httpClient.get<GoogleTokenInfo, { error: string }>(`${this.GOOGLE_AUTH_URL}?id_token=${idToken}`)
 
-    if (!apiResult.ok) {
-      if (apiResult.err.data.error === 'invalid_token') {
-        return Err(new GoogleAuthException.InvalidGoogleToken())
+    if (apiResult.failure) {
+      if (apiResult.error.data.error === 'invalid_token') {
+        throw new InvalidGoogleToken()
       }
-      return Err(new GoogleAuthException.GoogleAuthError())
+      throw new GoogleAuthError()
     }
 
-    return Ok(apiResult.value)
+    return apiResult.value
 
   }
 

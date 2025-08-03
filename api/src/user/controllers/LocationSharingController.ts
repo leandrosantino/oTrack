@@ -1,20 +1,13 @@
-import { inject, injectable } from "tsyringe";
 import { FastifyRequest } from 'fastify'
 import { WebSocket } from 'ws';
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
-import { WebSocketAuthMiddleware } from "authentication/middlewares/WebSocketAuthMiddleware";
-import { WebSocketEventClient } from "shared/EventClient/WebSocketEventClient";
-import { Role } from "user/Role";
-import { User } from "user/User";
+import { WebSocketEventClient } from "lib/EventClient/WebSocketEventClient";
+import { Role } from "user/entities/Role";
+import { User } from "user/entities/User";
 
-
-@injectable()
 export class LocationSharingController implements ControllerInterface {
 
-  constructor(
-    @inject('WebSocketAuthMiddleware') private readonly webSocketAuthMiddleware: WebSocketAuthMiddleware,
-  ) { }
 
   private clients = new Map<number, WebSocketEventClient>();
 
@@ -41,7 +34,6 @@ export class LocationSharingController implements ControllerInterface {
   }
 
   routes: FastifyPluginAsyncZod = async (app) => {
-    app.addHook('onRequest', this.webSocketAuthMiddleware.build([Role.ADMIN]))
     app.route({
       schema: {
         tags: ['websocket'],

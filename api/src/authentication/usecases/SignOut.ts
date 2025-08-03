@@ -1,20 +1,20 @@
-import { singleton, inject } from "tsyringe"
-import { RefreshTokenData } from "../DTOs"
-import { ITokenProvider } from "authentication/services/TokenProvider/ITokenProvider"
-import { IUserRepository } from "user/IUserRepository"
+import { TokenProvider } from "authentication/services/TokenProvider/TokenProvider"
+import { UserRepository } from "user/repository/UserRepository"
+import { RefreshTokenData } from "authentication/dto/RefreshTokenData"
+import { Inject, Injectable } from "@nestjs/common"
 
-@singleton()
+@Injectable()
 export class SignOut {
 
   constructor(
-    @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('TokenProvider') private readonly tokenProvider: ITokenProvider
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('TokenProvider') private readonly tokenProvider: TokenProvider
   ) { }
 
 
   async execute(refreshToken: string): Promise<void> {
     const decodedResult = await this.tokenProvider.decode<RefreshTokenData>(refreshToken)
-    if (!decodedResult.ok) {
+    if (decodedResult.failure) {
       return
     }
     await this.userRepository.deleteTokenById(decodedResult.value.id)

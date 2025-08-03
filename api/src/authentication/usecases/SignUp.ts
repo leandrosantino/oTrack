@@ -1,13 +1,13 @@
-import { singleton, inject } from "tsyringe"
-import { SignUpRequestDTO } from "../DTOs"
 import { CreateUser } from "user/usecases/CreateUser"
-import { Role } from "user/Role"
+import { Role } from "user/entities/Role"
+import { SignUpRequestDTO } from "authentication/dto/SignUpRequestDTO"
+import { Injectable } from "@nestjs/common"
 
-@singleton()
+@Injectable()
 export class SignUp {
 
   constructor(
-    @inject('CreateUser') private readonly createUser: CreateUser
+    private readonly createUser: CreateUser
   ) { }
 
 

@@ -9,9 +9,9 @@ const config: Config = {
   testMatch: ['**/*.spec.ts', '**/*.test.ts'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'], // Formatos do relatório de cobertura
+  coverageReporters: ['text'], // Formatos do relatório de cobertura
   collectCoverageFrom: [
-    'src/services/**/*.{js,ts}', // Arquivos que devem ser incluídos na análise
+    'src/**/*.{js,ts}', // Arquivos que devem ser incluídos na análise
     '!src/*.{js,ts}',
     '!src/**/*.d.ts', // Exclui arquivos de declaração de tipos
     '!src/**/index.ts', // Exemplo: exclui arquivos de índice

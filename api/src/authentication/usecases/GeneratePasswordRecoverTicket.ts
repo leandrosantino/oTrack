@@ -1,24 +1,24 @@
-import { inject, singleton } from "tsyringe";
-import { UserProfile } from "user/UserProfile";
-import { SignInException } from "authentication/exceptions/SignInException";
-import { ITicketProvider } from "authentication/services/TicketProvider/ITicketProvider";
-import { IUserRepository } from "user/IUserRepository";
+import { UserProfile } from "user/dto/UserProfile";
+import { TicketProvider } from "authentication/services/TicketProvider/TicketProvider";
+import { UserRepository } from "user/repository/UserRepository";
+import { Inject, Injectable } from "@nestjs/common";
+import { UserNotFoundException } from "authentication/exceptions/UserNotFoundException";
 
-@singleton()
+@Injectable()
 export class GeneratePasswordRecoverTicket {
 
   constructor(
-    @inject('UserRepository') private readonly userRepository: IUserRepository,
-    @inject('TicketProvider') private readonly ticketProvider: ITicketProvider
+    @Inject('UserRepository') private readonly userRepository: UserRepository,
+    @Inject('TicketProvider') private readonly ticketProvider: TicketProvider
   ) { }
 
   TICKET_VALIDITY_IN_MINUTES = 5
 
-  async execute(email: string): AsyncResult<string, SignInException> {
+  async execute(email: string): Promise<string> {
     const user = await this.userRepository.getByEmail(email)
-    if (!user) return Err(new SignInException.UserNotFound());
+    if (!user) throw new UserNotFoundException();
     const recoverTicket = this.ticketProvider.generate(new UserProfile(user), this.TICKET_VALIDITY_IN_MINUTES)
-    return Ok(recoverTicket)
+    return recoverTicket
   }
 
 }
