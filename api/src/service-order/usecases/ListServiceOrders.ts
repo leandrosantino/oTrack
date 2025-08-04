@@ -1,11 +1,12 @@
+import { Inject, Injectable } from "@nestjs/common";
 import { IServiceOrderRepository } from "service-order/interfaces/IServiceOrderRepository";
 import { inject, singleton } from "tsyringe";
 
 
-@singleton()
+@Injectable()
 export class ListServiceOrders {
   constructor(
-    @inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository
+    @Inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository
   ) { }
 
   async execute() {

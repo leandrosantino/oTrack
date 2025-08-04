@@ -41,7 +41,7 @@ export class WebSocketEventClient implements EventClient {
     this.socket.send(JSON.stringify({ event, payload }))
   }
 
-  onClose(call: VoidFunction) {
+  onClose(call: () => void) {
     this.socket.on('close', () => call())
   }
 

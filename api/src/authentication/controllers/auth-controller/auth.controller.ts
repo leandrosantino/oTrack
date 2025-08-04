@@ -93,7 +93,7 @@ export class AuthController {
     throw new CustonHttpException(result.error, status)
   }
 
-  @Post('refresh')
+  @Get('refresh')
   @ApiResponseError(HttpStatus.UNAUTHORIZED, ExpiredTokenException)
   @ApiResponseError(HttpStatus.BAD_REQUEST, InvalidTokenException)
   @ApiOkResponse({ description: 'Access Token', type: AccessTokenResponseDto })

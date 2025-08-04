@@ -9,6 +9,8 @@ import { AppModule } from 'app.module';
 import fastifyCookie from '@fastify/cookie';
 import fastifyCors from '@fastify/cors';
 import { apiReference } from '@scalar/nestjs-api-reference'
+import fastifyWebsocket from '@fastify/websocket';
+import { RealtimeServiceOrderService } from 'service-order/services/realtime-service-order-service/realtime-service-order.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -23,6 +25,8 @@ async function bootstrap() {
     origin: properties.CORS_ORIGINS.split(','),
     credentials: true
   })
+
+  app.getHttpAdapter().getInstance().register(fastifyWebsocket)
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // remove propriedades que não estão no DTO
@@ -60,6 +64,9 @@ async function bootstrap() {
       preferredSecurityScheme: 'BearerAuth'
     }
   }))
+
+  const realtimeServiceOrderService = app.get(RealtimeServiceOrderService);
+  app.register(realtimeServiceOrderService.routes, { prefix: 'service-order' })
 
   await app.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
     if (err) {

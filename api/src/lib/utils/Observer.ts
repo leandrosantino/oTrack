@@ -5,7 +5,7 @@ export class Observer<T> {
 
   private substribers: ((data: T) => void)[] = []
 
-  subscribe(cb: (data: T) => void): VoidFunction {
+  subscribe(cb: (data: T) => void): () => void {
     this.substribers.push(cb)
     return () => {
       this.substribers = this.substribers.filter(substriber => substriber !== cb)

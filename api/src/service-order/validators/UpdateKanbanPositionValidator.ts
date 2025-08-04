@@ -4,8 +4,9 @@ import { UpdateServiceOrderKanbanPositionRequestDTO } from "service-order/DTOs";
 import z from "zod";
 import { Validator } from "lib/Validator/Validator";
 import { ValidationException } from "lib/Validator/ValidatorException";
+import { Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class UpdateKanbanPositionValidator implements Validator<UpdateServiceOrderKanbanPositionRequestDTO> {
 
   private UPDATE_PAYLOAD_SCHEMA = z.object({

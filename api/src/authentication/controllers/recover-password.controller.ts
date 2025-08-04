@@ -1,12 +1,11 @@
-import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { RecoverPasswordIsValidRequestDto } from 'authentication/dto/RecoverPasswordIsValidRequestDto';
 import { RecoverPasswordRequestDto } from 'authentication/dto/RecoverPasswordRequestDto';
 import { UpdatePasswordRequestDto } from 'authentication/dto/UpdatePasswordRequestDto';
 import { TicketProvider } from 'authentication/services/TicketProvider/TicketProvider';
 import { SendPasswordRecoverMail } from 'authentication/usecases/SendPasswordRecoverMail';
 import { UpdatePassword } from 'authentication/usecases/UpdatePassword';
-import { FastifyReply } from 'fastify';
 
 @ApiTags('Authentication')
 @Controller('auth')

@@ -25,5 +25,5 @@
     "./src/**/*",
     "./tests/**/*",
     "src/@types"
-, "src/authentication/usecases/.ts"  ]
+  ]
 }

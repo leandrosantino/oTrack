@@ -1,12 +1,12 @@
 import { IServiceOrderRepository } from "service-order/interfaces/IServiceOrderRepository";
-import { inject, singleton } from "tsyringe";
 import { UpdateServiceOrderRequestDTO } from "../DTOs";
+import { Inject, Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class UpdateServiceOrder {
 
   constructor(
-    @inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository
+    @Inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository
   ) { }
 
   async execute(entity: UpdateServiceOrderRequestDTO) {

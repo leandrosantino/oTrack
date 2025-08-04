@@ -1,12 +1,13 @@
 import { inject, singleton } from "tsyringe";
 import { UpdateServiceOrderKanbanPositionRequestDTO } from "../DTOs";
 import { UpdateServiceOrder } from "./UpdateServiceOrder";
+import { Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class UpdateServiceOrderKanbanPosition {
 
   constructor(
-    @inject('UpdateServiceOrder') private readonly updateServiceOrder: UpdateServiceOrder
+    private readonly updateServiceOrder: UpdateServiceOrder
   ) { }
 
   async execute({ id, previousIndex, postIndex, status }: UpdateServiceOrderKanbanPositionRequestDTO) {

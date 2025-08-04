@@ -35,10 +35,6 @@ export class LocationSharingController implements ControllerInterface {
 
   routes: FastifyPluginAsyncZod = async (app) => {
     app.route({
-      schema: {
-        tags: ['websocket'],
-        security: [{ BearerAuth: [] }],
-      },
       method: 'GET',
       url: '/location/:ticket',
       handler: () => { },

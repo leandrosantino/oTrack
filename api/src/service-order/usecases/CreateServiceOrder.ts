@@ -1,12 +1,12 @@
 import { IServiceOrderRepository } from "service-order/interfaces/IServiceOrderRepository";
-import { inject, singleton } from "tsyringe";
 import { CreateServiceOrderRequestDTO } from "../DTOs";
 import { ICreateServiceOrder } from "../interfaces/ICreateServiceOrder";
+import { Inject, Injectable } from "@nestjs/common";
 
-@singleton()
+@Injectable()
 export class CreateServiceOrder implements ICreateServiceOrder {
   constructor(
-    @inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository
+    @Inject('ServiceOrderRepository') private readonly serviceOrderRepository: IServiceOrderRepository
   ) { }
 
   private readonly STEP_LENGTH = 1000

@@ -1,9 +1,9 @@
+import { Injectable } from "@nestjs/common";
 import { prisma } from "database";
 import { IServiceOrderRepository } from "service-order/interfaces/IServiceOrderRepository";
 import { ServiceOrder } from "service-order/ServiceOrder";
-import { singleton } from "tsyringe";
 
-@singleton()
+@Injectable()
 export class ServiceOrderRepository implements IServiceOrderRepository {
 
   async getHigherIndex(): Promise<number> {
