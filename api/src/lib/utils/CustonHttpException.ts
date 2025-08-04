@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { Exception } from "./Exception";
 
-export class CustonHttpException<T extends Exception> extends HttpException {
-  constructor(ExceptionClass: new (...args: any[]) => T, code: HttpStatus) {
-    const exception = new ExceptionClass()
+export class CustonHttpException extends HttpException {
+  constructor(exception: Exception, code: HttpStatus) {
     super(
       exception.details(),
       code

@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, InternalServerErrorException, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Inject, InternalServerErrorException, Post, Req, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SignInResquestDto } from '../dto/SignInResquestDto';
+import { SignInResquestDto } from '../../dto/SignInResquestDto';
 import { SignIn } from 'authentication/usecases/SignIn';
 import { AccessTokenResponseDto } from 'authentication/dto/AccessTokenResponseDto';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -62,13 +62,11 @@ export class AuthController {
       return
     }
 
-    if (result.error instanceof UserNotFoundException)
-      throw new CustonHttpException(UserNotFoundException, HttpStatus.NOT_FOUND)
+    let status = HttpStatus.INTERNAL_SERVER_ERROR
+    if (result.error instanceof UserNotFoundException) status = HttpStatus.NOT_FOUND
+    if (result.error instanceof InvalidPasswordException) status = HttpStatus.UNAUTHORIZED
 
-    if (result.error instanceof InvalidPasswordException)
-      throw new CustonHttpException(InvalidPasswordException, HttpStatus.UNAUTHORIZED)
-
-    throw new InternalServerErrorException()
+    throw new CustonHttpException(result.error, status)
   }
 
   @Post('login/google')
@@ -84,17 +82,15 @@ export class AuthController {
     if (result.success) {
       const { accessToken, refreshToken } = result.value
       reply.setCookie(this.refreshTokenCookiesName, refreshToken, this.refreshTokenCookiesOption)
-        .send({ accessToken })
+      reply.send({ accessToken })
       return
     }
 
-    if (result.error instanceof UserNotFoundException)
-      throw new CustonHttpException(UserNotFoundException, HttpStatus.NOT_FOUND)
+    let status = HttpStatus.INTERNAL_SERVER_ERROR
+    if (result.error instanceof UserNotFoundException) status = HttpStatus.NOT_FOUND
+    if (result.error instanceof InvalidGoogleToken) status = HttpStatus.UNAUTHORIZED
 
-    if (result.error instanceof InvalidGoogleToken)
-      throw new CustonHttpException(InvalidGoogleToken, HttpStatus.UNAUTHORIZED)
-
-    throw new InternalServerErrorException()
+    throw new CustonHttpException(result.error, status)
   }
 
   @Post('refresh')
@@ -107,24 +103,31 @@ export class AuthController {
 
     if (result.success) {
       const { accessToken, refreshToken: newRefreshToken } = result.value
-      return reply
-        .setCookie(this.refreshTokenCookiesName, newRefreshToken, this.refreshTokenCookiesOption)
-        .send({ accessToken })
+      reply.setCookie(this.refreshTokenCookiesName, newRefreshToken, this.refreshTokenCookiesOption)
+      reply.send({ accessToken })
+      return
     }
+
+    let status = HttpStatus.INTERNAL_SERVER_ERROR
 
     if (result.error instanceof AlreadyUsedToken) {
       this.logger.info('Attempt to refresh tokens using a discarded token')
-      throw new CustonHttpException(InvalidTokenException, HttpStatus.UNAUTHORIZED)
+      throw new CustonHttpException(new InvalidTokenException(), HttpStatus.UNAUTHORIZED)
     }
 
-    throw new InternalServerErrorException()
+    if (result.error instanceof ExpiredTokenException || result.error instanceof InvalidTokenException) {
+      status = HttpStatus.UNAUTHORIZED
+    }
+
+    throw new CustonHttpException(result.error, status)
   }
 
   @Post('logout')
   async logout(@Req() request: FastifyRequest, @Res() reply: FastifyReply) {
     const refreshToken = request.cookies.refreshToken ?? '';
     await this.signOut.execute(refreshToken)
-    reply.setCookie(this.refreshTokenCookiesName, '', this.refreshTokenCookiesOption).status(200)
+    reply.setCookie(this.refreshTokenCookiesName, '', this.refreshTokenCookiesOption).send()
+    return
   }
 
   @Post('signup')
@@ -135,10 +138,10 @@ export class AuthController {
     const result = await tryAsync(() => this.signUpUseCase.execute(body))
     if (result.success) return
 
-    if (result.error instanceof UserAlreadyExists)
-      throw new CustonHttpException(UserAlreadyExists, HttpStatus.CONFLICT)
+    let status = HttpStatus.INTERNAL_SERVER_ERROR
+    if (result.error instanceof UserAlreadyExists) status = HttpStatus.CONFLICT
 
-    throw new InternalServerErrorException()
+    throw new CustonHttpException(result.error, status)
   }
 
   @ApiOkResponse({ description: 'new websocket access ticket create', schema: { example: { ticket: 'bqbpydh9wtt5ndc2jiswnph3' } } })

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from './controllers/auth-controller/auth.controller';
 import { SignIn } from './usecases/SignIn';
 import { JsonWebTokenProvider } from './services/TokenProvider/JsonWebTokenProvider';
 import { RefreshTokens } from './usecases/RefreshTokens';

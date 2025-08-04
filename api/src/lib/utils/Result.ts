@@ -36,7 +36,11 @@ export async function tryAsync<T>(promise: () => Promise<T>): AsyncResult<T, Exc
     const value = await promise();
     return Ok(value)
   } catch (err) {
-    return Err(err)
+    if (err instanceof Exception) return Err(err)
+    return Err(new Exception({
+      message: 'Unexpected internal error',
+      type: 'UNEXPECTED_ERROR'
+    }))
   }
 }
 
@@ -45,6 +49,12 @@ export function trySync<T>(fn: () => T): Result<T, Exception> {
     const value = fn();
     return Ok(value)
   } catch (err) {
+    if (err! instanceof Exception) {
+      return Err(new Exception({
+        message: 'Unexpected internal error',
+        type: 'UNEXPECTED_ERROR'
+      }))
+    }
     return Err(err)
   }
 }

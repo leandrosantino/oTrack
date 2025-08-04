@@ -9,7 +9,7 @@ const config: Config = {
   testMatch: ['**/*.spec.ts', '**/*.test.ts'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['text'], // Formatos do relatório de cobertura
+  coverageReporters: ['html-spa'], // Formatos do relatório de cobertura
   collectCoverageFrom: [
     'src/**/*.{js,ts}', // Arquivos que devem ser incluídos na análise
     '!src/*.{js,ts}',

@@ -4,6 +4,7 @@ import { UnauthorizedException } from "authentication/exceptions/UnauthorizedExc
 import { UnauthticatedException } from "authentication/exceptions/UnauthticatedException";
 import { VerifyToken } from "authentication/usecases/VerifyToken";
 import { FastifyRequest } from "fastify";
+import { CustonHttpException } from "lib/utils/CustonHttpException";
 import { Role } from "user/entities/Role";
 
 @Injectable()
@@ -36,15 +37,12 @@ export class AuthGuard implements CanActivate {
     const verifyTokenResult = await tryAsync(() => this.verifyToken.execute(token))
 
     if (verifyTokenResult.failure) {
-      throw verifyTokenResult.error.details()
+      throw new CustonHttpException(verifyTokenResult.error, HttpStatus.UNAUTHORIZED)
     }
 
     const { value: userProfile } = verifyTokenResult
     if (requireRoles.length > 0 && !requireRoles.includes(userProfile.role)) {
-      throw new HttpException(
-        new UnauthorizedException().details(),
-        HttpStatus.FORBIDDEN
-      )
+      throw new CustonHttpException(new UnauthorizedException(), HttpStatus.FORBIDDEN)
     }
 
     request.user = userProfile
