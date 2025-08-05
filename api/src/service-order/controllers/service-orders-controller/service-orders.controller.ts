@@ -7,7 +7,7 @@ import { ListServiceOrders } from 'service-order/usecases/list-service-orders/Li
 import { Role } from 'user/entities/Role';
 
 @ApiTags('Service Orders')
-@Controller('service-orders')
+@Controller('service-order')
 export class ServiceOrdersController {
 
   constructor(

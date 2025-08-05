@@ -18,6 +18,7 @@ import { UserModule } from 'user/user.module';
 import { SharedModule } from 'shared/shared.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guard/AuthGuard';
+import { WebsocketAuthGuard } from './guard/WebsocketAuthGard';
 
 @Module({
   controllers: [AuthController, RecoverPasswordController],
@@ -27,6 +28,7 @@ import { AuthGuard } from './guard/AuthGuard';
     { provide: 'TicketProvider', useClass: CuidTicketProvider },
     { provide: 'GoogleAuth', useClass: GoogleAuth },
     { provide: APP_GUARD, useClass: AuthGuard },
+    WebsocketAuthGuard,
     GeneratePasswordRecoverTicket,
     SendPasswordRecoverMail,
     UpdatePassword,
@@ -38,6 +40,6 @@ import { AuthGuard } from './guard/AuthGuard';
     SignUp,
     SignIn,
   ],
-  exports: ['TicketProvider']
+  exports: [WebsocketAuthGuard]
 })
 export class AuthModule { }
