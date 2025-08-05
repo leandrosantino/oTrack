@@ -1,4 +1,4 @@
-import { FastifyRequest } from 'fastify'
+import { FastifyRequest, RouteHandlerMethod } from 'fastify'
 import { WebSocket } from 'ws';
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { UpdateServiceOrderKanbanPositionRequestDto } from "service-order/dto/UpdateServiceOrderKanbanPositionRequestDto";
@@ -9,7 +9,13 @@ import { Validator } from "lib/Validator/Validator";
 import { Observer } from "lib/utils/Observer";
 import { WebSocketEventClient } from "lib/EventClient/WebSocketEventClient";
 import { ListServiceOrders } from "service-order/usecases/list-service-orders/ListServiceOrders";
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { TicketProvider } from 'authentication/services/TicketProvider/TicketProvider';
+import { Role } from 'user/entities/Role';
+import { UnauthticatedException } from 'authentication/exceptions/UnauthticatedException';
+import { UserProfile } from 'user/dto/UserProfile';
+import { UnauthorizedException } from 'authentication/exceptions/UnauthorizedException';
+import { CustonHttpException } from 'lib/utils/CustonHttpException';
 
 @Injectable()
 export class RealtimeServiceOrderService implements ControllerInterface {
@@ -17,15 +23,24 @@ export class RealtimeServiceOrderService implements ControllerInterface {
   constructor(
     private readonly listServiceOrders: ListServiceOrders,
     private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
+    @Inject('TicketProvider') private readonly ticketProvider: TicketProvider,
     @Inject('CreateServiceOrderObserver') private readonly createServiceOrderObserver: Observer<ServiceOrder>,
     @Inject('UpdateKanbanPositionValidator') private readonly updateKanbanPositionValidator: Validator<UpdateServiceOrderKanbanPositionRequestDto>
   ) { }
 
   clients: WebSocketEventClient[] = []
 
-  webSocketHandler(socket: WebSocket, request: FastifyRequest) {
+  private requiredRoles: Role[] = [Role.ADMIN]
+
+  async webSocketHandler(socket: WebSocket, request: FastifyRequest) {
     const client = new WebSocketEventClient(socket, request.user!)
     this.clients.push(client)
+
+    const isAuthorized = await this.authGard(request, client)
+    if (!isAuthorized) {
+      socket.close()
+      return
+    }
 
     this.listServiceOrders.execute().then(orders => {
       client.emit('connected', orders)
@@ -60,10 +75,36 @@ export class RealtimeServiceOrderService implements ControllerInterface {
   routes: FastifyPluginAsyncZod = async (app) => {
     app.route({
       method: 'GET',
-      url: '/realtime/:ticket',
+      url: '/service-order/realtime/:ticket',
       handler: () => { },
-      wsHandler: (...params) => this.webSocketHandler(...params)
+      wsHandler: this.webSocketHandler.bind(this)
     })
+  }
+
+  async authGard(request: FastifyRequest, client: WebSocketEventClient) {
+    const { ticket } = request.params as { ticket: string }
+
+    if (!ticket) {
+      client.emit('error', new UnauthticatedException().details())
+      return false
+    }
+
+    const verifyTicketResult = await this.ticketProvider.use<UserProfile>(ticket)
+
+    if (verifyTicketResult.failure) {
+      client.emit('error', verifyTicketResult.error.details())
+      return false
+    }
+
+    const { value: userProfile } = verifyTicketResult
+
+    if (this.requiredRoles.length > 0 && !this.requiredRoles.includes(userProfile.role)) {
+      client.emit('error', new UnauthorizedException().details())
+      return false
+    }
+
+    request.user = userProfile
+    return true
   }
 
 }

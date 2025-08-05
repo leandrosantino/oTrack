@@ -9,8 +9,10 @@ import { UpdateServiceOrder } from './usecases/update-service-order/UpdateServic
 import { CreateServiceOrderObservable } from './usecases/create-service-order/CreateServiceOrderObservable';
 import { CreateServiceOrder } from './usecases/create-service-order/CreateServiceOrder';
 import { ServiceOrdersController } from './controllers/service-orders-controller/service-orders.controller';
+import { AuthModule } from 'authentication/authentication.module';
 
 @Module({
+  imports: [AuthModule],
   providers: [
     RealtimeServiceOrderService,
     ListServiceOrders,

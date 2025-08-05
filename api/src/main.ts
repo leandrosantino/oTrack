@@ -19,8 +19,6 @@ async function bootstrap() {
     { logger: ['error', 'warn', 'debug', 'verbose', 'fatal'] }
   );
 
-  //app.setErrorHandler(errorMiddleware.build())
-
   app.register(fastifyCors, {
     origin: properties.CORS_ORIGINS.split(','),
     credentials: true
@@ -55,8 +53,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // SwaggerModule.setup('docs', app, document);
-
   app.use('/docs', apiReference({
     content: document,
     withFastify: true,
@@ -66,7 +62,7 @@ async function bootstrap() {
   }))
 
   const realtimeServiceOrderService = app.get(RealtimeServiceOrderService);
-  app.register(realtimeServiceOrderService.routes, { prefix: 'service-order' })
+  app.register(realtimeServiceOrderService.routes)
 
   await app.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
     if (err) {

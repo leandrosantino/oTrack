@@ -37,6 +37,7 @@ import { AuthGuard } from './guard/AuthGuard';
     SignOut,
     SignUp,
     SignIn,
-  ]
+  ],
+  exports: ['TicketProvider']
 })
 export class AuthModule { }
