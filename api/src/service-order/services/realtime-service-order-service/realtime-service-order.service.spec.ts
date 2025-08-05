@@ -2,14 +2,14 @@ import { inject, injectable } from "tsyringe";
 import { FastifyRequest } from 'fastify'
 import { WebSocket } from 'ws';
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { UpdateServiceOrderKanbanPositionRequestDTO } from "service-order/DTOs";
-import { ServiceOrder } from "service-order/ServiceOrder";
-import { UpdateServiceOrderKanbanPosition } from "service-order/usecases/UpdateServiceOrderKanbanPosition";
+import { UpdateServiceOrderKanbanPositionRequestDto } from "service-order/dto/UpdateServiceOrderKanbanPositionRequestDto";
+import { ServiceOrder } from "service-order/entities/ServiceOrder";
+import { UpdateServiceOrderKanbanPosition } from "service-order/usecases/update-service-order-kanban-position/UpdateServiceOrderKanbanPosition";
 import { ControllerInterface } from "shared/interfaces/ControllerInterface";
 import { Validator } from "lib/Validator/Validator";
 import { Observer } from "lib/utils/Observer";
 import { WebSocketEventClient } from "lib/EventClient/WebSocketEventClient";
-import { ListServiceOrders } from "service-order/usecases/ListServiceOrders";
+import { ListServiceOrders } from "service-order/usecases/list-service-orders/ListServiceOrders";
 import { Inject, Injectable } from "@nestjs/common";
 
 @Injectable()
@@ -19,7 +19,7 @@ export class RealtimeServiceOrderService implements ControllerInterface {
     private readonly listServiceOrders: ListServiceOrders,
     private readonly updateServiceOrderKanbanPosition: UpdateServiceOrderKanbanPosition,
     @Inject('CreateServiceOrderObserver') private readonly createServiceOrderObserver: Observer<ServiceOrder>,
-    @Inject('UpdateKanbanPositionValidator') private readonly updateKanbanPositionValidator: Validator<UpdateServiceOrderKanbanPositionRequestDTO>
+    @Inject('UpdateKanbanPositionValidator') private readonly updateKanbanPositionValidator: Validator<UpdateServiceOrderKanbanPositionRequestDto>
   ) { }
 
   clients: WebSocketEventClient[] = []

@@ -1,0 +1,27 @@
+import { inject, singleton } from "tsyringe";
+import { UpdateServiceOrderKanbanPositionRequestDto } from "../../dto/UpdateServiceOrderKanbanPositionRequestDto";
+import { UpdateServiceOrder } from "../update-service-order/UpdateServiceOrder";
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export class UpdateServiceOrderKanbanPosition {
+
+  constructor(
+    private readonly updateServiceOrder: UpdateServiceOrder
+  ) { }
+
+  async execute({ id, previousIndex, postIndex, status }: UpdateServiceOrderKanbanPositionRequestDto) {
+
+    let index: number | undefined = 0
+    if (!postIndex && !previousIndex) index = undefined
+    if (postIndex && !previousIndex) index = postIndex + 100
+    if (previousIndex && !postIndex) index = previousIndex - 100
+    if (previousIndex && postIndex && previousIndex > 0 && postIndex > 0) {
+      index = (postIndex + previousIndex) / 2
+    }
+
+    return await this.updateServiceOrder.execute({ id, index, status })
+  }
+
+
+}

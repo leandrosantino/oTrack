@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { RealtimeServiceOrderService } from './services/realtime-service-order-service/realtime-service-order.service';
-import { ListServiceOrders } from './usecases/ListServiceOrders';
-import { UpdateServiceOrderKanbanPosition } from './usecases/UpdateServiceOrderKanbanPosition';
-import { UpdateKanbanPositionValidator } from './validators/UpdateKanbanPositionValidator';
+import { ListServiceOrders } from './usecases/list-service-orders/ListServiceOrders';
+import { UpdateServiceOrderKanbanPosition } from './usecases/update-service-order-kanban-position/UpdateServiceOrderKanbanPosition';
+import { UpdateKanbanPositionValidator } from './usecases/update-service-order-kanban-position/UpdateKanbanPositionValidator';
 import { Observer } from 'lib/utils/Observer';
-import { ServiceOrderRepository } from './repository/ServiceOrderRepository';
-import { UpdateServiceOrder } from './usecases/UpdateServiceOrder';
-import { CreateServiceOrderObservable } from './wrappers/CreateServiceOrderObservable';
-import { CreateServiceOrder } from './usecases/CreateServiceOrder';
+import { PrismaServiceOrderRepository } from './repository/PrismaServiceOrderRepository';
+import { UpdateServiceOrder } from './usecases/update-service-order/UpdateServiceOrder';
+import { CreateServiceOrderObservable } from './usecases/create-service-order/CreateServiceOrderObservable';
+import { CreateServiceOrder } from './usecases/create-service-order/CreateServiceOrder';
 import { ServiceOrdersController } from './controllers/service-orders-controller/service-orders.controller';
 
 @Module({
@@ -21,7 +21,7 @@ import { ServiceOrdersController } from './controllers/service-orders-controller
     { provide: 'CreateServiceOrder', useClass: CreateServiceOrder },
     { provide: 'CreateServiceOrderObservable', useClass: CreateServiceOrderObservable },
     { provide: 'UpdateKanbanPositionValidator', useClass: UpdateKanbanPositionValidator },
-    { provide: 'ServiceOrderRepository', useClass: ServiceOrderRepository }
+    { provide: 'ServiceOrderRepository', useClass: PrismaServiceOrderRepository }
   ],
   controllers: [ServiceOrdersController]
 })

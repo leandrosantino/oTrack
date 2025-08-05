@@ -2,8 +2,8 @@ import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Protected } from 'lib/decorators/Protected';
 import { CreateServiceOrderRequestDto } from 'service-order/dto/CreateServiceOrderRequestDto';
-import { ICreateServiceOrder } from 'service-order/interfaces/ICreateServiceOrder';
-import { ListServiceOrders } from 'service-order/usecases/ListServiceOrders';
+import { ICreateServiceOrder } from 'service-order/usecases/create-service-order/ICreateServiceOrder';
+import { ListServiceOrders } from 'service-order/usecases/list-service-orders/ListServiceOrders';
 import { Role } from 'user/entities/Role';
 
 @ApiTags('Service Orders')
