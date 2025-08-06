@@ -10,7 +10,9 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string(),
   MAIL_SERVICE_API_KEY: z.string(),
   WEB_APP_ENDPOINT: z.string(),
-  WEB_APP_PASSWORD_RESET_ROUTE: z.string()
+  WEB_APP_PASSWORD_RESET_ROUTE: z.string(),
+  REDIS_PASSWORD: z.string(),
+  WEBSOCKET_TICKET_TTL: z.string().transform(val => Number(val))
 })
 export type Properties = z.infer<typeof envSchema>
 

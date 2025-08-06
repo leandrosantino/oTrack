@@ -7,7 +7,7 @@ declare global {
   const Err: typeof import('lib/utils/Result').Err;
   const tryAsync: typeof import('lib/utils/Result').tryAsync;
   const trySync: typeof import('lib/utils/Result').trySync;
-  const properties: import('lib/utils/roperties').Properties;
+  const properties: import('lib/utils/properties').Properties;
 }
 
 export { };

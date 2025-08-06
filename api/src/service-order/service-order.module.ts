@@ -21,7 +21,6 @@ import { AuthModule } from 'authentication/authentication.module';
     { provide: 'CreateServiceOrderObserver', useClass: Observer },
     { provide: 'CreateServiceOrderObservable', useClass: CreateServiceOrderObservable },
     { provide: 'CreateServiceOrder', useClass: CreateServiceOrder },
-    { provide: 'CreateServiceOrderObservable', useClass: CreateServiceOrderObservable },
     { provide: 'UpdateKanbanPositionValidator', useClass: UpdateKanbanPositionValidator },
     { provide: 'ServiceOrderRepository', useClass: PrismaServiceOrderRepository }
   ],

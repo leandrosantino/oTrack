@@ -11,7 +11,7 @@ import { SignInResquestDto } from "authentication/dto/SignInResquestDto";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { UserNotFoundException } from "authentication/exceptions/UserNotFoundException";
 import { CustonHttpException } from "lib/utils/CustonHttpException";
-import { HttpStatus, InternalServerErrorException } from "@nestjs/common";
+import { HttpStatus } from "@nestjs/common";
 import { InvalidPasswordException } from "authentication/exceptions/InvalidPasswordException";
 import { CookieSerializeOptions } from "@fastify/cookie";
 import { GoogleLoginRequestDto } from "authentication/dto/GoogleLoginRequestDto";

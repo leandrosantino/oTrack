@@ -8,7 +8,7 @@ export class CuidTicketProvider implements TicketProvider {
 
   tickets: Map<string, TicketData> = new Map();
 
-  generate(payload: object, validityInMinutes: number): string {
+  async generate(payload: object, validityInMinutes: number): Promise<string> {
     const ticket = createId()
     this.tickets.set(ticket, {
       payload,
@@ -17,7 +17,7 @@ export class CuidTicketProvider implements TicketProvider {
     return ticket
   }
 
-  isValid(ticket: string): boolean {
+  async isValid(ticket: string): Promise<boolean> {
     const ticketData = this.tickets.get(ticket)
     if (!ticketData) return false
     return !isBefore(ticketData.expiresAt, new Date())

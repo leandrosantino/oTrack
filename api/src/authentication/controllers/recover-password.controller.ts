@@ -30,7 +30,7 @@ export class RecoverPasswordController {
   @Post('recover-password/isValid')
   @ApiOkResponse({ example: { isValid: true } })
   async recoverPasswordTicketIsValid(@Body() { ticket }: RecoverPasswordIsValidRequestDto,) {
-    const isValid = this.ticketProvider.isValid(ticket)
+    const isValid = await this.ticketProvider.isValid(ticket)
     return { isValid }
   }
 

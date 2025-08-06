@@ -1,9 +1,9 @@
 import { Exception } from "lib/utils/Exception";
 
 export interface TicketProvider {
-  generate(payload: object, validityInMinutes: number): string;
+  generate(payload: object, validityInMinutes: number): Promise<string>;
   use<T>(ticket: string): AsyncResult<T, InvalidTicket | ExpiredTicket>
-  isValid(ticket: string): boolean
+  isValid(ticket: string): Promise<boolean>
 }
 
 export type TicketData<T = any> = { payload: T; expiresAt: Date }

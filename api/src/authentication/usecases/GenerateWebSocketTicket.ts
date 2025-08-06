@@ -9,7 +9,7 @@ export class GenerateWebSocketTicket {
     @Inject('TicketProvider') private readonly ticketProvider: TicketProvider
   ) { }
 
-  TICKET_VALIDITY_IN_MINUTES = 1
+  TICKET_VALIDITY_IN_MINUTES = properties.WEBSOCKET_TICKET_TTL / 60
 
   async execute(ticketData: UserProfile): Promise<string> {
     return this.ticketProvider.generate(ticketData, this.TICKET_VALIDITY_IN_MINUTES)

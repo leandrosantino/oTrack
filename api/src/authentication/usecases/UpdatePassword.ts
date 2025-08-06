@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { PasswordHasher } from "shared/services/PasswordHasher/PasswordHasher";
 import { TicketProvider } from "authentication/services/TicketProvider/TicketProvider";
-import { inject, singleton } from "tsyringe";
 import { UserRepository } from "user/repository/UserRepository";
 import { UserProfile } from "user/dto/UserProfile";
 

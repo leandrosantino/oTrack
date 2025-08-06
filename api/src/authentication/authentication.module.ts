@@ -19,13 +19,14 @@ import { SharedModule } from 'shared/shared.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guard/AuthGuard';
 import { WebsocketAuthGuard } from './guard/WebsocketAuthGard';
+import { RedisTicketProvider } from './services/TicketProvider/RedisTicketProvider';
 
 @Module({
   controllers: [AuthController, RecoverPasswordController],
   imports: [UserModule, SharedModule],
   providers: [
     { provide: 'TokenProvider', useClass: JsonWebTokenProvider },
-    { provide: 'TicketProvider', useClass: CuidTicketProvider },
+    { provide: 'TicketProvider', useClass: RedisTicketProvider },
     { provide: 'GoogleAuth', useClass: GoogleAuth },
     { provide: APP_GUARD, useClass: AuthGuard },
     WebsocketAuthGuard,

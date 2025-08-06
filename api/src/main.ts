@@ -11,6 +11,7 @@ import fastifyCors from '@fastify/cors';
 import { apiReference } from '@scalar/nestjs-api-reference'
 import fastifyWebsocket from '@fastify/websocket';
 import { RealtimeServiceOrderService } from 'service-order/services/realtime-service-order-service/realtime-service-order.service';
+import { createClient } from "redis";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -76,5 +77,6 @@ async function bootstrap() {
       `📖 Access docs in http://localhost:3000/docs`
     )
   })
+
 }
 bootstrap();
