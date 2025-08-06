@@ -1,9 +1,8 @@
-import { ServiceOrder } from "service-order/entities/ServiceOrder";
 import { CreateServiceOrder } from "service-order/usecases/create-service-order/CreateServiceOrder";
-import { Observer } from "lib/utils/Observer";
 import { Inject, Injectable } from "@nestjs/common";
 import { CreateServiceOrderRequestDto } from "service-order/dto/CreateServiceOrderRequestDto";
 import { ServiceOrderRepository } from "service-order/repository/ServiceOrderRepository";
+import { HttpClient } from "shared/services/HttpClient/HttpCLient";
 
 
 @Injectable()
@@ -11,14 +10,14 @@ export class CreateServiceOrderObservable extends CreateServiceOrder {
 
   constructor(
     @Inject('ServiceOrderRepository') serviceOrderRepository: ServiceOrderRepository,
-    @Inject('CreateServiceOrderObserver') private readonly observer: Observer<ServiceOrder>
+    @Inject('HttpClient') private readonly httpClient: HttpClient
   ) {
     super(serviceOrderRepository)
   }
 
   async execute(data: CreateServiceOrderRequestDto) {
     const serviceOrder = await super.execute(data)
-    this.observer.notifyAll(serviceOrder)
+    this.httpClient.post('example', serviceOrder)
     return serviceOrder
   }
 

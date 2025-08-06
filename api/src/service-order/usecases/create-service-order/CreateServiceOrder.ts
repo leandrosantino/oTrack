@@ -1,12 +1,11 @@
 import { ServiceOrderRepository } from "service-order/repository/ServiceOrderRepository";
-import { ICreateServiceOrder } from "./ICreateServiceOrder";
-import { Inject, Injectable } from "@nestjs/common";
 import { CreateServiceOrderRequestDto } from "service-order/dto/CreateServiceOrderRequestDto";
 
-@Injectable()
-export class CreateServiceOrder implements ICreateServiceOrder {
+
+export class CreateServiceOrder {
+
   constructor(
-    @Inject('ServiceOrderRepository') private readonly serviceOrderRepository: ServiceOrderRepository
+    private readonly serviceOrderRepository: ServiceOrderRepository
   ) { }
 
   private readonly STEP_LENGTH = 1000

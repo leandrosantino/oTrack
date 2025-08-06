@@ -7,20 +7,19 @@ import { Observer } from 'lib/utils/Observer';
 import { PrismaServiceOrderRepository } from './repository/PrismaServiceOrderRepository';
 import { UpdateServiceOrder } from './usecases/update-service-order/UpdateServiceOrder';
 import { CreateServiceOrderObservable } from './usecases/create-service-order/CreateServiceOrderObservable';
-import { CreateServiceOrder } from './usecases/create-service-order/CreateServiceOrder';
 import { ServiceOrdersController } from './controllers/service-orders-controller/service-orders.controller';
 import { AuthModule } from 'authentication/authentication.module';
+import { SharedModule } from 'shared/shared.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, SharedModule],
   providers: [
     RealtimeServiceOrderService,
     ListServiceOrders,
     UpdateServiceOrderKanbanPosition,
     UpdateServiceOrder,
     { provide: 'CreateServiceOrderObserver', useClass: Observer },
-    { provide: 'CreateServiceOrderObservable', useClass: CreateServiceOrderObservable },
-    { provide: 'CreateServiceOrder', useClass: CreateServiceOrder },
+    { provide: 'CreateServiceOrder', useClass: CreateServiceOrderObservable },
     { provide: 'UpdateKanbanPositionValidator', useClass: UpdateKanbanPositionValidator },
     { provide: 'ServiceOrderRepository', useClass: PrismaServiceOrderRepository }
   ],
